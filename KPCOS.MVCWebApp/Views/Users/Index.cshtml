@@ -1,0 +1,220 @@
+﻿@model IEnumerable<KPCOS.Data.Models.User>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+@* <p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fullname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Password)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Role)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fullname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Role)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Username)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table> *@
+
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">User List</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-primary" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">Username</th>
+                    <th class="card-title text-center">Password</th>
+                    <th class="card-title text-center">Fullname</th>
+                    <th class="card-title text-center">Address</th>
+                    <th class="card-title text-center">Phone</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblUser">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="1">Id</label>
+                            <input type="hidden" id="UserId"/>
+                            <input type="text" id="UserId" name="Id" class="form-control"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Name</label>
+                            <input type="text" id="Fullname" name="Fullname" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+
+            $("#btSave").click(function () {
+                var formData = new FormData();
+                formData = $("frm").serialize();
+
+                formData.append("id", $("Id").val());
+                formData.append("name", $("Name").val());
+
+                $.ajax({
+                    url: 'https://localhost:7163/api/User',
+                    type: "POST",
+                    //processData: false,
+                    //contentType: true,
+                    headers: {
+                        'Accept': 'application/json',
+                        "Content-Type": 'application/json'
+                    },
+                    // dataType: 'json',
+                    data: formData,
+                    success: function (result) {
+                        if (result.status >= 1) {
+                            $('#userModal').modal('hide');
+                            loadData();
+                        }
+                        alert(result.message);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                })
+            })
+        });
+
+        function loadData() {
+            alert("Load data progressing ...");
+
+            $.ajax({
+                url: 'https://localhost:7163/api/User',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.username + '</td>';
+                        html += '<td>' + item.password + '</td>';
+                        html += '<td>' + item.fullname + '</td>';
+                        html += '<td>' + item.address + '</td>';
+                        html += '<td>' + item.phone + '</td>';
+                        html += '<td></td>';
+                        html += '</tr>'
+                    });
+                    $('.tblUser').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function add() {
+            //alert("Save function");
+            $("#userModalLabel").html("Add New");
+
+            $('#userModal').modal('show');
+        }
+    </script>
+}
