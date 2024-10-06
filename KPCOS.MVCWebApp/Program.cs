@@ -1,9 +1,11 @@
 using KPCOS.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddScoped<FA24_SE1717_PRN231_G4_KPCOSContext>();
+builder.Services.AddDbContext<FA24_SE1717_PRN231_G4_KPCOSContext>(opt =>
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
