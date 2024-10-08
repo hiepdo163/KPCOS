@@ -28,6 +28,5 @@ public partial class Package
 
     public DateTime? UpdateAt { get; set; }
 
-    [JsonIgnore]
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 }

@@ -127,12 +127,38 @@
                     <div class="form-group row">
                         <div class="col-md-4">
                             <label for="1">Id</label>
-                            <input type="hidden" id="UserId"/>
+                            @* <input type="hidden" id="UserId"/> *@
                             <input type="text" id="UserId" name="Id" class="form-control"/>
                         </div>
                         <div class="col-md-4">
-                            <label for="1">Name</label>
+                            <label for="1">Full Name</label>
                             <input type="text" id="Fullname" name="Fullname" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">User Name</label>
+                            <input type="text" id="Username" name="Username" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Address</label>
+                            <input type="text" id="Address" name="Address" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Phone</label>
+                            <input type="text" id="Phone" name="Phone" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Role</label>
+                            <select id="Role" name="Role" class="form-select">
+                                <option value="User">User</option>
+                                <option value="Consultation">Consultation</option>
+                                <option value="Employee">Employee</option>
+                                <option value="Customer">Customer</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Password</label>
+                            <input type="text" id="Password" name="Password" class="form-control" />
                         </div>
                     </div>
                 </div>
@@ -150,24 +176,26 @@
         $(document).ready(function () {
             loadData();
 
-            $("#btSave").click(function () {
-                var formData = new FormData();
-                formData = $("frm").serialize();
-
-                formData.append("id", $("Id").val());
-                formData.append("name", $("Name").val());
+            $("#btSave").click(function (event) {
+                event.preventDefault();
 
                 $.ajax({
                     url: 'https://localhost:7163/api/User',
                     type: "POST",
-                    //processData: false,
-                    //contentType: true,
                     headers: {
-                        'Accept': 'application/json',
+                        'accept': 'text/plain',
                         "Content-Type": 'application/json'
                     },
-                    // dataType: 'json',
-                    data: formData,
+                    data: `{
+                        "id": "`+ $('#UserId').val() + `",
+                        "fullname": "`+ $('#Fullname').val() +`",
+                        "username": "`+ $('#Username').val() +`",
+                        "address": "`+ $('#Address').val() +`",
+                        "phone": "`+ $('#Phone').val() +`",
+                        "role": "`+ $('#Role').val() +`",
+                        "password": "`+ $('#Password').val()+`",
+                        "status": `+ true +`
+                    }`,
                     success: function (result) {
                         if (result.status >= 1) {
                             $('#userModal').modal('hide');
@@ -179,6 +207,46 @@
                         alert(xhr.statusText);
                     }
                 })
+
+
+
+                // var formData = new FormData();
+                // formData = $("frm").serialize();
+
+                // formData.append("id", $("UserId").val());
+                // formData.append("fullname", $("Fullname").val());
+
+                // $.ajax({
+                //     url: 'https://localhost:7163/api/User',
+                //     type: "POST",
+                //     //processData: false,
+                //     //contentType: true,
+                //     headers: {
+                //         'Accept': 'application/json',
+                //         "Content-Type": 'application/json'
+                //     },
+                //     // dataType: 'json',
+                //     data: JSON.stringify({
+                //         id: $('#UserId').val(),
+                //         fullname: $('#Fullname').val(),
+                //         username: $('#Username').val(),
+                //         address: $('#Address').val(),
+                //         phone: $('#Phone').val(),
+                //         role: $('#Role').val(),
+                //         password: $('#Password').val(),
+                //         status: true
+                //     }),
+                //     success: function (result) {
+                //         if (result.status >= 1) {
+                //             $('#userModal').modal('hide');
+                //             loadData();
+                //         }
+                //         alert(result.message);
+                //     },
+                //     error: function (xhr, error) {
+                //         alert(xhr.statusText);
+                //     }
+                // })
             })
         });
 

@@ -28,7 +28,6 @@ public partial class User
     public DateTime? UpdateDate { get; set; }
 
     public string Username { get; set; }
-    [JsonIgnore]
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
