@@ -114,5 +114,61 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
         }
+
+        public async Task<IBusinessResult> Create(ServiceFeedback serviceFeedback)
+        {
+            if (serviceFeedback == null)
+            {
+                return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
+            }
+            try
+            {
+                var result = await _unitOfWork.ServiceFeedback.CreateAsync(serviceFeedback);
+                if (result > 0)
+                {
+                    return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG);
+                }
+                else
+                {
+                    return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new BusinessResult(Const.ERROR_EXCEPTION, ex.Message);
+
+            }
+        }
+
+        public async Task<IBusinessResult> Update(ServiceFeedback serviceFeedback)
+        {
+            if (serviceFeedback == null)
+            {
+                return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+            }
+            try
+            {
+                var result = await _unitOfWork.ServiceFeedback.UpdateAsync(serviceFeedback);
+
+                if (result > 0)
+                {
+                    return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
+                }
+                else
+                {
+                    return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return new BusinessResult(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }
+
+

@@ -12,9 +12,9 @@ namespace KPCOS.Service.Interface
     {
         Task<IBusinessResult> GetAll();
         Task<IBusinessResult> GetById(string id);
-        //Task<IBusinessResult> Create(ServiceFeedback serviceFeedback);
-        //Task<IBusinessResult> Update(ServiceFeedback serviceFeedback);
-        Task<IBusinessResult> Save(ServiceFeedback serviceFeedback);
+        Task<IBusinessResult> Create(ServiceFeedback serviceFeedback);
+        Task<IBusinessResult> Update(ServiceFeedback serviceFeedback);
+        //Task<IBusinessResult> Save(ServiceFeedback serviceFeedback);
         Task<IBusinessResult> DeleteById(string Id);
     }
 }
