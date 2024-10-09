@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using KPCOS.Service.Service;
 using Microsoft.AspNetCore.Http;
@@ -38,5 +39,12 @@ namespace KPCOS.APIService.Controllers
         {
             return await _userService.DeleteById(id);
         }
+
+        [HttpPost("login")]
+        public async Task<IBusinessResult> Login([FromBody] LoginDTO loginDTO)
+        {
+            return await _userService.LoginAsync(loginDTO);
+        }
+
     }
 }

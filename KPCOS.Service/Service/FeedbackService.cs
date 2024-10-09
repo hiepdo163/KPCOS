@@ -25,6 +25,7 @@ namespace KPCOS.Service.Service
             #endregion
 
             var feedbacks = await _unitOfWork.Feedback.GetAllAsync();
+            Console.WriteLine($"Feedback count: {feedbacks.Count()}");
             if (feedbacks == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Feedback>());
@@ -45,49 +46,7 @@ namespace KPCOS.Service.Service
             {
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, feedback);
             }
-        }
-        //public async Task<IBusinessResult> Save(Feedback feedback)
-        //{
-        //    try
-        //    {
-        //        int result = -1;
-        //        var FeedbackTmp = await _unitOfWork.Feedback.GetByIdAsync(feedback.Id);
-        //        if (FeedbackTmp != null)
-        //        {
-        //            FeedbackTmp.Content = feedback.Content;
-        //            FeedbackTmp.CustomerId = feedback.CustomerId;
-        //            FeedbackTmp.ProjectId = feedback.ProjectId;
-        //            FeedbackTmp.Rating = feedback.Rating;
-        //            FeedbackTmp.UpdateDate = DateTime.Now;
-
-        //            result = await _unitOfWork.Feedback.UpdateAsync(FeedbackTmp);
-        //            if (result > 0)
-        //            {
-        //                return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, feedback);
-        //            }
-        //            else
-        //            {
-        //                return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            result = await _unitOfWork.Feedback.CreateAsync(feedback);
-        //            if (result > 0)
-        //            {
-        //                return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, feedback);
-        //            }
-        //            else
-        //            {
-        //                return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG, feedback);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
-        //    }
-        //}
+        }   
         public async Task<IBusinessResult> DeleteById(string id)
         {
             try

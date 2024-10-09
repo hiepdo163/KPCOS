@@ -1,11 +1,17 @@
 ﻿using KPCOS.Common;
 using KPCOS.Data;
 using KPCOS.Data.Models;
+using KPCOS.Data.Repository;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,9 +20,11 @@ namespace KPCOS.Service.Service
     public class UserService: IUserService
     {
         private readonly UnitOfWork _unitOfWork;
-        public UserService()
+        private readonly IConfiguration _configuration;
+        public UserService(IConfiguration configuration)
         {
             _unitOfWork ??= new UnitOfWork();
+            _configuration = configuration;
         }
         public async Task<IBusinessResult> GetAll()
         {
@@ -118,5 +126,41 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
         }
+
+        public async Task<IBusinessResult> LoginAsync(LoginDTO loginDTO)
+        {
+            var user = await _unitOfWork.User.GetByUsernameAndPasswordAsync(loginDTO.Username, loginDTO.Password);
+
+            if (user == null)
+            {
+                return new BusinessResult(Const.FAIL_READ_CODE, "Invalid username or password.");
+            }
+
+            var token = GenerateJwtToken(user);
+
+            return new BusinessResult(Const.SUCCESS_READ_CODE, "Login successful.", new { token });
+        }
+        public string GenerateJwtToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["JwtConfig:Secret"]);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role)
+        }),
+                Expires = DateTime.UtcNow.AddHours(2), 
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+      
     }
 }

@@ -2,6 +2,7 @@
 using KPCOS.Service.Base;
 using KPCOS.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace KPCOS.APIService.Controllers
 {
@@ -19,7 +20,7 @@ namespace KPCOS.APIService.Controllers
 
         // GET: api/Feedbacks
         [HttpGet]
-
+        
         public async Task<IBusinessResult> GetFeedbacks()
         {
             return await _feedbackService.GetAll();
