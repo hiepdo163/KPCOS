@@ -12,9 +12,9 @@ namespace KPCOS.Service.Interface
     {
         Task<IBusinessResult> GetAll();
         Task<IBusinessResult> GetById(string code);
-        //Task<IBusinessResult> Create(Employee employee);
-        //Task<IBusinessResult> Update(Employee employee);
-        Task<IBusinessResult> Save(Employee employee);
+        Task<IBusinessResult> Create(Employee employee);
+        Task<IBusinessResult> Update(Employee employee);
+        //Task<IBusinessResult> Save(Employee employee);
         Task<IBusinessResult> DeleteById(string Id);
     }
 }
