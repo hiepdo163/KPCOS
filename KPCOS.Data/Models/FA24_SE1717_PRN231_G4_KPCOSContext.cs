@@ -2,7 +2,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using KPCOS.Data.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -775,7 +774,7 @@ public partial class FA24_SE1717_PRN231_G4_KPCOSContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("username");
         });
-        ModelBuilderExtension.SeedData(modelBuilder);
+        //ModelBuilderExtension.SeedData(modelBuilder);
         OnModelCreatingPartial(modelBuilder);
     }
 

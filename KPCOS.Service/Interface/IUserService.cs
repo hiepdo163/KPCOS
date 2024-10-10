@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace KPCOS.Service.Interface
         //Task<IBusinessResult> Update(User user);
         Task<IBusinessResult> Save(User user);
         Task<IBusinessResult> DeleteById(string Id);
+        Task<IBusinessResult> LoginAsync(LoginDTO loginDTO);
     }
 }
