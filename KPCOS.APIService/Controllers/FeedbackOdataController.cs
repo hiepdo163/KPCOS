@@ -3,7 +3,7 @@ using KPCOS.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-
+using System.Collections.Generic;
 namespace KPCOS.APIService.Controllers
 {
     [Route("odata/[controller]")]
@@ -20,10 +20,19 @@ namespace KPCOS.APIService.Controllers
         // GET: api/Feedback
         [HttpGet]
         [EnableQuery]
-        public async Task<IActionResult> GetFeedbacks()
+        public IQueryable<Feedback> GetFeedbacks()
         {
-            var result = await _feedbackService.GetAll();
-            return Ok(result);
+            // Assuming _feedbackService.GetAll() returns a Task<BusinessResult<List<Feedback>>>
+            var businessResult = _feedbackService.GetAll().Result;
+
+            if (businessResult.Data is IEnumerable<Feedback> feedbacks)
+            {
+                // Convert IEnumerable<Feedback> to IQueryable<Feedback>
+                return feedbacks.AsQueryable();
+            }
+
+            // If the data isn't available or in an incorrect format, return an empty IQueryable
+            return Enumerable.Empty<Feedback>().AsQueryable();
         }
 
     }
