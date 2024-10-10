@@ -22,16 +22,15 @@ namespace KPCOS.APIService.Controllers
         [EnableQuery]
         public IQueryable<Feedback> GetFeedbacks()
         {
-            // Assuming _feedbackService.GetAll() returns a Task<BusinessResult<List<Feedback>>>
+            
             var businessResult = _feedbackService.GetAll().Result;
 
             if (businessResult.Data is IEnumerable<Feedback> feedbacks)
             {
-                // Convert IEnumerable<Feedback> to IQueryable<Feedback>
                 return feedbacks.AsQueryable();
             }
 
-            // If the data isn't available or in an incorrect format, return an empty IQueryable
+            //neu sai format, return thanh enum
             return Enumerable.Empty<Feedback>().AsQueryable();
         }
 
