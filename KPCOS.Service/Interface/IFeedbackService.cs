@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,8 @@ namespace KPCOS.Service.Interface
     {
         Task<IBusinessResult> GetAll();
         Task<IBusinessResult> GetById(string code);
-        Task<IBusinessResult> Create(Feedback feedback);
-        Task<IBusinessResult> Update(Feedback feedback);
+        Task<IBusinessResult> Create(FeedbackDTO feedback);
+        Task<IBusinessResult> Update(FeedbackDTO feedback);
         //Task<IBusinessResult> Save(Feedback feedback);
         Task<IBusinessResult> DeleteById(string Id);
     }
