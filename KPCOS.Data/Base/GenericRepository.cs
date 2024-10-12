@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,6 +26,18 @@ namespace KPCOS.Data.Base
         public List<T> GetAll()
         {
             return [.. _context.Set<T>()];
+        }
+
+        public async Task<List<T>> GetAllAsync2(Expression<Func<T, bool>> predicate = null)
+        {
+            var query = _context.Set<T>().AsQueryable();
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            return await query.ToListAsync();
         }
         public async Task<List<T>> GetAllAsync()
         {

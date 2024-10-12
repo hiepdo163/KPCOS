@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -32,14 +33,14 @@ namespace KPCOS.APIService.Controllers
             return await _feedbackService.GetById(id);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IBusinessResult> UpdateFeedbacks(Feedback feedback)
+        [HttpPut]
+        public async Task<IBusinessResult> UpdateFeedbacks(FeedbackDTO feedback)
         {
             return await _feedbackService.Update(feedback); 
         }
 
         [HttpPost]
-        public async Task<IBusinessResult> CreateFeedback(Feedback feedback)
+        public async Task<IBusinessResult> CreateFeedback(FeedbackDTO feedback)
         {
             return await _feedbackService.Create(feedback);
         }

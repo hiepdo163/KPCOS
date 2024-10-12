@@ -1,3 +1,4 @@
+using KPCOS.Data;
 using KPCOS.Data.Models;
 using KPCOS.Service.Interface;
 using KPCOS.Service.Service;
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IConsultationService, ConsultationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IPackageService, PackageService>();
+builder.Services.AddScoped<UnitOfWork>();
 
 // Configure the DbContext with SQL Server
 builder.Services.AddDbContext<FA24_SE1717_PRN231_G4_KPCOSContext>(opt =>
