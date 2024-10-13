@@ -45,6 +45,24 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, quotation);
             }
         }
+
+        public async Task<IBusinessResult> GetByDesignId(string designId)
+        {
+            var quotation = await _unitOfWork.Quotation.GetAllAsync2(x => x.DesignId == designId);
+            if (quotation == null)
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new Quotation());
+
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, quotation);
+        }
+
+        public async Task<Design?> IsDesignExist(string DesignId)
+        {
+            var existingDesign = await _unitOfWork.Design.GetByIdAsync(DesignId);
+            if (existingDesign == null)
+                return null;
+            return existingDesign;
+        }
+
         public async Task<IBusinessResult> Save(Quotation quotation)
         {
             try
@@ -53,15 +71,15 @@ namespace KPCOS.Service.Service
                 var quotationTmp = await _unitOfWork.Quotation.GetByIdAsync(quotation.Id);
                 if (quotationTmp != null)
                 {
-                    quotationTmp.ComplexityLevel = quotationTmp.ComplexityLevel;
-                    quotationTmp.ConsultationAmount = quotationTmp.ConsultationAmount;
-                    quotationTmp.DesignId = quotationTmp.DesignId;
-                    quotationTmp.Note = quotationTmp.Note;
-                    quotationTmp.QuotationAmount = quotationTmp.QuotationAmount;
-                    quotationTmp.QuotationDate = quotationTmp.QuotationDate;
-                    quotationTmp.Scale = quotationTmp.Scale;
-                    quotationTmp.Status = quotationTmp.Status;
-                    quotationTmp.Style = quotationTmp.Style;
+                    quotationTmp.ComplexityLevel = quotation.ComplexityLevel;
+                    quotationTmp.ConsultationAmount = quotation.ConsultationAmount;
+                    quotationTmp.DesignId = quotation.DesignId;
+                    quotationTmp.Note = quotation.Note;
+                    quotationTmp.QuotationAmount = quotation.QuotationAmount;
+                    quotationTmp.QuotationDate = quotation.QuotationDate;
+                    quotationTmp.Scale = quotation.Scale;
+                    quotationTmp.Status = quotation.Status;
+                    quotationTmp.Style = quotation.Style;
 
                     result = await _unitOfWork.Quotation.UpdateAsync(quotationTmp);
                     if (result > 0)
@@ -75,6 +93,18 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
+                    var existingDesign = await IsDesignExist(quotation.DesignId);
+                    quotation.Id = Guid.NewGuid().ToString();
+                    if (existingDesign != null)
+                    {
+                        quotation.DesignId = existingDesign.Id;
+                        quotation.Design = existingDesign;
+                    }
+                    else
+                    {
+                        quotation.Design = null;
+                        quotation.DesignId = null;
+                    }
                     result = await _unitOfWork.Quotation.CreateAsync(quotation);
                     if (result > 0)
                     {
