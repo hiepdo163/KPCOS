@@ -2,6 +2,7 @@
 using KPCOS.Data;
 using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using System;
 using System.Collections.Generic;
@@ -86,14 +87,22 @@ namespace KPCOS.Service.Service
         //    }
         //}
 
-        public async Task<IBusinessResult> Create(Employee employee)
+        public async Task<IBusinessResult> Create(EmployeeDTO request)
         {
-            if (employee is null)
+            if (request is null)
             {
                 return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
             }
             try
             {
+                var employee = new Employee
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Salary = request.Salary,
+                    SupervisorId = request.SupervisorId,
+                    UserId = request.UserId
+                };
+
                 var result = await _unitOfWork.Employee.CreateAsync(employee);
                 if (result > 0)
                 {
@@ -110,14 +119,20 @@ namespace KPCOS.Service.Service
             }
         }
 
-            public async Task<IBusinessResult> Update(Employee employee)
+            public async Task<IBusinessResult> Update(string id, EmployeeDTO request)
         {
-            if (employee is null)
-            {
-                return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
-            }
             try
             {
+                var employee = await _unitOfWork.Employee.GetByIdAsync(id);
+                if (employee == null)
+                {
+                    return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                }
+
+                employee.Salary = request.Salary;
+                employee.SupervisorId = request.SupervisorId;
+                employee.UserId = request.UserId;
+
                 var result = await _unitOfWork.Employee.UpdateAsync(employee);
                 if (result > 0)
                 {

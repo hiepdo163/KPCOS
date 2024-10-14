@@ -16,6 +16,10 @@ builder.Services.AddScoped<IConsultationService, ConsultationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IPackageService, PackageService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IServiceAssignmentService, ServiceAssignmentService>();
+builder.Services.AddScoped<IServiceBookingService, ServiceBookingService>();
+builder.Services.AddScoped<IServiceExecutionService, ServiceExecutionService>();
 builder.Services.AddDbContext<FA24_SE1717_PRN231_G4_KPCOSContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddCors(options =>

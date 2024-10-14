@@ -12,14 +12,9 @@ using Newtonsoft.Json;
 
 namespace KPCOS.MVCWebApp.Controllers
 {
-    public class CustomersController : Controller
+    public class CustomersController(FA24_SE1717_PRN231_G4_KPCOSContext context) : Controller
     {
-        private readonly FA24_SE1717_PRN231_G4_KPCOSContext _context;
-
-        public CustomersController(FA24_SE1717_PRN231_G4_KPCOSContext context)
-        {
-            _context = context;
-        }
+        private readonly FA24_SE1717_PRN231_G4_KPCOSContext _context = context;
 
         // GET: Customers
         public async Task<IActionResult> Index()

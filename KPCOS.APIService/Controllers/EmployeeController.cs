@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using KPCOS.Service.Service;
 using Microsoft.AspNetCore.Http;
@@ -23,13 +24,13 @@ namespace KPCOS.APIService.Controllers
         {
             return await _employeeService.GetById(id);
         }
-        [HttpPut]
-        public async Task<IBusinessResult> PutAnEmployee(Employee request)
+        [HttpPut("{id}")]
+        public async Task<IBusinessResult> PutAnEmployee([FromRoute] string id, EmployeeDTO request)
         {
-            return await _employeeService.Update(request);
+            return await _employeeService.Update(id, request);
         }
         [HttpPost]
-        public async Task<IBusinessResult> CreateAnEmployee(Employee request)
+        public async Task<IBusinessResult> CreateAnEmployee(EmployeeDTO request)
         {
             return await _employeeService.Create(request);
         }
