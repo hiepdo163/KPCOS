@@ -14,7 +14,7 @@ namespace KPCOS.Service.Interface
         Task<IBusinessResult> GetById(string code);
         //Task<IBusinessResult> Create(Project project);
         //Task<IBusinessResult> Update(Project project);
-        Task<IBusinessResult> Save(Project project);
+        Task<IBusinessResult> Save(ProjectDTO project);
         Task<IBusinessResult> DeleteById(string Id);
     }
 }
