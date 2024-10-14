@@ -78,6 +78,10 @@ namespace KPCOS.Service.Service
                     }
                 } else
                 {
+                    consultation.Id = Guid.NewGuid().ToString();
+                    consultation.DesignId = null;
+                    consultation.Design = null;
+
                     result = await _unitOfWork.Consultation.CreateAsync(consultation);
                     if (result > 0)
                     {

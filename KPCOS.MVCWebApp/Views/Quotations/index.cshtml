@@ -1,0 +1,248 @@
+﻿@model IEnumerable<KPCOS.Data.Models.Quotation>
+
+@{
+    ViewData["Title"] = "Quotation List";
+}
+
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">Quotation List</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-primary" onclick="addQuotation();">
+            Add Quotation
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">Id</th>
+                    <th class="card-title text-center">Complexity Level</th>
+                    <th class="card-title text-center">Consultation Amount</th>
+                    <th class="card-title text-center">Quotation Amount</th>
+                    <th class="card-title text-center">Quotation Date</th>
+                    <th class="card-title text-center">Scale</th>
+                    <th class="card-title text-center">Status</th>
+                    <th class="card-title text-center">Style</th>
+                    <th class="card-title text-center">Design Id</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblQuotation">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="quotationModal" tabindex="-1" aria-labelledby="quotationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmQuotation", id = "frmQuotation" }))
+            {
+                @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="quotationModalLabel">Quotation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="ComplexityLevel">Complexity Level</label>
+                                <input type="text" id="ComplexityLevel" name="ComplexityLevel" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="ConsultationAmount">Consultation Amount</label>
+                                <input type="text" id="ConsultationAmount" name="ConsultationAmount" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="Note">Note</label>
+                                <input type="text" id="Note" name="Note" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="QuotationAmount">Quotation Amount</label>
+                                <input type="text" id="QuotationAmount" name="QuotationAmount" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="QuotationDate">Quotation Date</label>
+                                <input type="date" id="QuotationDate" name="QuotationDate" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="Scale">Scale</label>
+                                <input type="text" id="Scale" name="Scale" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="Status">Status</label>
+                                <select id="Status" name="Status" class="form-select">
+                                    <option value="Pending">Pending</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="Style">Style</label>
+                                <input type="text" id="Style" name="Style" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="DesignId">DesignId</label>
+                                <select type="text" id="DesignId" name="DesignId" class="form-select">
+                                <select/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btSaveQuotation" type="button" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                loadQuotationData();
+
+                $("#btSaveQuotation").click(function (event) {
+                    event.preventDefault();
+                    var id = $("#quotationModal").data("id");
+                    var method = id ? "PUT" : "POST";
+                    var url = 'https://localhost:7163/api/Quotation';
+
+                    $.ajax({
+                        url: url,
+                        type: method,
+                        headers: {
+                            'accept': 'text/plain',
+                            "Content-Type": 'application/json'
+                        },
+                        data: JSON.stringify({
+                            id: id,
+                            complexityLevel: $('#ComplexityLevel').val(),
+                            consultationAmount: $('#ConsultationAmount').val(),
+                            quotationAmount: $('#QuotationAmount').val(),
+                            quotationDate: $('#QuotationDate').val(),
+                            note: $('#Note').val(),
+                            scale: $('#Scale').val(),
+                            status: $('#Status').val(),
+                            style: $('#Style').val(),
+                            designId: $('#DesignId').val()
+                        }),
+                        success: function (result) {
+                            $('#quotationModal').modal('hide');
+                            loadQuotationData();
+                            alert(result.message);
+                        },
+                        error: function (xhr) {
+                            alert(xhr.statusText);
+                        }
+                    });
+                });
+            });
+
+            function loadQuotationData() {
+                alert("Loading quotation data ...");
+
+                $.ajax({
+                    url: 'https://localhost:7163/api/Quotation',
+                    type: "GET",
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                        var html = '';
+                        $.each(result.data, function (key, item) {
+                            html += '<tr>';
+                            html += '<td>' + item.id + '</td>';
+                            html += '<td>' + item.complexityLevel + '</td>';
+                            html += '<td>' + item.consultationAmount + '</td>';
+                            html += '<td>' + item.quotationAmount + '</td>';
+                            html += '<td>' + item.quotationDate + '</td>';
+                            html += '<td>' + item.scale + '</td>';
+                            html += '<td>' + item.status + '</td>';
+                            html += '<td>' + item.style + '</td>';
+                            html += '<td>' + item.designId + '</td>';
+                            html += '<td>' +
+                                '<button class="btn btn-success" onclick="editQuotation(`'+ item.id +'`)">Update</button>' +
+                                '<button class="btn btn-danger" onclick="deleteQuotation(`' + item.id +'`)">Delete</button>' +
+                                '</td>';
+                            html += '</tr>'
+                        });
+                        $('.tblQuotation').html(html);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                });
+
+                $.ajax({
+                    url: 'https://localhost:7163/api/Design',
+                    type: "GET",
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                        var html = '';
+                        $.each(result.data, function (key, item) {
+                           html += '<option value="' + item.id +'">' + item.id+'</option>'
+                        });
+                        $('#DesignId').html(html);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+
+            function addQuotation() {
+                $("#quotationModalLabel").html("Add New Quotation");
+                $('#frmQuotation').trigger("reset");
+                $('#quotationModal').modal('show');
+                $('#quotationModal').data("id", null);
+            }
+
+            function editQuotation(id) {
+                $("#quotationModalLabel").html("Update Quotation");
+                $.ajax({
+                    url: 'https://localhost:7163/api/Quotation/' + id,
+                    type: "GET",
+                    contentType: 'application/json',
+                    success: function (response) {
+                        $('#ComplexityLevel').val(response.data.complexityLevel);
+                        $('#ConsultationAmount').val(response.data.consultationAmount);
+                        $('#QuotationAmount').val(response.data.quotationAmount);
+                        $('#QuotationDate').val(response.data.quotationDate);
+                        $('#Note').val(response.data.note);
+                        $('#Scale').val(response.data.scale);
+                        $('#Status').val(response.data.status);
+                        $('#Style').val(response.data.style);
+
+                        $('#quotationModal').modal('show');
+                        $('#quotationModal').data("id", id);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+
+
+            function deleteQuotation(id) {
+                if (confirm("Are you sure you want to delete this quotation?")) {
+                    $.ajax({
+                        url: 'https://localhost:7163/api/Quotation/' + id,
+                        type: "DELETE",
+                        success: function (result) {
+                            loadQuotationData();
+                            alert(result.message);
+                        },
+                        error: function (xhr) {
+                            alert(xhr.statusText);
+                        }
+                    });
+                }
+            }
+        </script>
+}
