@@ -20,10 +20,8 @@ namespace KPCOS.Service.Service
         }
         public async Task<IBusinessResult> GetAll()
         {
-            #region Business rule
-            #endregion
 
-            var customers = await _unitOfWork.Customer.GetCustomersAsync();
+            var customers = await _unitOfWork.Customer.GetAllAsync();
             if (customers == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Customer>());
@@ -32,6 +30,8 @@ namespace KPCOS.Service.Service
             {
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, customers);
             }
+
+
         }
         public async Task<IBusinessResult> GetById(string id)
         {

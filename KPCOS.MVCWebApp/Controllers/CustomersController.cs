@@ -14,56 +14,48 @@ namespace KPCOS.MVCWebApp.Controllers
 {
     public class CustomersController : Controller
     {
-        private readonly FA24_SE1717_PRN231_G4_KPCOSContext _context;
-
-        public CustomersController(FA24_SE1717_PRN231_G4_KPCOSContext context)
-        {
-            _context = context;
-        }
-
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            //var fA24_SE1717_PRN231_G4_KPCOSContext = _context.Customers.Include(c => c.Package).Include(c => c.User);
-            //return View(await fA24_SE1717_PRN231_G4_KPCOSContext.ToListAsync());
+            string apiUrl = Const.APIEndpoint + "Customer";
+            Console.WriteLine("API URL: " + apiUrl);
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer"))
+                try
                 {
-                    if (response.IsSuccessStatusCode)
+                    using (var response = await httpClient.GetAsync(apiUrl))
                     {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-
-                        if (result != null && result.Data != null)
+                        if (response.IsSuccessStatusCode)
                         {
-                            var data = JsonConvert.DeserializeObject<List<Customer>>(result.Data.ToString());
-                            return View(data);
+                            var content = await response.Content.ReadAsStringAsync();
+                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+
+                            if (result != null && result.Data != null)
+                            {
+                                var data = JsonConvert.DeserializeObject<List<Customer>>(result.Data.ToString());
+                                return View(data);
+                            }
+                        }
+                        else
+                        {
+
+                            Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception occurred: " + ex.Message);
                 }
             }
             return View(new List<Customer>());
         }
 
         // GET: Customers/Details/5
+        [Route("Details/{id}")]
         public async Task<IActionResult> Details(string id)
         {
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var customer = await _context.Customers
-            //    .Include(c => c.Package)
-            //    .Include(c => c.User)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
-            //if (customer == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return View(customer);
+          
 
             using (var httpClient = new HttpClient())
             {
