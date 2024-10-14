@@ -1,0 +1,83 @@
+﻿@model KPCOS.Data.Models.Design
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Design</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Budget" class="control-label"></label>
+                <input asp-for="Budget" class="form-control" />
+                <span asp-validation-for="Budget" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConsultantBy" class="control-label"></label>
+                <input asp-for="ConsultantBy" class="form-control" />
+                <span asp-validation-for="ConsultantBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CustomerId" class="control-label"></label>
+                <select asp-for="CustomerId" class ="form-control" asp-items="ViewBag.CustomerId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="DesignType" class="control-label"></label>
+                <input asp-for="DesignType" class="form-control" />
+                <span asp-validation-for="DesignType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FiltrationSystem" class="control-label"></label>
+                <input asp-for="FiltrationSystem" class="form-control" />
+                <span asp-validation-for="FiltrationSystem" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KoiCountRange" class="control-label"></label>
+                <input asp-for="KoiCountRange" class="form-control" />
+                <span asp-validation-for="KoiCountRange" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KoiType" class="control-label"></label>
+                <input asp-for="KoiType" class="form-control" />
+                <span asp-validation-for="KoiType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Note" class="control-label"></label>
+                <input asp-for="Note" class="form-control" />
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TemplateId" class="control-label"></label>
+                <select asp-for="TemplateId" class ="form-control" asp-items="ViewBag.TemplateId">
+                    <option value="">-- Select a Template --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="WaterQuality" class="control-label"></label>
+                <input asp-for="WaterQuality" class="form-control" />
+                <span asp-validation-for="WaterQuality" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
