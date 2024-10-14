@@ -61,7 +61,9 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Designer.Id)
                         </td>
+                        <td></td>
                         <td>
+                            <a asp-action="Create">Create New</a>
                             <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                             <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                             <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
@@ -141,6 +143,19 @@
 
 @section scripts {
     <script type="text/javascript">
+
+        function addProject() {
+            $("#projectModalLabel").html("Add New Project");
+            $('#projectModal').modal('show');
+            $('#ActualCost').val('');
+            $('#EstimatedCost').val('');
+            $('#StartDate').val('');
+            $('#EndDate').val('');
+            $('#Status').val('');
+            $('#ConstructionStaffId').val('');
+            $('#CustomerId').val('');
+            $('#DesignerId').val('');
+        }
         $(document).ready(function () {
             loadProjectData();
             loadCustomerData();
@@ -199,6 +214,7 @@
                         html += '<td>' + item.constructionStaffId + '</td>';
                         html += '<td>' + item.customerId + '</td>';
                         html += '<td>' + item.designerId + '</td>';
+                        html += '<td>' '</td>';
                         html += '</tr>';
                     });
                     $('.tblProject').html(html);
@@ -253,18 +269,6 @@
         }
 
 
-        function addProject() {
-            $("#projectModalLabel").html("Add New Project");
-            $('#projectModal').modal('show');
-            $('#ActualCost').val('');
-            $('#EstimatedCost').val('');
-            $('#StartDate').val('');
-            $('#EndDate').val('');
-            $('#Status').val('');
-            $('#ConstructionStaffId').val('');
-            $('#CustomerId').val('');
-            $('#DesignerId').val('');
-        }
     </script>
 }
 
