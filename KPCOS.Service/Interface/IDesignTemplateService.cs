@@ -16,5 +16,6 @@ namespace KPCOS.Service.Interface
         //Task<IBusinessResult> Update(DesignTemplate designTemplate);
         Task<IBusinessResult> Save(DesignTemplate designTemplate);
         Task<IBusinessResult> DeleteById(string Id);
+        Task<IBusinessResult> GetWithCondition(string name);
     }
 }

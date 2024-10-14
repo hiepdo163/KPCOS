@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.ModelBuilder;
+using System.ComponentModel.Design;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -34,6 +35,8 @@ builder.Services.AddScoped<IConsultationService, ConsultationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IPackageService, PackageService>();
+builder.Services.AddScoped<IDesignTemplateService, DesignTemplateService>();
+builder.Services.AddScoped<IDesignService, DesignSevice>();
 builder.Services.AddScoped<UnitOfWork>();
 
 // Configure the DbContext with SQL Server

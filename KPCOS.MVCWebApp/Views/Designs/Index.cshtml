@@ -1,0 +1,143 @@
+﻿@model IEnumerable<KPCOS.Data.Models.Design>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Budget)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ConsultantBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Depth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DesignType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FiltrationSystem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KoiCountRange)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KoiType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MinLength)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MinWidth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Note)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Shape)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WaterLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WaterQuality)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Template)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Budget)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConsultantBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Depth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DesignType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FiltrationSystem)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KoiCountRange)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KoiType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MinLength)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MinWidth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Note)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Shape)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WaterLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WaterQuality)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Template.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

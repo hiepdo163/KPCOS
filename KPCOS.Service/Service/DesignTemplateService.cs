@@ -33,6 +33,22 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, designTemplates);
             }
         }
+
+        public async Task<IBusinessResult> GetWithCondition(string name)
+        {
+            #region Business rule
+            #endregion
+
+            var designTemplates = await _unitOfWork.DesignTemplate.GetAllAsync2(x => x.Name.Contains(name));
+            if (designTemplates == null)
+            {
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<DesignTemplate>());
+            }
+            else
+            {
+                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, designTemplates);
+            }
+        }
         public async Task<IBusinessResult> GetById(string id)
         {
             var designTemplate = await _unitOfWork.DesignTemplate.GetByIdAsync(id);
@@ -62,6 +78,7 @@ namespace KPCOS.Service.Service
                     templateTmp.TotalPrice = template.TotalPrice;
 
                     result = await _unitOfWork.DesignTemplate.UpdateAsync(template);
+
                     if (result > 0)
                     {
                         return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, template);
