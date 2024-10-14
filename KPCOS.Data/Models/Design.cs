@@ -7,6 +7,11 @@ namespace KPCOS.Data.Models;
 
 public partial class Design
 {
+    public Design()
+    {
+        Id = Guid.NewGuid().ToString();
+        CreateDate = UpdateDate = DateTime.UtcNow;
+    }
     public string Id { get; set; }
 
     public decimal? Budget { get; set; }
