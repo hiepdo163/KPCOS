@@ -1,4 +1,7 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -6,19 +9,17 @@ using KPCOS.Data.Models;
 using KPCOS.Common;
 using KPCOS.Service.Base;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
 
 namespace KPCOS.MVCWebApp.Controllers
 {
-    public class FeedbacksController : Controller
+  
+    public class ServiceFeedbacksController : Controller
     {
-        // GET: Feedbacks
+        // GET: ServiceFeedbacks
         public async Task<IActionResult> Index()
         {
-            string apiUrl = Const.APIEndpoint + "Feedback"; 
-            Console.WriteLine("API URL: " + apiUrl); 
+            string apiUrl = Const.APIEndpoint + "ServiceFeedback";
+            Console.WriteLine("API URL: " + apiUrl);
             using (var httpClient = new HttpClient())
             {
                 try
@@ -32,13 +33,12 @@ namespace KPCOS.MVCWebApp.Controllers
 
                             if (result != null && result.Data != null)
                             {
-                                var data = JsonConvert.DeserializeObject<List<Feedback>>(result.Data.ToString());
+                                var data = JsonConvert.DeserializeObject<List<ServiceFeedback>>(result.Data.ToString());
                                 return View(data);
                             }
                         }
                         else
                         {
-                           
                             Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
                         }
                     }
@@ -48,11 +48,10 @@ namespace KPCOS.MVCWebApp.Controllers
                     Console.WriteLine("Exception occurred: " + ex.Message);
                 }
             }
-            return View(new List<Feedback>());
+            return View(new List<ServiceFeedback>());
         }
 
-
-        // GET: Feedbacks/Details/{id}
+        // GET: ServiceFeedbacks/Details/{id}
         [Route("Details/{id}")]
         public async Task<IActionResult> Details(string id)
         {
@@ -61,10 +60,10 @@ namespace KPCOS.MVCWebApp.Controllers
                 return NotFound();
             }
 
-            Feedback feedback = null;
+            ServiceFeedback serviceFeedback = null;
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Feedback/" + id))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceFeedback/" + id))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -72,21 +71,21 @@ namespace KPCOS.MVCWebApp.Controllers
                         var result = JsonConvert.DeserializeObject<BusinessResult>(content);
                         if (result != null && result.Data != null)
                         {
-                            feedback = JsonConvert.DeserializeObject<Feedback>(result.Data.ToString());
+                            serviceFeedback = JsonConvert.DeserializeObject<ServiceFeedback>(result.Data.ToString());
                         }
                     }
                 }
             }
 
-            if (feedback == null)
+            if (serviceFeedback == null)
             {
                 return NotFound();
             }
 
-            return View(feedback);
+            return View(serviceFeedback);
         }
 
-        // GET: Feedbacks/Create
+        // GET: ServiceFeedbacks/Create
         public async Task<IActionResult> Create()
         {
             var customers = new List<Customer>();
@@ -107,7 +106,7 @@ namespace KPCOS.MVCWebApp.Controllers
             }
             ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName");
 
-            var projects = new List<Project>();
+            var serviceBookings = new List<ServiceBooking>();
             using (var httpClient = new HttpClient())
             {
                 using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
@@ -118,206 +117,27 @@ namespace KPCOS.MVCWebApp.Controllers
                         var result = JsonConvert.DeserializeObject<BusinessResult>(content);
                         if (result != null && result.Data != null)
                         {
-                            projects = JsonConvert.DeserializeObject<List<Project>>(result.Data.ToString());
+                            serviceBookings = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
                         }
                     }
                 }
             }
-            ViewData["ProjectId"] = new SelectList(projects, "ProjectId", "ProjectName");
+            ViewData["ServiceBookingId"] = new SelectList(serviceBookings, "ServiceBookingId", "ServiceBookingName");
 
             return View();
         }
 
-        // POST: Feedbacks/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: ServiceFeedbacks/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Content,CustomerId,ProjectId,Rating")] Feedback feedback)
+        public async Task<IActionResult> Create([Bind("Id,ServiceBookingId,CustomerId,Rating,Feedback,CreateDate")] ServiceFeedback serviceFeedback)
         {
             bool saveStatus = false;
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + "Feedback", feedback))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Status == Const.SUCCESS_CREATE_CODE)
-                            {
-                                saveStatus = true;
-                            }
-                            else
-                            {
-                                saveStatus = false;
-                            }
-                        }
-                    }
-                }
-            }
-            if (saveStatus)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                var customers = new List<Customer>();
-                using (var httpClient = new HttpClient())
-                {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customers"))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Data != null)
-                            {
-                                customers = JsonConvert.DeserializeObject<List<Customer>>(result.Data.ToString());
-                            }
-                        }
-                    }
-                }
-                ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName", feedback.CustomerId);
-
-                var projects = new List<Project>();
-                using (var httpClient = new HttpClient())
-                {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Projects"))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Data != null)
-                            {
-                                projects = JsonConvert.DeserializeObject<List<Project>>(result.Data.ToString());
-                            }
-                        }
-                    }
-                }
-                ViewData["ProjectId"] = new SelectList(projects, "ProjectId", "ProjectName", feedback.ProjectId);
-                return View(feedback);
-            }
-        }
-
-        // GET: Feedbacks/Edit/5
-        public async Task<IActionResult> Edit(string? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Feedback feedback = null;
-            using (var httpClient = new HttpClient())
-            {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Feedback/" + id))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                        if (result != null && result.Data != null)
-                        {
-                            feedback = JsonConvert.DeserializeObject<Feedback>(result.Data.ToString());
-                        }
-                    }
-                }
-            }
-
-            if (feedback == null)
-            {
-                return NotFound();
-            }
-
-            // Get dropdown data ------------------------------------------------------------
-            var customers = new List<Customer>();
-            using (var httpClient = new HttpClient())
-            {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer"))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                        if (result != null && result.Data != null)
-                        {
-                            var customerData = result.Data.ToString();
-                            if (!string.IsNullOrEmpty(customerData))
-                            {
-                                customers = JsonConvert.DeserializeObject<List<Customer>>(customerData);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (customers != null && customers.Count > 0)
-            {
-                ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName", feedback.CustomerId);
-                ViewBag.CustomerId = ViewData["CustomerId"];
-            }
-            else
-            {
-                ViewData["CustomerId"] = new SelectList(new List<Customer>(), "CustomerId", "FullName");
-                ViewBag.CustomerId = ViewData["CustomerId"];
-            }
-
-            var projects = new List<Project>();
-            using (var httpClient = new HttpClient())
-            {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Projects"))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                        if (result != null && result.Data != null)
-                        {
-                            var projectData = result.Data.ToString();
-                            if (!string.IsNullOrEmpty(projectData))
-                            {
-                                projects = JsonConvert.DeserializeObject<List<Project>>(projectData);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (projects != null && projects.Count > 0)
-            {
-                ViewData["ProjectId"] = new SelectList(projects, "ProjectId", "ProjectName", feedback.ProjectId);
-                ViewBag.ProjectId = ViewData["ProjectId"];
-            }
-            else
-            {
-                ViewData["ProjectId"] = new SelectList(new List<Project>(), "ProjectId", "ProjectName");
-                ViewBag.ProjectId = ViewData["ProjectId"];
-            }
-            return View("Edit", feedback);
-        }
-
-        // POST: Feedbacks/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Content,CustomerId,ProjectId,Rating")] Feedback feedback)
-        {
-            if (id != feedback.Id)
-            {
-                return NotFound();
-            }
-
-            bool saveStatus = false;
-            if (ModelState.IsValid)
-            {
-                using (var httpClient = new HttpClient())
-                {
-                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "Feedback/" + id, feedback))
+                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + "ServiceFeedback", serviceFeedback))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -357,12 +177,12 @@ namespace KPCOS.MVCWebApp.Controllers
                         }
                     }
                 }
-                ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName", feedback.CustomerId);
+                ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName");
 
-                var projects = new List<Project>();
+                var serviceBookings = new List<ServiceBooking>();
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Projects"))
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -370,28 +190,29 @@ namespace KPCOS.MVCWebApp.Controllers
                             var result = JsonConvert.DeserializeObject<BusinessResult>(content);
                             if (result != null && result.Data != null)
                             {
-                                projects = JsonConvert.DeserializeObject<List<Project>>(result.Data.ToString());
+                                serviceBookings = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
                             }
                         }
                     }
                 }
-                ViewData["ProjectId"] = new SelectList(projects, "ProjectId", "ProjectName", feedback.ProjectId);
-                return View(feedback);
+                ViewData["ServiceBookingId"] = new SelectList(serviceBookings, "ServiceBookingId", "ServiceBookingName");
+
+                return View(serviceFeedback);
             }
         }
 
-        // GET: Feedbacks/Delete/5
-        public async Task<IActionResult> Delete(string? id)
+        // GET: ServiceFeedbacks/Edit/5
+        public async Task<IActionResult> Edit(string id)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
-            Feedback feedback = null;
+            ServiceFeedback serviceFeedback = null;
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Feedback/" + id))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceFeedback/" + id))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -399,37 +220,78 @@ namespace KPCOS.MVCWebApp.Controllers
                         var result = JsonConvert.DeserializeObject<BusinessResult>(content);
                         if (result != null && result.Data != null)
                         {
-                            feedback = JsonConvert.DeserializeObject<Feedback>(result.Data.ToString());
+                            serviceFeedback = JsonConvert.DeserializeObject<ServiceFeedback>(result.Data.ToString());
                         }
                     }
                 }
             }
 
-            if (feedback == null)
+            if (serviceFeedback == null)
             {
                 return NotFound();
             }
 
-            return View(feedback);
+            var customers = new List<Customer>();
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                        if (result != null && result.Data != null)
+                        {
+                            customers = JsonConvert.DeserializeObject<List<Customer>>(result.Data.ToString());
+                        }
+                    }
+                }
+            }
+            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName", serviceFeedback.CustomerId);
+
+            var serviceBookings = new List<ServiceBooking>();
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                        if (result != null && result.Data != null)
+                        {
+                            serviceBookings = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
+                        }
+                    }
+                }
+            }
+            ViewData["ServiceBookingId"] = new SelectList(serviceBookings, "ServiceBookingId", "ServiceBookingName", serviceFeedback.ServiceBookingId);
+
+            return View(serviceFeedback);
         }
 
-        // POST: Feedbacks/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: ServiceFeedbacks/Edit/5
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,ServiceBookingId,CustomerId,Rating,Feedback,CreateDate")] ServiceFeedback serviceFeedback)
         {
+            if (id != serviceFeedback.Id)
+            {
+                return NotFound();
+            }
+
             bool saveStatus = false;
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "Feedback/" + id))
+                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "ServiceFeedback/" + id, serviceFeedback))
                     {
                         if (response.IsSuccessStatusCode)
                         {
                             var content = await response.Content.ReadAsStringAsync();
                             var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Status  == Const.SUCCESS_DELETE_CODE)
+                            if (result != null && result.Status == Const.SUCCESS_UPDATE_CODE)
                             {
                                 saveStatus = true;
                             }
@@ -447,7 +309,111 @@ namespace KPCOS.MVCWebApp.Controllers
             }
             else
             {
-                return View();
+                var customers = new List<Customer>();
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer"))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                            if (result != null && result.Data != null)
+                            {
+                                customers = JsonConvert.DeserializeObject<List<Customer>>(result.Data.ToString());
+                            }
+                        }
+                    }
+                }
+                ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName", serviceFeedback.CustomerId);
+
+                var serviceBookings = new List<ServiceBooking>();
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                            if (result != null && result.Data != null)
+                            {
+                                serviceBookings = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
+                            }
+                        }
+                    }
+                }
+                ViewData["ServiceBookingId"] = new SelectList(serviceBookings, "ServiceBookingId", "ServiceBookingName", serviceFeedback.ServiceBookingId);
+
+                return View(serviceFeedback);
+            }
+        }
+
+        // GET: ServiceFeedbacks/Delete/5
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            ServiceFeedback serviceFeedback = null;
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceFeedback/" + id))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                        if (result != null && result.Data != null)
+                        {
+                            serviceFeedback = JsonConvert.DeserializeObject<ServiceFeedback>(result.Data.ToString());
+                        }
+                    }
+                }
+            }
+
+            if (serviceFeedback == null)
+            {
+                return NotFound();
+            }
+
+            return View(serviceFeedback);
+        }
+
+        // POST: ServiceFeedbacks/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            bool deleteStatus = false;
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "ServiceFeedback/" + id))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                        if (result != null && result.Status == Const.SUCCESS_DELETE_CODE)
+                        {
+                            deleteStatus = true;
+                        }
+                        else
+                        {
+                            deleteStatus = false;
+                        }
+                    }
+                }
+            }
+            if (deleteStatus)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return View("Delete", id);
             }
         }
     }

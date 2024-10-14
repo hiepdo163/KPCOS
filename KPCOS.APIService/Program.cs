@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.ModelBuilder;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers().AddOData(opt =>
 {
     var odataBuilder = new ODataConventionModelBuilder();
-    odataBuilder.EntitySet<Feedback>("Feedback"); 
+    odataBuilder.EntitySet<Feedback>("Feedback");
     opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(100)
        .AddRouteComponents("odata", odataBuilder.GetEdmModel());
 });
@@ -66,8 +67,8 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false, 
-        ValidateAudience = false, 
+        ValidateIssuer = false,
+        ValidateAudience = false,
         RequireExpirationTime = false,
         ValidateLifetime = true
     };
