@@ -7,6 +7,11 @@ namespace KPCOS.Data.Models;
 
 public partial class DesignTemplate
 {
+    public DesignTemplate() 
+    {
+       Id = Guid.NewGuid().ToString();
+    }
+
     public string Id { get; set; }
 
     public string DefaultLocation { get; set; }
