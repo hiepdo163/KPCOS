@@ -1,4 +1,6 @@
 using KPCOS.Data.Models;
+using KPCOS.Service.Interface;
+using KPCOS.Service.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +10,10 @@ builder.Services.AddDbContext<FA24_SE1717_PRN231_G4_KPCOSContext>(opt =>
         opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IServiceFeedbackService, ServiceFeedbackService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
