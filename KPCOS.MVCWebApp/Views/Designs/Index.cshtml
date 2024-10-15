@@ -67,9 +67,6 @@
                 @Html.DisplayNameFor(model => model.WaterQuality)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Template)
             </th>
             <th></th>
@@ -133,10 +130,7 @@
                 @Html.DisplayFor(modelItem => item.WaterQuality)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Customer.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Template.Id)
+                @Html.DisplayFor(modelItem => item.TemplateId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -87,7 +87,19 @@ namespace KPCOS.MVCWebApp.Controllers
         // GET: Designs/Create
         public IActionResult Create()
         {
+            var designTypes = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Traditional Japanese Garden Style", Text = "Traditional Japanese Garden Style" },
+        new SelectListItem { Value = "Modern Geometric Design", Text = "Modern Geometric Design" },
+        new SelectListItem { Value = "Natural Ecosystem Pond", Text = "Natural Ecosystem Pond" },
+        new SelectListItem { Value = "Indoor Zen Pond", Text = "Indoor Zen Pond" },
+        new SelectListItem { Value = "Luxury Infinity Pond", Text = "Luxury Infinity Pond" }
+    };
+
+            ViewBag.DesignTypes = designTypes;
+
             ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id");
+            ViewData["ConsultantBy"] = new SelectList(_context.Employees, "Id", "Id");
             ViewData["TemplateId"] = new SelectList(_context.DesignTemplates, "Id", "Name");
             return View();
         }
@@ -122,7 +134,7 @@ namespace KPCOS.MVCWebApp.Controllers
                     }
                 }
             }
-
+            ViewData["ConsultantBy"] = new SelectList(_context.Employees, "Id", "Id", design.ConsultantBy);
             ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", design.CustomerId);
             ViewData["TemplateId"] = new SelectList(_context.DesignTemplates, "Id", "Name", design.TemplateId);
             return View(design);
@@ -149,6 +161,18 @@ namespace KPCOS.MVCWebApp.Controllers
                         if (result != null && result.Data != null)
                         {
                             var design = JsonConvert.DeserializeObject<Design>(result.Data.ToString());
+
+                            var designTypes = new List<SelectListItem>
+                            {
+                                new SelectListItem { Value = "Traditional Japanese Garden Style", Text = "Traditional Japanese Garden Style" },
+                                new SelectListItem { Value = "Modern Geometric Design", Text = "Modern Geometric Design" },
+                                new SelectListItem { Value = "Natural Ecosystem Pond", Text = "Natural Ecosystem Pond" },
+                                new SelectListItem { Value = "Indoor Zen Pond", Text = "Indoor Zen Pond" },
+                                new SelectListItem { Value = "Luxury Infinity Pond", Text = "Luxury Infinity Pond" }
+                            };
+
+                            ViewBag.DesignTypes = designTypes;
+
                             ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", design.CustomerId);
                             ViewData["TemplateId"] = new SelectList(_context.DesignTemplates, "Id", "Name", design.TemplateId);
                             return View(design);
