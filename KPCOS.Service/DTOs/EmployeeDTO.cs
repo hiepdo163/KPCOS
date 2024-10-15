@@ -10,8 +10,8 @@ namespace KPCOS.Service.DTOs
     {
         public decimal? Salary { get; set; }
 
-        public string SupervisorId { get; set; }
+        public string? SupervisorId { get; set; }
 
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
     }
 }
