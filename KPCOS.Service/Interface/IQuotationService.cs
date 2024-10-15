@@ -16,5 +16,6 @@ namespace KPCOS.Service.Interface
         //Task<IBusinessResult> Update(Quotation quotation);
         Task<IBusinessResult> Save(Quotation quotation);
         Task<IBusinessResult> DeleteById(string Id);
+        Task<IBusinessResult> GetByDesignId(string designId);
     }
 }

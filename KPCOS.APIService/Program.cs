@@ -39,6 +39,7 @@ builder.Services.AddScoped<IDesignTemplateService, DesignTemplateService>();
 builder.Services.AddScoped<IDesignService, DesignSevice>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IQuotationService, QuotationService>();
 builder.Services.AddScoped<UnitOfWork>();
 
 // Configure the DbContext with SQL Server
