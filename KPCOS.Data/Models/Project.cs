@@ -7,7 +7,7 @@ namespace KPCOS.Data.Models;
 
 public partial class Project
 {
-    public string Id { get; set; }
+    public String Id { get; set; }
 
     public decimal? ActualCost { get; set; }
 

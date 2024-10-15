@@ -157,11 +157,17 @@ namespace KPCOS.MVCWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var project = await _context.Projects.FindAsync(id);
-            if (project != null)
+            var feedbacks = await _context.Feedbacks.Where(f => f.ProjectId == id).ToListAsync();
+            if (feedbacks != null)
             {
-                _context.Projects.Remove(project);
+                _context.Feedbacks.RemoveRange(feedbacks);
+                var project = await _context.Projects.FindAsync(id);
+                if (project != null)
+                {
+                    _context.Projects.Remove(project);
+                }
             }
+
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

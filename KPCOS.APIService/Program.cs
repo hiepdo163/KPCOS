@@ -37,6 +37,8 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IPackageService, PackageService>();
 builder.Services.AddScoped<IDesignTemplateService, DesignTemplateService>();
 builder.Services.AddScoped<IDesignService, DesignSevice>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IQuotationService, QuotationService>();
 builder.Services.AddScoped<UnitOfWork>();
 
