@@ -23,6 +23,8 @@ builder.Services.AddControllers().AddOData(opt =>
        .AddRouteComponents("odata", odataBuilder.GetEdmModel());
 });
 
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 
 builder.Services.AddEndpointsApiExplorer();

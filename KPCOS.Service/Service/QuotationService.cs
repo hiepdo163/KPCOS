@@ -61,18 +61,22 @@ namespace KPCOS.Service.Service
             try
             {
                 int result = -1;
-                var quotationTmp = await _unitOfWork.Quotation.GetByIdAsync(quotation.Id);
+                var quotationTmp = await _unitOfWork.Quotation.GetQuery()
+                    .FirstOrDefaultAsync(q => q.Id == quotation.Id);
+                var design = await _unitOfWork.Design.GetAllAsync();
+
                 if (quotationTmp != null)
                 {
                     quotationTmp.ComplexityLevel = quotation.ComplexityLevel;
                     quotationTmp.ConsultationAmount = quotation.ConsultationAmount;
-                    quotationTmp.DesignId = quotation.DesignId;
                     quotationTmp.Note = quotation.Note;
                     quotationTmp.QuotationAmount = quotation.QuotationAmount;
                     quotationTmp.QuotationDate = quotation.QuotationDate;
                     quotationTmp.Scale = quotation.Scale;
                     quotationTmp.Status = quotation.Status;
                     quotationTmp.Style = quotation.Style;
+                    var existingDesign = await _unitOfWork.Design.GetByIdAsync(quotation.DesignId);
+                    quotationTmp.Design = existingDesign;
 
                     result = await _unitOfWork.Quotation.UpdateAsync(quotationTmp);
                     if (result > 0)
@@ -86,18 +90,21 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
-                    var existingDesign = await _unitOfWork.Design.GetQuery().Include(d => d.Quotations).FirstOrDefaultAsync(d => d.Id == quotation.DesignId);
+                    var existingDesign = await _unitOfWork.Design.GetQuery()
+                        .Include(d => d.Quotations)
+                        .FirstOrDefaultAsync(d => d.Id == quotation.DesignId);
                     quotation.Id = Guid.NewGuid().ToString();
                     if (existingDesign != null)
                     {
-                        quotation.DesignId = existingDesign.Id;
+                        existingDesign.Quotations.Add(quotation);
+                        result = await _unitOfWork.Design.UpdateAsync(existingDesign);
                     }
                     else
                     {
                         quotation.Design = null;
                         quotation.DesignId = null;
+                        result = await _unitOfWork.Quotation.CreateAsync(quotation);
                     }
-                    result = await _unitOfWork.Quotation.CreateAsync(quotation);
                     if (result > 0)
                     {
                         return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, quotation);
