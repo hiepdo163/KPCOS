@@ -105,7 +105,7 @@ namespace KPCOS.MVCWebApp.Controllers
                     }
                 }
             }
-            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName");
+            ViewData["CustomerId"] = new SelectList(customers, "Id", "Id");
 
             var projects = new List<Project>();
             using (var httpClient = new HttpClient())
@@ -123,7 +123,7 @@ namespace KPCOS.MVCWebApp.Controllers
                     }
                 }
             }
-            ViewData["ProjectId"] = new SelectList(projects, "ProjectId", "ProjectName");
+            ViewData["ProjectId"] = new SelectList(projects, "Id", "Id");
 
             return View();
         }
@@ -180,7 +180,7 @@ namespace KPCOS.MVCWebApp.Controllers
                         }
                     }
                 }
-                ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "FullName", feedback.CustomerId);
+                ViewData["CustomerId"] = new SelectList(customers, "Id", "Id", feedback.CustomerId);
 
                 var projects = new List<Project>();
                 using (var httpClient = new HttpClient())
@@ -198,7 +198,7 @@ namespace KPCOS.MVCWebApp.Controllers
                         }
                     }
                 }
-                ViewData["ProjectId"] = new SelectList(projects, "ProjectId", "ProjectName", feedback.ProjectId);
+                ViewData["ProjectId"] = new SelectList(projects, "Id", "Id", feedback.ProjectId);
                 return View(feedback);
             }
         }
