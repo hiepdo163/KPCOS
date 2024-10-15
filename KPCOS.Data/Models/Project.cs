@@ -11,6 +11,7 @@ public partial class Project
     {
         Id = Guid.NewGuid().ToString();
     }
+  
     public String Id { get; set; }
 
     public decimal? ActualCost { get; set; }

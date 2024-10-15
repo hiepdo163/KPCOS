@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KPCOS.Service.Interface;
+using KPCOS.Service.DTOs;
 
 namespace KPCOS.Service.Service
 {
@@ -45,40 +46,103 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, serviceAssignment);
             }
         }
-        public async Task<IBusinessResult> Save(ServiceAssignment serviceAssignment)
+        //public async Task<IBusinessResult> Save(ServiceAssignment serviceAssignment)
+        //{
+        //    try
+        //    {
+        //        int result = -1;
+        //        var serviceAssignmentTmp = await _unitOfWork.ServiceAssignment.GetByIdAsync(serviceAssignment.Id);
+        //        if (serviceAssignmentTmp != null)
+        //        {
+        //            serviceAssignmentTmp.ServiceBookingId = serviceAssignment.ServiceBookingId;
+        //            serviceAssignmentTmp.AssignDate = serviceAssignment.AssignDate;
+        //            serviceAssignmentTmp.EmployeeId = serviceAssignment.EmployeeId;
+        //            serviceAssignmentTmp.Status = serviceAssignment.Status;
+
+        //            result = await _unitOfWork.ServiceAssignment.UpdateAsync(serviceAssignmentTmp);
+        //            if (result > 0)
+        //            {
+        //                return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, serviceAssignment);
+        //            }
+        //            else
+        //            {
+        //                return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            result = await _unitOfWork.ServiceAssignment.CreateAsync(serviceAssignment);
+        //            if (result > 0)
+        //            {
+        //                return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, serviceAssignment);
+        //            }
+        //            else
+        //            {
+        //                return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG, serviceAssignment);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
+        //    }
+        //}
+
+        public async Task<IBusinessResult> Create(ServiceAssignmentDTO request)
         {
+            if (request is null)
+            {
+                return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
+            }
             try
             {
-                int result = -1;
-                var serviceAssignmentTmp = await _unitOfWork.ServiceAssignment.GetByIdAsync(serviceAssignment.Id);
-                if (serviceAssignmentTmp != null)
+                var serviceAssignment = new ServiceAssignment
                 {
-                    serviceAssignmentTmp.ServiceBookingId = serviceAssignment.ServiceBookingId;
-                    serviceAssignmentTmp.AssignDate = serviceAssignment.AssignDate;
-                    serviceAssignmentTmp.EmployeeId = serviceAssignment.EmployeeId;
-                    serviceAssignmentTmp.Status = serviceAssignment.Status;
-
-                    result = await _unitOfWork.ServiceAssignment.UpdateAsync(serviceAssignmentTmp);
-                    if (result > 0)
-                    {
-                        return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, serviceAssignment);
-                    }
-                    else
-                    {
-                        return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
-                    }
+                    Id = Guid.NewGuid().ToString(),
+                    ServiceBookingId = request.ServiceBookingId,
+                    EmployeeId = request.EmployeeId,
+                    AssignDate = DateTime.Now,
+                    Status = request.Status
+                };
+                var result = await _unitOfWork.ServiceAssignment.CreateAsync(serviceAssignment);
+                if (result > 0)
+                {
+                    return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, request);
                 }
                 else
                 {
-                    result = await _unitOfWork.ServiceAssignment.CreateAsync(serviceAssignment);
-                    if (result > 0)
-                    {
-                        return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, serviceAssignment);
-                    }
-                    else
-                    {
-                        return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG, serviceAssignment);
-                    }
+                    return new BusinessResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG, request);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
+            }
+        }
+
+        public async Task<IBusinessResult> Update(string id, ServiceAssignmentDTO request)
+        {
+            try
+            {
+                var serviceAssignment = await _unitOfWork.ServiceAssignment.GetByIdAsync(id);
+                if (serviceAssignment == null)
+                {
+                    return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                }
+
+                serviceAssignment.ServiceBookingId = request.ServiceBookingId;
+                serviceAssignment.EmployeeId = request.EmployeeId;
+                serviceAssignment.AssignDate = DateTime.Now;
+                serviceAssignment.Status = request.Status;
+
+                var result = await _unitOfWork.ServiceAssignment.UpdateAsync(serviceAssignment);
+                if (result > 0)
+                {
+                    return new BusinessResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, serviceAssignment);
+                }
+                else
+                {
+                    return new BusinessResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG, serviceAssignment);
                 }
             }
             catch (Exception ex)
