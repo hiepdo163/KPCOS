@@ -6,13 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KPCOS.Data.Models;
+using KPCOS.Common;
 
 namespace KPCOS.MVCWebApp.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly FA24_SE1717_PRN231_G4_KPCOSContext _context;
-
+        
         public ProjectsController(FA24_SE1717_PRN231_G4_KPCOSContext context)
         {
             _context = context;

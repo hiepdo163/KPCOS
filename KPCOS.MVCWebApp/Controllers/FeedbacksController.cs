@@ -14,10 +14,11 @@ namespace KPCOS.MVCWebApp.Controllers
 {
     public class FeedbacksController : Controller
     {
+        private readonly string _apiEndpoint = Const.APIEndpoint + "Feedback/";
         // GET: Feedbacks
         public async Task<IActionResult> Index()
         {
-            string apiUrl = Const.APIEndpoint + "Feedback"; 
+            string apiUrl = _apiEndpoint;
             Console.WriteLine("API URL: " + apiUrl); 
             using (var httpClient = new HttpClient())
             {
@@ -53,7 +54,7 @@ namespace KPCOS.MVCWebApp.Controllers
 
 
         // GET: Feedbacks/Details/{id}
-        [Route("Details/{id}")]
+       
         public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -64,7 +65,7 @@ namespace KPCOS.MVCWebApp.Controllers
             Feedback feedback = null;
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Feedback/" + id))
+                using (var response = await httpClient.GetAsync($"{_apiEndpoint }{id}"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -140,7 +141,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + "Feedback", feedback))
+                    using (var response = await httpClient.PostAsJsonAsync(_apiEndpoint, feedback))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -167,7 +168,7 @@ namespace KPCOS.MVCWebApp.Controllers
                 var customers = new List<Customer>();
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customers"))
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer"))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -185,7 +186,7 @@ namespace KPCOS.MVCWebApp.Controllers
                 var projects = new List<Project>();
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Projects"))
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -214,7 +215,7 @@ namespace KPCOS.MVCWebApp.Controllers
             Feedback feedback = null;
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Feedback/" + id))
+                using (var response = await httpClient.GetAsync($"{_apiEndpoint}{id}"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -257,19 +258,19 @@ namespace KPCOS.MVCWebApp.Controllers
 
             if (customers != null && customers.Count > 0)
             {
-                ViewData["Id"] = new SelectList(customers, "Id", "FullName", feedback.CustomerId);
+                ViewData["CustomerId"] = new SelectList(customers, "Id", "Id", feedback.CustomerId);
                 ViewBag.CustomerId = ViewData["CustomerId"];
             }
             else
             {
-                ViewData["Id"] = new SelectList(new List<Customer>(), "Id", "FullName");
+                ViewData["Id"] = new SelectList(new List<Customer>(), "Id", "Id");
                 ViewBag.CustomerId = ViewData["CustomerId"];
             }
 
             var projects = new List<Project>();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Projects"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -317,7 +318,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "Feedback/" + id, feedback))
+                    using (var response = await httpClient.PutAsJsonAsync($"{_apiEndpoint}{id}", feedback))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -357,12 +358,12 @@ namespace KPCOS.MVCWebApp.Controllers
                         }
                     }
                 }
-                ViewData["CustomerId"] = new SelectList(customers, "Id", "FullName", feedback.CustomerId);
+                ViewData["CustomerId"] = new SelectList(customers, "Id", "Id", feedback.CustomerId);
 
                 var projects = new List<Project>();
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Projects"))
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -375,7 +376,7 @@ namespace KPCOS.MVCWebApp.Controllers
                         }
                     }
                 }
-                ViewData["ProjectId"] = new SelectList(projects, "Id", "ProjectName", feedback.ProjectId);
+                ViewData["ProjectId"] = new SelectList(projects, "Id", "Id", feedback.ProjectId);
                 return View(feedback);
             }
         }
@@ -391,7 +392,7 @@ namespace KPCOS.MVCWebApp.Controllers
             Feedback feedback = null;
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Feedback/" + id))
+                using (var response = await httpClient.GetAsync($"{_apiEndpoint}{id}"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -423,7 +424,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "Feedback/" + id))
+                    using (var response = await httpClient.DeleteAsync($"{_apiEndpoint}{id}"))
                     {
                         if (response.IsSuccessStatusCode)
                         {
