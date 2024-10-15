@@ -31,7 +31,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var feedbacks = await _unitOfWork.Feedback.GetAllAsync2(f => f.IsDeleted == false || f.IsDeleted == null);
+            var feedbacks = await _unitOfWork.Feedback.GetFeedbackInclude(f => f.IsDeleted == false || f.IsDeleted == null);
             if (feedbacks == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Feedback>());
