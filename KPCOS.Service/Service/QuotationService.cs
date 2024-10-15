@@ -3,6 +3,7 @@ using KPCOS.Data;
 using KPCOS.Data.Models;
 using KPCOS.Service.Base;
 using KPCOS.Service.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,14 +56,6 @@ namespace KPCOS.Service.Service
             return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, quotation);
         }
 
-        public async Task<Design?> IsDesignExist(string DesignId)
-        {
-            var existingDesign = await _unitOfWork.Design.GetByIdAsync(DesignId);
-            if (existingDesign == null)
-                return null;
-            return existingDesign;
-        }
-
         public async Task<IBusinessResult> Save(Quotation quotation)
         {
             try
@@ -93,12 +86,11 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
-                    var existingDesign = await IsDesignExist(quotation.DesignId);
+                    var existingDesign = await _unitOfWork.Design.GetQuery().Include(d => d.Quotations).FirstOrDefaultAsync(d => d.Id == quotation.DesignId);
                     quotation.Id = Guid.NewGuid().ToString();
                     if (existingDesign != null)
                     {
                         quotation.DesignId = existingDesign.Id;
-                        quotation.Design = existingDesign;
                     }
                     else
                     {

@@ -126,7 +126,7 @@ namespace KPCOS.MVCWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ConstructionStaffId"] = new SelectList(_context.Employees, "Id", "Id", project.ConstructionStaffId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", project.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", project.CustomerId);
             ViewData["DesignerId"] = new SelectList(_context.Employees, "Id", "Id", project.DesignerId);
             return View(project);
         }

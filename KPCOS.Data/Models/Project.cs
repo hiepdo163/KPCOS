@@ -7,6 +7,10 @@ namespace KPCOS.Data.Models;
 
 public partial class Project
 {
+    public Project()
+    {
+        Id = Guid.NewGuid().ToString();
+    }
     public String Id { get; set; }
 
     public decimal? ActualCost { get; set; }

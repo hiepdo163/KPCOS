@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using KPCOS.Data.Models;
 using KPCOS.Common;
 using Newtonsoft.Json;
@@ -108,7 +106,7 @@ namespace KPCOS.MVCWebApp.Controllers
                         var contentString = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                         // Post the data to the API
-                        var response = await httpClient.PostAsync(Const.APIEndpoint + "DesignTemplate", contentString);
+                        var response = await httpClient.PostAsync($"{_apiEndpoint}", contentString);
 
                         // Check if the response is successful
                         if (response.IsSuccessStatusCode)
