@@ -14,6 +14,7 @@ builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IServiceFeedbackService, ServiceFeedbackService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
