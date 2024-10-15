@@ -45,12 +45,12 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, project);
             }
         }
-        public async Task<IBusinessResult> Save(Project project)
+        public async Task<IBusinessResult> Save(ProjectDTO project)
         {
             try
             {
                 int result = -1;
-                var projectTmp = await _unitOfWork.Project.GetByIdAsync(project.Id);
+                var projectTmp = await _unitOfWork.Project.GetByIdAsync(project.Id.ToString());
                 if (projectTmp != null)
                 {
                     projectTmp.ActualCost = project.ActualCost;
@@ -74,7 +74,18 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
-                    result = await _unitOfWork.Project.CreateAsync(project);
+                    var newProject = new Project
+                    {
+                        ActualCost = project.ActualCost,
+                        ConstructionStaffId = project.ConstructionStaffId,
+                        CustomerId = project.CustomerId,
+                        DesignerId = project.DesignerId,
+                        StartDate = project.StartDate,
+                        EndDate = project.EndDate,
+                        EstimatedCost = project.EstimatedCost,
+                        Status = project.Status
+                    };
+                    result = await _unitOfWork.Project.CreateAsync(newProject);
                     if (result > 0)
                     {
                         return new BusinessResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, project);

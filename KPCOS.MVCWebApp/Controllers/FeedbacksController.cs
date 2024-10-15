@@ -180,7 +180,7 @@ namespace KPCOS.MVCWebApp.Controllers
                         }
                     }
                 }
-                ViewData["CustomerId"] = new SelectList(customers, "Id", "FullName", feedback.CustomerId);
+                ViewData["CustomerId"] = new SelectList(customers, "Id", "Id", feedback.CustomerId);
 
                 var projects = new List<Project>();
                 using (var httpClient = new HttpClient())

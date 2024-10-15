@@ -64,8 +64,9 @@ namespace KPCOS.Data.Base
 
         public async Task<int> UpdateAsync(T entity)
         {
-            var tracker = _context.Attach(entity);
-            tracker.State = EntityState.Modified;
+            //var tracker = _context.Attach(entity);
+            //tracker.State = EntityState.Modified;
+            //_context.Entry(entity).State = EntityState.Modified;
 
             return await _context.SaveChangesAsync();
         }

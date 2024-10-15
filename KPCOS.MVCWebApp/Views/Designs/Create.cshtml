@@ -1,0 +1,146 @@
+﻿@model KPCOS.Data.Models.Design
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Design</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Budget" class="control-label"></label>
+                <input asp-for="Budget" class="form-control" />
+                <span asp-validation-for="Budget" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConsultantBy" class="control-label"></label>
+                <select asp-for="ConsultantBy" class="form-control" asp-items="ViewBag.ConsultantBy">
+                    <option value="">-- Select a Consultant --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CustomerId" class="control-label"></label>
+                <select asp-for="CustomerId" class ="form-control" asp-items="ViewBag.CustomerId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="DesignType" class="control-label"></label>
+                <select asp-for="DesignType" class="form-control" asp-items="ViewBag.DesignTypes">
+                    <option value="">-- Select DesignType --</option>
+                </select>
+                <span asp-validation-for="DesignType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FiltrationSystem" class="control-label"></label>
+                <select asp-for="FiltrationSystem" class="form-control">
+                    <option value="">-- Select Filtration System --</option>
+                    <option value="Basic Filtration">Basic Filtration</option>
+                    <option value="UV Sterilizer">UV Sterilizer</option>
+                    <option value="Biological Filtration">Biological Filtration</option>
+                    <option value="Mechanical Filtration">Mechanical Filtration</option>
+                    <option value="Eco-friendly Natural Filtration">Eco-friendly Natural Filtration</option>
+                </select>
+                <span asp-validation-for="FiltrationSystem" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="KoiCountRange" class="control-label"></label>
+                <select asp-for="KoiCountRange" class="form-control">
+                    <option value="">-- Select Koi Count Range --</option>
+                    <option value="1-5 Koi">1-5 Koi</option>
+                    <option value="6-10 Koi">6-10 Koi</option>
+                    <option value="11-20 Koi">11-20 Koi</option>
+                    <option value="21+ Koi">21+ Koi</option>
+                </select>
+                <span asp-validation-for="KoiCountRange" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="KoiType" class="control-label"></label>
+                <select asp-for="KoiType" class="form-control">
+                    <option value="">-- Select Koi Type --</option>
+                    <option value="Kohaku">Kohaku</option>
+                    <option value="Showa">Showa</option>
+                    <option value="Sanke">Sanke</option>
+                    <option value="Shiro Utsuri">Shiro Utsuri</option>
+                    <option value="Tancho">Tancho</option>
+                    <option value="Yamabuki Ogon">Yamabuki Ogon</option>
+                    <option value="Platinum Ogon">Platinum Ogon</option>
+                </select>
+                <span asp-validation-for="KoiType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Note" class="control-label"></label>
+                <input asp-for="Note" class="form-control" />
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TemplateId" class="control-label"></label>
+                <select asp-for="TemplateId" class ="form-control" asp-items="ViewBag.TemplateId">
+                    <option value="">-- Select a Template --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Depth" class="control-label"></label>
+                <input asp-for="Depth" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="Depth" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Location" class="control-label"></label>
+                <select asp-for="Location" class="form-control">
+                    <option value="">-- Select Location --</option>
+                    <option value="Indoor">Indoor</option>
+                    <option value="Outside">Outside</option>
+                </select>
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MinLength" class="control-label"></label>
+                <input asp-for="MinLength" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="MinLength" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MinWidth" class="control-label"></label>
+                <input asp-for="MinWidth" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="MinWidth" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="WaterLevel" class="control-label"></label>
+                <input asp-for="WaterLevel" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="WaterLevel" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="WaterQuality" class="control-label"></label>
+                <select asp-for="WaterQuality" class="form-control">
+                    <option value="">-- Select Water Quality --</option>
+                    <option value="Excellent">Excellent</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Poor">Poor</option>
+                </select>
+                <span asp-validation-for="WaterQuality" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,218 @@
+﻿@model IEnumerable<KPCOS.Data.Models.ServiceAssignment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-md-10">
+        <h1 class="display-8">Service Assignments</h1>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-success" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">Service Booking</th>
+                    <th class="card-title text-center">Employee</th>
+                    <th class="card-title text-center">AssignDate</th>
+                    <th class="card-title text-center">Status</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblAssignments">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmServiceAssignment", id = "frmServiceAssignment" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignmentModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="1">Service Booking Id</label>
+                            <select id="serviceBookingId" name="serviceBookingId" class="form-select fslServiceBookingId"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Employee Id</label>
+                            <select id="employeeId" name="employeeId" class="form-select fslEmloyeeId"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Status</label>
+                            <select id="status" name="Status" class="form-select">
+                                <option value="Done">Done</option>
+                                <option value="On-Going">On-Going</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="button" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+
+            $("#btSave").click(function (event) {
+                event.preventDefault();
+
+                var id = $("#assignmentModal").data("id");
+
+                $.ajax({
+                    url: id ? 'https://localhost:7163/api/ServiceAssignment/' + id : 'https://localhost:7163/api/ServiceAssignment',
+                    type: id ? "PUT" : "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        "Content-Type": 'application/json'
+                    },
+                    data: JSON.stringify({
+                        serviceBookingId: $('#serviceBookingId').val(),
+                        employeeId: $('#employeeId').val(),
+                        status: $('#status').val()
+                    }),
+                    success: function (result) {
+                        if (result.status >= 1) {
+                            $('#assignmentModal').modal('hide');
+                            loadData();
+                        }
+                        alert(result.message);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                })
+            })
+        });
+
+        function loadData() {
+
+            $.ajax({
+                url: 'https://localhost:7163/api/ServiceAssignment',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.serviceBookingId + '</td>';
+                        html += '<td>' + item.employeeId + '</td>';
+                        html += '<td>' + item.assignDate + '</td>';
+                        html += '<td>' + item.status + '</td>';
+                        html += '<td>' +
+                                    // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
+                                    // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
+                                    '<button type="button" class="btn btn-warning" onclick="edit(`'+ item.id +'`);">Edit</button> |' +
+                                    //'<button type="button" class="btn btn-danger" onclick="remove(`'+ item.id +'`);">Delete</button>' +
+                                '</td >';
+                        html += '</tr>'
+                    });
+                    $('.tblAssignments').html(html);
+
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+
+            $.ajax({
+                url: 'https://localhost:7163/api/ServiceBooking',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<option value="' + item.id + '">' + item.serviceType + '</option>';
+                    });
+                    $('.fslServiceBookingId').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+            $.ajax({
+                url: 'https://localhost:7163/api/Employee',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<option value="' + item.id + '">' + item.salary + '</option>';
+                    });
+                    $('.fslEmloyeeId').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function add() {
+            $("#assignmentModalLabel").html("New Assignment Service");
+            $('#frmServiceAssignment').trigger("reset");
+            $('#assignmentModal').modal('show');
+            $('#assignmentModal').data("id", null);
+        }
+
+        function edit(id) {
+            $("#assignmentModalLabel").html("Update Assignment Service");
+            $.ajax({
+                url: 'https://localhost:7163/api/ServiceAssignment/' + id,
+                type: "GET",
+                contentType: 'application/json',
+                success: function (result) {
+                    $('#serviceBookingId').val(result.data.serviceBookingId);
+                    $('#employeeId').val(result.data.employeeId);
+                    $('#status').val(result.data.status);
+
+                    $('#assignmentModal').modal('show');
+                    $('#assignmentModal').data("id", id);
+                },
+                error: function (xhr) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function remove(id) {
+            if (confirm("Are you sure you want to delete this assignment service?")) {
+                $.ajax({
+                    url: 'https://localhost:7163/api/ServiceAssignment/' + id,
+                    type: "DELETE",
+                    success: function (result) {
+                        loadData();
+                        alert(result.message);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+        }
+    </script>
+}

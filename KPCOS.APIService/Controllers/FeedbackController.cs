@@ -20,7 +20,6 @@ namespace KPCOS.APIService.Controllers
 
         // GET: api/Feedbacks
         [HttpGet]
-        
         public async Task<IBusinessResult> GetFeedbacks()
         {
             return await _feedbackService.GetAll();
