@@ -46,14 +46,15 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, consultation);
             }
         }
-        //public async Task<IBusinessResult> Create(Consultation consultation)
-        //{
 
-        //}
-        //public async Task<IBusinessResult> Update(Consultation consultation)
-        //{
+        public async Task<Design?> IsDesignExist(string DesignId)
+        {
+            var existingDesign = await _unitOfWork.Design.GetByIdAsync(DesignId);
+            if (existingDesign == null)
+                return null;
+            return existingDesign;
+        }
 
-        //}
         public async Task<IBusinessResult> Save(Consultation consultation)
         {
             try
@@ -78,9 +79,18 @@ namespace KPCOS.Service.Service
                     }
                 } else
                 {
+                    var existingDesign = await IsDesignExist(consultation.DesignId);
                     consultation.Id = Guid.NewGuid().ToString();
-                    consultation.DesignId = null;
-                    consultation.Design = null;
+                    if (existingDesign != null)
+                    {
+                        consultation.DesignId = existingDesign.Id;
+                        consultation.Design = existingDesign;
+                    }
+                    else
+                    {
+                        consultation.Design = null;
+                        consultation.DesignId = null;
+                    }
 
                     result = await _unitOfWork.Consultation.CreateAsync(consultation);
                     if (result > 0)
