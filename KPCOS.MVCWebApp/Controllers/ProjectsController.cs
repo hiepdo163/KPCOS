@@ -34,9 +34,9 @@ namespace KPCOS.MVCWebApp.Controllers
             }
 
             var project = await _context.Projects
-                .Include(p => p.ConstructionStaff)
-                .Include(p => p.Customer)
-                .Include(p => p.Designer)
+                .Include(p => p.ConstructionStaff.User)
+                .Include(p => p.Customer.User)
+                .Include(p => p.Designer.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (project == null)
             {
@@ -47,13 +47,32 @@ namespace KPCOS.MVCWebApp.Controllers
         }
 
         // GET: Projects/Create
+        // GET: Projects/Create
+        // GET: Projects/Create
         public IActionResult Create()
         {
-            ViewData["ConstructionStaffId"] = new SelectList(_context.Employees, "Id", "Id");
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id");
-            ViewData["DesignerId"] = new SelectList(_context.Employees, "Id", "Id");
+            ViewData["ConstructionStaffId"] = new SelectList(
+                _context.Employees.Include(e => e.User).Select(e => new { e.Id, FullName = e.User.Fullname }),
+                "Id",
+                "FullName"
+            );
+
+            ViewData["DesignerId"] = new SelectList(
+                _context.Employees.Include(e => e.User).Select(e => new { e.Id, FullName = e.User.Fullname }),
+                "Id",
+                "FullName"
+            );
+
+            ViewData["CustomerId"] = new SelectList(
+                _context.Customers.Include(c => c.User).Select(c => new { c.Id, FullName = c.User.Fullname }),
+                "Id",
+                "FullName"
+            );
+
             return View();
         }
+
+
 
         // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -87,9 +106,23 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ConstructionStaffId"] = new SelectList(_context.Employees, "Id", "Id", project.ConstructionStaffId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", project.CustomerId);
-            ViewData["DesignerId"] = new SelectList(_context.Employees, "Id", "Id", project.DesignerId);
+            ViewData["ConstructionStaffId"] = new SelectList(
+                _context.Employees.Include(e => e.User).Select(e => new { e.Id, FullName = e.User.Fullname }),
+                "Id",
+                "FullName"
+            );
+
+            ViewData["DesignerId"] = new SelectList(
+                _context.Employees.Include(e => e.User).Select(e => new { e.Id, FullName = e.User.Fullname }),
+                "Id",
+                "FullName"
+            );
+
+            ViewData["CustomerId"] = new SelectList(
+                _context.Customers.Include(c => c.User).Select(c => new { c.Id, FullName = c.User.Fullname }),
+                "Id",
+                "FullName"
+            );
             return View(project);
         }
 

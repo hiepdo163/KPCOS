@@ -76,7 +76,6 @@ namespace KPCOS.Service.Service
                 {
                     var newProject = new Project
                     {
-                        Id = Guid.NewGuid().ToString(),
                         ActualCost = project.ActualCost,
                         ConstructionStaffId = project.ConstructionStaffId,
                         CustomerId = project.CustomerId,
