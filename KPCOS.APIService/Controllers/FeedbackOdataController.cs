@@ -8,7 +8,7 @@ namespace KPCOS.APIService.Controllers
 {
     [Route("odata/[controller]")]
     [ApiController]
-    public class FeedbackOdataController : ODataController // Change to ODataController
+    public class FeedbackOdataController : ODataController 
     {
         private readonly IFeedbackService _feedbackService;
 
