@@ -24,7 +24,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var serviceAssignments = await _unitOfWork.ServiceAssignment.GetAllAsync();
+            var serviceAssignments = await _unitOfWork.ServiceAssignment.GetServiceAssignmentsAsync();
             if (serviceAssignments == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<ServiceAssignment>());
@@ -36,7 +36,7 @@ namespace KPCOS.Service.Service
         }
         public async Task<IBusinessResult> GetById(string id)
         {
-            var serviceAssignment = await _unitOfWork.ServiceAssignment.GetByIdAsync(id);
+            var serviceAssignment = await _unitOfWork.ServiceAssignment.GetAServiceAssignmentByIdAsync(id);
             if (serviceAssignment == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new ServiceAssignment());
@@ -161,8 +161,9 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
-                    var result = await _unitOfWork.ServiceAssignment.RemoveAsync(serviceAssignment);
-                    if (result)
+                    serviceAssignment.Status = "Canceled";
+                    var result = await _unitOfWork.ServiceAssignment.UpdateAsync(serviceAssignment);
+                    if (result > 0)
                     {
                         return new BusinessResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG, serviceAssignment);
                     }

@@ -13,11 +13,6 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="ServiceBookingId" class="control-label"></label>
                 <select asp-for="ServiceBookingId" class ="form-control" asp-items="ViewBag.ServiceBookingId"></select>
             </div>
@@ -26,9 +21,11 @@
                 <select asp-for="EmployeeId" class ="form-control" asp-items="ViewBag.EmployeeId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="AssignDate" class="control-label"></label>
-                <input asp-for="AssignDate" class="form-control" />
-                <span asp-validation-for="AssignDate" class="text-danger"></span>
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Done">Done</option>
+                    <option value="On-Going">On-Going</option>
+                </select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
