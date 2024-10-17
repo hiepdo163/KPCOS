@@ -109,6 +109,46 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
+                    var employees = await _unitOfWork.Employee.GetEmployeesByUserIdAsync(id);
+                    var customers = await _unitOfWork.Customer.GetCustomersByUserIdAsync(id);
+                    foreach (var employee in employees)
+                    {
+                        var asignments = await _unitOfWork.ServiceAssignment.GetAssignmentsByEmployeeIdAsync(employee.Id);
+                        var executions = await _unitOfWork.ServiceExecution.GetExecutionsByEmployeeIdAsync(employee.Id);
+                        foreach (var assignment in asignments)
+                        {
+                            assignment.Status = "Canceled";
+                            await _unitOfWork.ServiceAssignment.UpdateAsync(assignment);
+                        }
+                        foreach (var execution in executions)
+                        {
+                            execution.Status = "Canceled";
+                            await _unitOfWork.ServiceExecution.UpdateAsync(execution);
+                        }
+                        await _unitOfWork.Employee.RemoveAsync(employee);
+                    }
+                    foreach (var customer in customers)
+                    {
+                        var serviceBookings = await _unitOfWork.ServiceBooking.GetBookingsByCustomerIdAsync(id);
+                        foreach (var booking in serviceBookings)
+                        {
+                            var assignments = await _unitOfWork.ServiceAssignment.GetAssignmentsByServiceBookingIdAsync(booking.Id);
+                            var executions = await _unitOfWork.ServiceExecution.GetExecutionsByServiceBookingIdAsync(booking.Id);
+                            foreach (var assignment in assignments)
+                            {
+                                assignment.Status = "Canceled";
+                                await _unitOfWork.ServiceAssignment.UpdateAsync(assignment);
+                            }
+                            foreach (var execution in executions)
+                            {
+                                execution.Status = "Canceled";
+                                await _unitOfWork.ServiceExecution.UpdateAsync(execution);
+                            }
+                            booking.Status = "Canceled";
+                            await _unitOfWork.ServiceBooking.UpdateAsync(booking);
+                        }
+                        await _unitOfWork.Customer.RemoveAsync(customer);
+                    }
                     var result = await _unitOfWork.User.RemoveAsync(user);
                     if (result)
                     {
@@ -161,6 +201,20 @@ namespace KPCOS.Service.Service
             return tokenHandler.WriteToken(token);
         }
 
-      
+        public async Task<IBusinessResult> GetAllByRole(string role)
+        {
+            #region Business rule
+            #endregion
+
+            var users = await _unitOfWork.User.GetCustomersByRoleAsync(role);
+            if (users == null)
+            {
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<User>());
+            }
+            else
+            {
+                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, users);
+            }
+        }
     }
 }

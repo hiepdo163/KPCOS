@@ -15,9 +15,9 @@ namespace KPCOS.Data.Repository
 
         public UserRepository(FA24_SE1717_PRN231_G4_KPCOSContext context) => _context = context;
 
-        public async Task<List<User>> GetCustomersAsync()
+        public async Task<List<User>> GetCustomersByRoleAsync(string role)
         {
-            return await _context.Users.AsNoTracking().AsSplitQuery().Include(c => c.Customers).ToListAsync();
+            return await _context.Users.AsNoTracking().AsSplitQuery().Where(u => u.Role.ToLower() == role.ToLower()).ToListAsync();
         }
         public async Task<User?> GetByUsernameAndPasswordAsync(string username, string password)
         {

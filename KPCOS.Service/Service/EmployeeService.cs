@@ -24,7 +24,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var employees = await _unitOfWork.Employee.GetAllAsync();
+            var employees = await _unitOfWork.Employee.GetEmployeesAsync();
             if (employees == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Employee>());
@@ -36,7 +36,7 @@ namespace KPCOS.Service.Service
         }
         public async Task<IBusinessResult> GetById(string id)
         {
-            var employee = await _unitOfWork.Employee.GetByIdAsync(id);
+            var employee = await _unitOfWork.Employee.GetAnEmployeeByIdAsync(id);
             if (employee == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new Employee());
@@ -160,6 +160,18 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
+                    var asignments = await _unitOfWork.ServiceAssignment.GetAssignmentsByEmployeeIdAsync(id);
+                    var executions = await _unitOfWork.ServiceExecution.GetExecutionsByEmployeeIdAsync(id);
+                    foreach (var assignment in asignments)
+                    {
+                        assignment.Status = "Canceled";
+                        await _unitOfWork.ServiceAssignment.UpdateAsync(assignment);
+                    }
+                    foreach (var execution in executions)
+                    {
+                        execution.Status = "Canceled";
+                        await _unitOfWork.ServiceExecution.UpdateAsync(execution);
+                    }
                     var result = await _unitOfWork.Employee.RemoveAsync(employee);
                     if (result)
                     {

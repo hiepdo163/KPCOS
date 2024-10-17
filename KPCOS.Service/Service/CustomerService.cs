@@ -21,7 +21,7 @@ namespace KPCOS.Service.Service
         public async Task<IBusinessResult> GetAll()
         {
 
-            var customers = await _unitOfWork.Customer.GetAllAsync();
+            var customers = await _unitOfWork.Customer.GetCustomersAsync();
             if (customers == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Customer>());
@@ -97,6 +97,24 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
+                    var serviceBookings = await _unitOfWork.ServiceBooking.GetBookingsByCustomerIdAsync(id);
+                    foreach (var booking in serviceBookings)
+                    {
+                        var assignments = await _unitOfWork.ServiceAssignment.GetAssignmentsByServiceBookingIdAsync(booking.Id);
+                        var executions = await _unitOfWork.ServiceExecution.GetExecutionsByServiceBookingIdAsync(booking.Id);
+                        foreach (var assignment in assignments)
+                        {
+                            assignment.Status = "Canceled";
+                            await _unitOfWork.ServiceAssignment.UpdateAsync(assignment);
+                        }
+                        foreach (var execution in executions)
+                        {
+                            execution.Status = "Canceled";
+                            await _unitOfWork.ServiceExecution.UpdateAsync(execution);
+                        }
+                        booking.Status = "Canceled";
+                        await _unitOfWork.ServiceBooking.UpdateAsync(booking);
+                    }
                     var result = await _unitOfWork.Customer.RemoveAsync(customer);
                     if (result)
                     {

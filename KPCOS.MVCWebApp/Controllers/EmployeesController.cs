@@ -9,21 +9,18 @@ using KPCOS.Data.Models;
 using KPCOS.Common;
 using KPCOS.Service.Base;
 using Newtonsoft.Json;
+using KPCOS.Service.DTOs;
 
 namespace KPCOS.MVCWebApp.Controllers
 {
-    public class CustomersController(FA24_SE1717_PRN231_G4_KPCOSContext context) : Controller
+    public class EmployeesController : Controller
     {
-        private readonly FA24_SE1717_PRN231_G4_KPCOSContext _context = context;
-
-        // GET: Customers
+        // GET: Employees
         public async Task<IActionResult> Index()
         {
-            //var fA24_SE1717_PRN231_G4_KPCOSContext = _context.Customers.Include(c => c.Package).Include(c => c.User);
-            //return View(await fA24_SE1717_PRN231_G4_KPCOSContext.ToListAsync());
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -32,37 +29,22 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<List<Customer>>(result.Data.ToString());
+                            var data = JsonConvert.DeserializeObject<List<Employee>>(result.Data.ToString());
                             return View(data);
                         }
                     }
                 }
             }
-            return View(new List<Customer>());
+            return View(new List<Employee>());
+            //return View();
         }
 
-        // GET: Customers/Details/5
+        // GET: Employees/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var customer = await _context.Customers
-            //    .Include(c => c.Package)
-            //    .Include(c => c.User)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
-            //if (customer == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return View(customer);
-
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer/" + id))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee/" + id))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -71,53 +53,36 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<Customer>(result.Data.ToString());
+                            var data = JsonConvert.DeserializeObject<Employee>(result.Data.ToString());
                             return View(data);
                         }
                     }
                 }
             }
-            return View(new Customer());
+            return View(new Employee());
         }
 
-        // GET: Customers/Create
-        //public IActionResult Create()
-        //{
-        //    ViewData["PackageId"] = new SelectList(_context.Packages, "Id", "Id");
-        //    ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-        //    return View();
-        //}
+        // GET: Employees/Create
         public async Task<IActionResult> Create()
         {
             ViewData["UserId"] = new SelectList(await this.GetUsers(), "Id", "Fullname");
-            ViewData["PackageId"] = new SelectList(await this.GetPackages(), "Id", "Description");
+            ViewData["SupervisorId"] = new SelectList(await this.GetSupervisors(), "Id", "User.Fullname");
             return View();
         }
 
-        // POST: Customers/Create
+        // POST: Employees/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Customer customer)
+        public async Task<IActionResult> Create(EmployeeDTO employee)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _context.Add(customer);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //ViewData["PackageId"] = new SelectList(_context.Packages, "Id", "Id", customer.PackageId);
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", customer.UserId);
-            //return View(customer);
-
             bool Status = false;
-            #region Create customer
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + "Customer", customer))
+                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + "Employee", employee))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -142,34 +107,20 @@ namespace KPCOS.MVCWebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             else
-            {                
-                ViewData["UserId"] = new SelectList(await this.GetUsers(), "Id", "Fullname", customer.UserId);
-                ViewData["PackageId"] = new SelectList(await this.GetPackages(), "Id", "Description", customer.PackageId);
-                return View(customer);
+            {
+                ViewData["UserId"] = new SelectList(await this.GetUsers(), "Id", "Fullname", employee.UserId);
+                ViewData["SupervisorId"] = new SelectList(await this.GetSupervisors(), "Id", "User.Fullname", employee.SupervisorId);
+                return View(employee);
             }
-            #endregion
         }
 
-        // GET: Customers/Edit/5
+        // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var customer = await _context.Customers.FindAsync(id);
-            //if (customer == null)
-            //{
-            //    return NotFound();
-            //}
-            //ViewData["PackageId"] = new SelectList(_context.Packages, "Id", "Id", customer.PackageId);
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", customer.UserId);
-            //return View(customer);
-            var customer = new Customer();
+            var employee = new Employee();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer/" + id))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee/" + id))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -178,58 +129,29 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            customer = JsonConvert.DeserializeObject<Customer>(result.Data.ToString());
+                            employee = JsonConvert.DeserializeObject<Employee>(result.Data.ToString());
                         }
                     }
                 }
             }
-            ViewData["UserId"] = new SelectList(await this.GetUsers(), "Id", "Fullname", customer.UserId);
-            ViewData["PackageId"] = new SelectList(await this.GetPackages(), "Id", "Description", customer.PackageId);
-            return View(customer);
+            ViewData["UserId"] = new SelectList(await this.GetUsers(), "Id", "Fullname", employee.UserId);
+            ViewData["SupervisorId"] = new SelectList(await this.GetSupervisors(), "Id", "User.Fullname", employee.SupervisorId);
+            return View(employee);
         }
 
-        // POST: Customers/Edit/5
+        // POST: Employees/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Customer customer)
+        public async Task<IActionResult> Edit(string id, EmployeeDTO employee)
         {
-            //if (id != customer.Id)
-            //{
-            //    return NotFound();
-            //}
-
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        _context.Update(customer);
-            //        await _context.SaveChangesAsync();
-            //    }
-            //    catch (DbUpdateConcurrencyException)
-            //    {
-            //        if (!CustomerExists(customer.Id))
-            //        {
-            //            return NotFound();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //ViewData["PackageId"] = new SelectList(_context.Packages, "Id", "Id", customer.PackageId);
-            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", customer.UserId);
-            //return View(customer);
-
             bool status = false;
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "Customer", customer))
+                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "Employee/"+ id, employee))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -255,34 +177,18 @@ namespace KPCOS.MVCWebApp.Controllers
             }
             else
             {
-                ViewData["UserId"] = new SelectList(await this.GetUsers(), "Id", "Fullname", customer.UserId);
-                ViewData["PackageId"] = new SelectList(await this.GetPackages(), "Id", "Description", customer.PackageId);
-                return View(customer);
+                ViewData["UserId"] = new SelectList(await this.GetUsers(), "Id", "Fullname", employee.UserId);
+                ViewData["SupervisorId"] = new SelectList(await this.GetSupervisors(), "Id", "User.Fullname", employee.SupervisorId);
+                return View(employee);
             }
         }
 
-        // GET: Customers/Delete/5
+        // GET: Employees/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var customer = await _context.Customers
-            //    .Include(c => c.Package)
-            //    .Include(c => c.User)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
-            //if (customer == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return View(customer);
-
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer/" + id))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee/" + id))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -291,35 +197,26 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<Customer>(result.Data.ToString());
+                            var data = JsonConvert.DeserializeObject<Employee>(result.Data.ToString());
                             return View(data);
                         }
                     }
                 }
             }
-            return View(new Customer());
+            return View(new Employee());
         }
 
-        // POST: Customers/Delete/5
+        // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            //var customer = await _context.Customers.FindAsync(id);
-            //if (customer != null)
-            //{
-            //    _context.Customers.Remove(customer);
-            //}
-
-            //await _context.SaveChangesAsync();
-            //return RedirectToAction(nameof(Index));
-
             bool status = false;
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "Customer/" + id))
+                    using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "Employee/" + id))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -349,17 +246,12 @@ namespace KPCOS.MVCWebApp.Controllers
             }
         }
 
-        //private bool CustomerExists(string id)
-        //{
-        //    return _context.Customers.Any(e => e.Id == id);
-        //}
-
         public async Task<List<User>> GetUsers()
         {
             var users = new List<User>();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "User/get-all-by-role/customer"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "User/get-all-by-role/employee"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -375,13 +267,12 @@ namespace KPCOS.MVCWebApp.Controllers
             }
             return users;
         }
-
-        public async Task<List<Package>> GetPackages()
+        public async Task<List<Employee>> GetSupervisors()
         {
-            var packages = new List<Package>();
+            var employees = new List<Employee>();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Package"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -390,12 +281,12 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            packages = JsonConvert.DeserializeObject<List<Package>>(result.Data.ToString());
+                            employees = JsonConvert.DeserializeObject<List<Employee>>(result.Data.ToString());
                         }
                     }
                 }
             }
-            return packages;
+            return employees;
         }
     }
 }

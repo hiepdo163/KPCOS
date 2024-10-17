@@ -17,11 +17,15 @@ namespace KPCOS.Data.Repository
 
         public async Task<List<Customer>> GetCustomersAsync()
         {
-            return await _context.Customers.AsNoTracking().AsSplitQuery().Include(c => c.User).Include(c => c.Package).ToListAsync();
+            return await _context.Customers.AsNoTracking().AsSplitQuery().Include(c => c.User).Include(c => c.Package).Include(c => c.ServiceBookings).ToListAsync();
         }
         public async Task<Customer?> GetACustomerByIdAsync(string id)
         {
             return await _context.Customers.Include(c => c.User).Include(c => c.Package).FirstOrDefaultAsync(m => m.Id == id); ;
+        }
+        public async Task<List<Customer>> GetCustomersByUserIdAsync(string userId)
+        {
+            return await _context.Customers.AsNoTracking().AsSplitQuery().Where(c => c.UserId == userId).ToListAsync();
         }
     }
 }

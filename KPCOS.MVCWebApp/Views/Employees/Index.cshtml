@@ -1,77 +1,62 @@
-﻿@model IEnumerable<KPCOS.Data.Models.ServiceAssignment>
+﻿@model IEnumerable<KPCOS.Data.Models.Employee>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<div class="row">
-    <div class="col-md-10">
-        <h1 class="display-8">Service Assignments</h1>
-    </div>
-    <div class="col-md-2 text-end">
-        <a asp-action="Create">Create New</a>
-    </div>
-</div>
+<h1>Employee</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ServiceBooking)
+                @Html.DisplayNameFor(model => model.User)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee)
+                @Html.DisplayNameFor(model => model.Salary)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AssignDate)
+                @Html.DisplayNameFor(model => model.Supervisor)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
+            
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ServiceBooking.ServiceType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Employee.User.Fullname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AssignDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>                    
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    @if (item.Status == "On-Going")
-                    {
-                        <span>|</span>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        <span>|</span>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    }
-                </td>
-            </tr>
-        }
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Fullname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Salary)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Supervisor.User.Fullname)
+            </td>
+            
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
     </tbody>
 </table>
 
 
-
-
-@* <div class="row">
+@*<div class="row">
     <div class="col-md-10">
-        <h1 class="display-8">Service Assignments</h1>
+        <h1 class="display-8">Employees</h1>
     </div>
     <div class="col-md-2 text-end">
-        <button type="button" class="btn btn-success" onclick="add();">
-            Add
-        </button>
+    <button type="button" class="btn btn-success" onclick="add();">
+    Add
+    </button>
     </div>
 </div>
 
@@ -80,45 +65,43 @@
         <table class="table table-striped table-bordered table-hover">
             <thead>
                 <tr class="card-header">
-                    <th class="card-title text-center">Service Booking</th>
-                    <th class="card-title text-center">Employee</th>
-                    <th class="card-title text-center">AssignDate</th>
-                    <th class="card-title text-center">Status</th>
+                    <th class="card-title text-center">User</th>
+                    <th class="card-title text-center">Salary</th>
+                    <th class="card-title text-center">Supervisor</th>
                     <th class="card-title text-center"></th>
                 </tr>
             </thead>
-            <tbody class="tblAssignments">
+            <tbody class="tblEmployees">
             </tbody>
         </table>
     </div>
 </div>
 
-<div class="modal" id="assignmentModal" tabindex="-1" aria-labelledby="assignmentModalLabel" aria-hidden="true">
+<div class="modal" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmServiceAssignment", id = "frmServiceAssignment" }))
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmEmployee", id = "frmEmployee" }))
             {
                 @Html.AntiForgeryToken()
                 <div class="modal-header">
-                    <h5 class="modal-title" id="assignmentModalLabel"></h5>
+                    <h5 class="modal-title" id="employeeModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <label for="1">Service Booking Id</label>
-                            <select id="serviceBookingId" name="serviceBookingId" class="form-select fslServiceBookingId"></select>
+                            <label for="1">User</label>
+                            <select id="userId" name="userId" class="form-select fslUserId"></select>
                         </div>
                         <div class="col-md-4">
-                            <label for="1">Employee Id</label>
-                            <select id="employeeId" name="employeeId" class="form-select fslEmloyeeId"></select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="1">Status</label>
-                            <select id="status" name="Status" class="form-select">
-                                <option value="Done">Done</option>
-                                <option value="On-Going">On-Going</option>
+                            <label for="1">Supervisor</label>
+                            <select id="supervisorId" name="supervisorId" class="form-select fslSupervisorId">
+                                
                             </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Salary</label>
+                            <input type="text" id="salary" name="salary" class="form-control" />
                         </div>
                     </div>
                 </div>
@@ -131,7 +114,7 @@
     </div>
 </div>
 
-@section scripts {
+ @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
             loadData();
@@ -139,23 +122,23 @@
             $("#btSave").click(function (event) {
                 event.preventDefault();
 
-                var id = $("#assignmentModal").data("id");
+                var id = $("#employeeModal").data("id");
 
                 $.ajax({
-                    url: id ? 'https://localhost:7163/api/ServiceAssignment/' + id : 'https://localhost:7163/api/ServiceAssignment',
+                    url: id ? 'https://localhost:7163/api/Employee/' + id : 'https://localhost:7163/api/Employee',
                     type: id ? "PUT" : "POST",
                     headers: {
                         'Accept': 'application/json',
                         "Content-Type": 'application/json'
                     },
                     data: JSON.stringify({
-                        serviceBookingId: $('#serviceBookingId').val(),
-                        employeeId: $('#employeeId').val(),
-                        status: $('#status').val()
+                        userId: $('#userId').val(),
+                        supervisorId: $('#supervisorId').val(),
+                        salary: $('#salary').val()
                     }),
                     success: function (result) {
                         if (result.status >= 1) {
-                            $('#assignmentModal').modal('hide');
+                            $('#employeeModal').modal('hide');
                             loadData();
                         }
                         alert(result.message);
@@ -170,7 +153,7 @@
         function loadData() {
 
             $.ajax({
-                url: 'https://localhost:7163/api/ServiceAssignment',
+                url: 'https://localhost:7163/api/Employee',
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
                 dataType: "json",
@@ -178,19 +161,18 @@
                     var html = '';
                     $.each(result.data, function (key, item) {
                         html += '<tr>';
-                        html += '<td>' + item.serviceBooking.serviceType + '</td>';
-                        html += '<td>' + item.employee.user.fullname + '</td>';
-                        html += '<td>' + item.assignDate + '</td>';
-                        html += '<td>' + item.status + '</td>';
+                        html += '<td>' + item.userId + '</td>';
+                        html += '<td>' + item.salary + '</td>';
+                        html += '<td>' + item.supervisorId + '</td>';
                         html += '<td>' +
                                     // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
                                     // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
                                     '<button type="button" class="btn btn-warning" onclick="edit(`'+ item.id +'`);">Edit</button> |' +
-                                    //'<button type="button" class="btn btn-danger" onclick="remove(`'+ item.id +'`);">Delete</button>' +
+                                    '<button type="button" class="btn btn-danger" onclick="remove(`'+ item.id +'`);">Delete</button>' +
                                 '</td >';
                         html += '</tr>'
                     });
-                    $('.tblAssignments').html(html);
+                    $('.tblEmployees').html(html);
 
                 },
                 error: function (xhr, error) {
@@ -199,16 +181,16 @@
             });
 
             $.ajax({
-                url: 'https://localhost:7163/api/ServiceBooking',
+                url: 'https://localhost:7163/api/User/get-all-by-role/employee',
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
                 dataType: "json",
                 success: function (result) {
                     var html = '';
                     $.each(result.data, function (key, item) {
-                        html += '<option value="' + item.id + '">' + item.serviceType + '</option>';
+                        html += '<option value="' + item.id + '">' + item.fullname + '</option>';
                     });
-                    $('.fslServiceBookingId').html(html);
+                    $('.fslUserId').html(html);
                 },
                 error: function (xhr, error) {
                     alert(xhr.statusText);
@@ -221,10 +203,11 @@
                 dataType: "json",
                 success: function (result) {
                     var html = '';
+                    html += '<option value="">None</option>';
                     $.each(result.data, function (key, item) {
                         html += '<option value="' + item.id + '">' + item.user.fullname + '</option>';
                     });
-                    $('.fslEmloyeeId').html(html);
+                    $('.fslSupervisorId').html(html);
                 },
                 error: function (xhr, error) {
                     alert(xhr.statusText);
@@ -233,25 +216,25 @@
         }
 
         function add() {
-            $("#assignmentModalLabel").html("New Assignment Service");
-            $('#frmServiceAssignment').trigger("reset");
-            $('#assignmentModal').modal('show');
-            $('#assignmentModal').data("id", null);
+            $("#employeeModalLabel").html("New Employee");
+            $('#frmEmployee').trigger("reset");
+            $('#employeeModal').modal('show');
+            $('#employeeModal').data("id", null);
         }
 
         function edit(id) {
-            $("#assignmentModalLabel").html("Update Assignment Service");
+            $("#employeeModalLabel").html("Update Employee");
             $.ajax({
-                url: 'https://localhost:7163/api/ServiceAssignment/' + id,
+                url: 'https://localhost:7163/api/Employee/' + id,
                 type: "GET",
                 contentType: 'application/json',
                 success: function (result) {
-                    $('#serviceBookingId').val(result.data.serviceBookingId);
-                    $('#employeeId').val(result.data.employeeId);
-                    $('#status').val(result.data.status);
+                    $('#userId').val(result.data.userId);
+                    $('#salary').val(result.data.salary);
+                    $('#supervisorId').val(result.data.supervisorId);
 
-                    $('#assignmentModal').modal('show');
-                    $('#assignmentModal').data("id", id);
+                    $('#employeeModal').modal('show');
+                    $('#employeeModal').data("id", id);
                 },
                 error: function (xhr) {
                     alert(xhr.statusText);
@@ -260,9 +243,9 @@
         }
 
         function remove(id) {
-            if (confirm("Are you sure you want to delete this assignment service?")) {
+            if (confirm("Are you sure you want to delete this employee?")) {
                 $.ajax({
-                    url: 'https://localhost:7163/api/ServiceAssignment/delete/' + id,
+                    url: 'https://localhost:7163/api/Employee/' + id,
                     type: "DELETE",
                     success: function (result) {
                         loadData();
@@ -274,5 +257,5 @@
                 });
             }
         }
-    </script> 
-}*@
+    </script>
+} *@
