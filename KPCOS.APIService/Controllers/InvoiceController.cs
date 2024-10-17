@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,14 +24,14 @@ namespace KPCOS.APIService.Controllers
             return await _invoiceService.GetById(id);
         }
         [HttpPut]
-        public async Task<IBusinessResult> PutAInvoice(Invoice request)
-        {
-            return await _invoiceService.Save(request);
-        }
+        //public async Task<IBusinessResult> PutAInvoice(Invoice request)
+        //{
+        //    return await _invoiceService.Save(request);
+        //}
         [HttpPost]
-        public async Task<IBusinessResult> CreateAInvoice(Invoice request)
+        public async Task<IBusinessResult> CreateAInvoice(InvoiceDTO invoice)
         {
-            return await _invoiceService.Save(request);
+            return await _invoiceService.Create(invoice);
         }
         [HttpDelete("{id}")]
         public async Task<IBusinessResult> DeleteAInvoice([FromRoute] string id)
