@@ -8,6 +8,7 @@ using KPCOS.Service.Base;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using KPCOS.Service.DTOs;
 
 
 namespace KPCOS.MVCWebApp.Controllers
@@ -205,9 +206,9 @@ namespace KPCOS.MVCWebApp.Controllers
         }
 
         // GET: Feedbacks/Edit/5
-        public async Task<IActionResult> Edit(string? id)
+        public async Task<IActionResult> Edit(string id)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -298,7 +299,7 @@ namespace KPCOS.MVCWebApp.Controllers
                 ViewData["ProjectId"] = new SelectList(new List<Project>(), "Id", "Id");
                 ViewBag.ProjectId = ViewData["ProjectId"];
             }
-            return View("Edit", feedback);
+            return View(feedback);
         }
 
         // POST: Feedbacks/Edit/5
@@ -318,7 +319,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PutAsJsonAsync($"{_apiEndpoint}{id}", feedback))
+                    using (var response = await httpClient.PutAsJsonAsync($"{_apiEndpoint}", feedback))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -342,42 +343,7 @@ namespace KPCOS.MVCWebApp.Controllers
             }
             else
             {
-                var customers = new List<Customer>();
-                using (var httpClient = new HttpClient())
-                {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer"))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Data != null)
-                            {
-                                customers = JsonConvert.DeserializeObject<List<Customer>>(result.Data.ToString());
-                            }
-                        }
-                    }
-                }
-                ViewData["CustomerId"] = new SelectList(customers, "Id", "Id", feedback.CustomerId);
-
-                var projects = new List<Project>();
-                using (var httpClient = new HttpClient())
-                {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Data != null)
-                            {
-                                projects = JsonConvert.DeserializeObject<List<Project>>(result.Data.ToString());
-                            }
-                        }
-                    }
-                }
-                ViewData["ProjectId"] = new SelectList(projects, "Id", "Id", feedback.ProjectId);
-                return View(feedback);
+                return await Edit(id);
             }
         }
 
@@ -451,5 +417,10 @@ namespace KPCOS.MVCWebApp.Controllers
                 return View();
             }
         }
+
     }
+
+
+
+
 }

@@ -34,19 +34,25 @@ namespace KPCOS.Service.Service
             var feedbacks = await _unitOfWork.Feedback.GetFeedbackInclude(f => f.IsDeleted == false || f.IsDeleted == null);
             if (feedbacks == null)
             {
-                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Feedback>());
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<FeedbackDTO>());
             }
-            else
+            var feedbackDtos = feedbacks.Select(f => new FeedbackDTO
             {
-                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, feedbacks);
-            }
+                ID = f.Id,
+                CustomerId = f.CustomerId,
+                ProjectId = f.ProjectId,
+                Content = f.Content,
+                Rating = f.Rating
+            }).ToList();
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, feedbackDtos);
+
         }
         public async Task<IBusinessResult> GetById(string id)
         {
             var feedback = await _unitOfWork.Feedback.GetByIdAsync(id);
             if (feedback == null || feedback.IsDeleted == true)
             {
-                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new Feedback());
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new FeedbackDTO());
             }
             else
             {

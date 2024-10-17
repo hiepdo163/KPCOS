@@ -109,7 +109,7 @@ namespace KPCOS.MVCWebApp.Controllers
             var serviceBookings = new List<ServiceBooking>();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -182,7 +182,7 @@ namespace KPCOS.MVCWebApp.Controllers
                 var serviceBookings = new List<ServiceBooking>();
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking"))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -252,7 +252,7 @@ namespace KPCOS.MVCWebApp.Controllers
             var serviceBookings = new List<ServiceBooking>();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -285,7 +285,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PutAsJsonAsync($"{_apiEndpoint}{id}", serviceFeedback))
+                    using (var response = await httpClient.PutAsJsonAsync($"{_apiEndpoint}", serviceFeedback))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -309,43 +309,7 @@ namespace KPCOS.MVCWebApp.Controllers
             }
             else
             {
-                var customers = new List<Customer>();
-                using (var httpClient = new HttpClient())
-                {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Customer"))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Data != null)
-                            {
-                                customers = JsonConvert.DeserializeObject<List<Customer>>(result.Data.ToString());
-                            }
-                        }
-                    }
-                }
-                ViewData["CustomerId"] = new SelectList(customers, "Id", "Id", serviceFeedback.CustomerId);
-
-                var serviceBookings = new List<ServiceBooking>();
-                using (var httpClient = new HttpClient())
-                {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Project"))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Data != null)
-                            {
-                                serviceBookings = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
-                            }
-                        }
-                    }
-                }
-                ViewData["ServiceBookingId"] = new SelectList(serviceBookings, "Id", "Id ", serviceFeedback.ServiceBookingId);
-
-                return View(serviceFeedback);
+                return await Edit(id);
             }
         }
 
