@@ -359,7 +359,7 @@ namespace KPCOS.MVCWebApp.Controllers
             var users = new List<User>();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "User"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "User/get-all-by-role/customer"))
                 {
                     if (response.IsSuccessStatusCode)
                     {

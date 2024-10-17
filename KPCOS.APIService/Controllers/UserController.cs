@@ -46,5 +46,10 @@ namespace KPCOS.APIService.Controllers
             return await _userService.LoginAsync(loginDTO);
         }
 
+        [HttpGet("get-all-by-role/{role}")]
+        public async Task<IBusinessResult> GetUsersByRole([FromRoute] string role)
+        {
+            return await _userService.GetAllByRole(role);
+        }
     }
 }

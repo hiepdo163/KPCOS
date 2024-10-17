@@ -12,6 +12,7 @@ namespace KPCOS.Service.Interface
     public interface IUserService
     {
         Task<IBusinessResult> GetAll();
+        Task<IBusinessResult> GetAllByRole(string role);
         Task<IBusinessResult> GetById(string code);
         //Task<IBusinessResult> Create(User user);
         //Task<IBusinessResult> Update(User user);

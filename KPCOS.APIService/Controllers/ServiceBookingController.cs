@@ -34,7 +34,7 @@ namespace KPCOS.APIService.Controllers
         {
             return await _serviceBookingService.Create(request);
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IBusinessResult> DeleteAServiceBooking([FromRoute] string id)
         {
             return await _serviceBookingService.DeleteById(id);

@@ -24,7 +24,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var serviceBookings = await _unitOfWork.ServiceBooking.GetAllAsync();
+            var serviceBookings = await _unitOfWork.ServiceBooking.GetServiceBookingsAsync();
             if (serviceBookings == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<ServiceBooking>());
@@ -36,7 +36,7 @@ namespace KPCOS.Service.Service
         }
         public async Task<IBusinessResult> GetById(string id)
         {
-            var serviceBooking = await _unitOfWork.ServiceBooking.GetByIdAsync(id);
+            var serviceBooking = await _unitOfWork.ServiceBooking.GetAServiceBookingByIdAsync(id);
             if (serviceBooking == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new ServiceBooking());
@@ -172,8 +172,21 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
-                    var result = await _unitOfWork.ServiceBooking.RemoveAsync(serviceBooking);
-                    if (result)
+                    var assignments = await _unitOfWork.ServiceAssignment.GetAssignmentsByServiceBookingIdAsync(id);
+                    var executions = await _unitOfWork.ServiceExecution.GetExecutionsByServiceBookingIdAsync(id);
+                    foreach (var assignment in assignments)
+                    {
+                        assignment.Status = "Canceled";
+                        await _unitOfWork.ServiceAssignment.UpdateAsync(assignment);
+                    }
+                    foreach (var execution in executions)
+                    {
+                        execution.Status = "Canceled";
+                        await _unitOfWork.ServiceExecution.UpdateAsync(execution);
+                    }
+                    serviceBooking.Status = "Canceled";
+                    var result = await _unitOfWork.ServiceBooking.UpdateAsync(serviceBooking);
+                    if (result > 0)
                     {
                         return new BusinessResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG, serviceBooking);
                     }

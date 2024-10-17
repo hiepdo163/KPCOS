@@ -18,25 +18,25 @@ namespace KPCOS.MVCWebApp.Controllers
         // GET: ServiceBookings
         public async Task<IActionResult> Index()
         {
-            //using (var httpClient = new HttpClient())
-            //{
-            //    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking"))
-            //    {
-            //        if (response.IsSuccessStatusCode)
-            //        {
-            //            var content = await response.Content.ReadAsStringAsync();
-            //            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
 
-            //            if (result != null && result.Data != null)
-            //            {
-            //                var data = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
-            //                return View(data);
-            //            }
-            //        }
-            //    }
-            //}
-            //return View(new List<ServiceBooking>());
-            return View();
+                        if (result != null && result.Data != null)
+                        {
+                            var data = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
+                            return View(data);
+                        }
+                    }
+                }
+            }
+            return View(new List<ServiceBooking>());
+            //return View();
         }
         public async Task<IActionResult> Details(string id)
         {
@@ -61,7 +61,7 @@ namespace KPCOS.MVCWebApp.Controllers
         }
         public async Task<IActionResult> Create()
         {
-            ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "MembershipStatus");
+            ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "User.Fullname");
             return View();
         }
         [HttpPost]
@@ -99,7 +99,7 @@ namespace KPCOS.MVCWebApp.Controllers
             }
             else
             {
-                ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "MembershipStatus", serviceBookingDTO.CustomerId);
+                ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "User.Fullname", serviceBookingDTO.CustomerId);
                 return View(serviceBookingDTO);
             }
         }
@@ -123,7 +123,7 @@ namespace KPCOS.MVCWebApp.Controllers
                     }
                 }
             }
-            ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "MembershipStatus", serviceBooking.CustomerId);
+            ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "User.Fullname", serviceBooking.CustomerId);
             return View(serviceBooking);
         }
 
@@ -136,7 +136,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "ServiceBooking", serviceBookingDTO))
+                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "ServiceBooking/" + id, serviceBookingDTO))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -162,7 +162,7 @@ namespace KPCOS.MVCWebApp.Controllers
             }
             else
             {
-                ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "MembershipStatus", serviceBookingDTO.CustomerId);
+                ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "User.Fullname", serviceBookingDTO.CustomerId);
                 return View(serviceBookingDTO);
             }
         }
@@ -181,7 +181,7 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<ServiceAssignment>(result.Data.ToString());
+                            var data = JsonConvert.DeserializeObject<ServiceBooking>(result.Data.ToString());
                             return View(data);
                         }
                     }
@@ -199,7 +199,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "ServiceBooking/" + id))
+                    using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "ServiceBooking/delete/" + id))
                     {
                         if (response.IsSuccessStatusCode)
                         {
