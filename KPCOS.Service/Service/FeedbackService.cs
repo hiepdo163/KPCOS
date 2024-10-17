@@ -59,6 +59,14 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, feedback);
             }
         }
+        public async Task<IBusinessResult> GetByProjectId(string id)
+        {
+            var feedback =  await _unitOfWork.Feedback.GetAllAsync2(x => x.ProjectId == id);
+            if (feedback == null)
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new Feedback());
+
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, feedback);
+        }
         public async Task<IBusinessResult> DeleteById(string id)
         {
             try
