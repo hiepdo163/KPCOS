@@ -18,25 +18,25 @@ namespace KPCOS.MVCWebApp.Controllers
         // GET: ServiceExecutions
         public async Task<IActionResult> Index()
         {
-            //using (var httpClient = new HttpClient())
-            //{
-            //    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceExecution"))
-            //    {
-            //        if (response.IsSuccessStatusCode)
-            //        {
-            //            var content = await response.Content.ReadAsStringAsync();
-            //            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceExecution"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
 
-            //            if (result != null && result.Data != null)
-            //            {
-            //                var data = JsonConvert.DeserializeObject<List<ServiceExecution>>(result.Data.ToString());
-            //                return View(data);
-            //            }
-            //        }
-            //    }
-            //}
-            //return View(new List<ServiceExecution>());
-            return View();
+                        if (result != null && result.Data != null)
+                        {
+                            var data = JsonConvert.DeserializeObject<List<ServiceExecution>>(result.Data.ToString());
+                            return View(data);
+                        }
+                    }
+                }
+            }
+            return View(new List<ServiceExecution>());
+            //return View();
         }
 
         // GET: ServiceExecutions/Details/5
@@ -66,7 +66,7 @@ namespace KPCOS.MVCWebApp.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["ServiceBookingId"] = new SelectList(await this.GetServiceBookings(), "Id", "ServiceType");
-            ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "Salary");
+            ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "User.Fullname");
             return View();
         }
 
@@ -109,7 +109,7 @@ namespace KPCOS.MVCWebApp.Controllers
             else
             {
                 ViewData["ServiceBookingId"] = new SelectList(await this.GetServiceBookings(), "Id", "ServiceType", serviceExecution.ServiceBookingId);
-                ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "Salary", serviceExecution.EmployeeId);
+                ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "User.Fullname", serviceExecution.EmployeeId);
                 return View(serviceExecution);
             }
         }
@@ -135,7 +135,7 @@ namespace KPCOS.MVCWebApp.Controllers
                 }
             }
             ViewData["ServiceBookingId"] = new SelectList(await this.GetServiceBookings(), "Id", "ServiceType", serviceExecution.ServiceBookingId);
-            ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "Salary", serviceExecution.EmployeeId);
+            ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "User.Fullname", serviceExecution.EmployeeId);
             return View(serviceExecution);
         }
 
@@ -151,7 +151,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "ServiceExecution", serviceExecution))
+                    using (var response = await httpClient.PutAsJsonAsync(Const.APIEndpoint + "ServiceExecution/" + id, serviceExecution))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -178,7 +178,7 @@ namespace KPCOS.MVCWebApp.Controllers
             else
             {
                 ViewData["ServiceBookingId"] = new SelectList(await this.GetServiceBookings(), "Id", "ServiceType", serviceExecution.ServiceBookingId);
-                ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "Salary", serviceExecution.EmployeeId);
+                ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "User.Fullname", serviceExecution.EmployeeId);
                 return View(serviceExecution);
             }
         }
@@ -216,7 +216,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "ServiceExecution/" + id))
+                    using (var response = await httpClient.DeleteAsync(Const.APIEndpoint + "ServiceExecution/delete/" + id))
                     {
                         if (response.IsSuccessStatusCode)
                         {
