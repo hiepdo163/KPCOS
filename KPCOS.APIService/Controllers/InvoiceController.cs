@@ -24,14 +24,14 @@ namespace KPCOS.APIService.Controllers
             return await _invoiceService.GetById(id);
         }
         [HttpPut]
-        //public async Task<IBusinessResult> PutAInvoice(Invoice request)
-        //{
-        //    return await _invoiceService.Save(request);
-        //}
-        [HttpPost]
-        public async Task<IBusinessResult> CreateAInvoice(InvoiceDTO invoice)
+        public async Task<IBusinessResult> PutAInvoice(Invoice request)
         {
-            return await _invoiceService.Create(invoice);
+            return await _invoiceService.Save(request);
+        }
+        [HttpPost]
+        public async Task<IBusinessResult> CreateAInvoice(Invoice request)
+        {
+            return await _invoiceService.Save(request);
         }
         [HttpDelete("{id}")]
         public async Task<IBusinessResult> DeleteAInvoice([FromRoute] string id)

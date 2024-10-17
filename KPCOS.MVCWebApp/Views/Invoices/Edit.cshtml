@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="PaymentMethod" class="control-label"></label>
-                <input asp-for="PaymentMethod" class="form-control" />
+                <select asp-for="PaymentMethod" class="form-control" asp-items="ViewBag.PaymentMethodList"></select>
                 <span asp-validation-for="PaymentMethod" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -35,7 +35,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
+                <select asp-for="Status" class="form-control" asp-items="ViewBag.StatusList"></select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
