@@ -1,0 +1,261 @@
+﻿@model IEnumerable<KPCOS.Data.Models.Employee>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Employee</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Salary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Supervisor)
+            </th>
+            
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Fullname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Salary)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Supervisor.User.Fullname)
+            </td>
+            
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+@*<div class="row">
+    <div class="col-md-10">
+        <h1 class="display-8">Employees</h1>
+    </div>
+    <div class="col-md-2 text-end">
+    <button type="button" class="btn btn-success" onclick="add();">
+    Add
+    </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">User</th>
+                    <th class="card-title text-center">Salary</th>
+                    <th class="card-title text-center">Supervisor</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblEmployees">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmEmployee", id = "frmEmployee" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="employeeModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="1">User</label>
+                            <select id="userId" name="userId" class="form-select fslUserId"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Supervisor</label>
+                            <select id="supervisorId" name="supervisorId" class="form-select fslSupervisorId">
+                                
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="1">Salary</label>
+                            <input type="text" id="salary" name="salary" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="button" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+ @section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+
+            $("#btSave").click(function (event) {
+                event.preventDefault();
+
+                var id = $("#employeeModal").data("id");
+
+                $.ajax({
+                    url: id ? 'https://localhost:7163/api/Employee/' + id : 'https://localhost:7163/api/Employee',
+                    type: id ? "PUT" : "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        "Content-Type": 'application/json'
+                    },
+                    data: JSON.stringify({
+                        userId: $('#userId').val(),
+                        supervisorId: $('#supervisorId').val(),
+                        salary: $('#salary').val()
+                    }),
+                    success: function (result) {
+                        if (result.status >= 1) {
+                            $('#employeeModal').modal('hide');
+                            loadData();
+                        }
+                        alert(result.message);
+                    },
+                    error: function (xhr, error) {
+                        alert(xhr.statusText);
+                    }
+                })
+            })
+        });
+
+        function loadData() {
+
+            $.ajax({
+                url: 'https://localhost:7163/api/Employee',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.userId + '</td>';
+                        html += '<td>' + item.salary + '</td>';
+                        html += '<td>' + item.supervisorId + '</td>';
+                        html += '<td>' +
+                                    // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
+                                    // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
+                                    '<button type="button" class="btn btn-warning" onclick="edit(`'+ item.id +'`);">Edit</button> |' +
+                                    '<button type="button" class="btn btn-danger" onclick="remove(`'+ item.id +'`);">Delete</button>' +
+                                '</td >';
+                        html += '</tr>'
+                    });
+                    $('.tblEmployees').html(html);
+
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+
+            $.ajax({
+                url: 'https://localhost:7163/api/User/get-all-by-role/employee',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<option value="' + item.id + '">' + item.fullname + '</option>';
+                    });
+                    $('.fslUserId').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+            $.ajax({
+                url: 'https://localhost:7163/api/Employee',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    html += '<option value="">None</option>';
+                    $.each(result.data, function (key, item) {
+                        html += '<option value="' + item.id + '">' + item.user.fullname + '</option>';
+                    });
+                    $('.fslSupervisorId').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function add() {
+            $("#employeeModalLabel").html("New Employee");
+            $('#frmEmployee').trigger("reset");
+            $('#employeeModal').modal('show');
+            $('#employeeModal').data("id", null);
+        }
+
+        function edit(id) {
+            $("#employeeModalLabel").html("Update Employee");
+            $.ajax({
+                url: 'https://localhost:7163/api/Employee/' + id,
+                type: "GET",
+                contentType: 'application/json',
+                success: function (result) {
+                    $('#userId').val(result.data.userId);
+                    $('#salary').val(result.data.salary);
+                    $('#supervisorId').val(result.data.supervisorId);
+
+                    $('#employeeModal').modal('show');
+                    $('#employeeModal').data("id", id);
+                },
+                error: function (xhr) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function remove(id) {
+            if (confirm("Are you sure you want to delete this employee?")) {
+                $.ajax({
+                    url: 'https://localhost:7163/api/Employee/' + id,
+                    type: "DELETE",
+                    success: function (result) {
+                        loadData();
+                        alert(result.message);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+        }
+    </script>
+} *@
