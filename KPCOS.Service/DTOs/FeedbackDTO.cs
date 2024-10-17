@@ -12,6 +12,6 @@ namespace KPCOS.Service.DTOs
         public string CustomerId { get; set; }
         public string ProjectId { get; set; }
         public string Content { get; set; }
-        public int Rating { get; set; }
+        public decimal? Rating { get; set; }
     }
 }

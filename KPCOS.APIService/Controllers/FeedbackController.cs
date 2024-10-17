@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KPCOS.APIService.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+   
     public class FeedbackController : ControllerBase
     {
         private readonly IFeedbackService _feedbackService;

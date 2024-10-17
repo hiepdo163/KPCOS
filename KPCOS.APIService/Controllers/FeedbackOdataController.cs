@@ -8,7 +8,7 @@ namespace KPCOS.APIService.Controllers
 {
     [Route("odata/[controller]")]
     [ApiController]
-    public class FeedbackOdataController : ODataController // Change to ODataController
+    public class FeedbackOdataController : ODataController 
     {
         private readonly IFeedbackService _feedbackService;
 
@@ -20,10 +20,10 @@ namespace KPCOS.APIService.Controllers
         // GET: api/Feedback
         [HttpGet]
         [EnableQuery]
-        public IQueryable<Feedback> GetFeedbacks()
+        public async Task<IQueryable<Feedback>> GetFeedbacks()
         {
             
-            var businessResult = _feedbackService.GetAll().Result;
+            var businessResult = await _feedbackService.GetAll();
 
             if (businessResult.Data is IEnumerable<Feedback> feedbacks)
             {
