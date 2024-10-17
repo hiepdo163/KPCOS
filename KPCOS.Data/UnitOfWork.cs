@@ -32,7 +32,7 @@ namespace KPCOS.Data
         public UnitOfWork()
         {
             _context ??= new FA24_SE1717_PRN231_G4_KPCOSContext();
-            _consultationRepository ??= new ConsultationRepository();
+            _consultationRepository ??= new ConsultationRepository(_context);
             _customerRepository ??= new CustomerRepository();
             _designConceptRepository ??= new DesignConceptRepository();
             _designRepository ??= new DesignRepository(_context);
