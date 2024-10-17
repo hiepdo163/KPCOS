@@ -49,5 +49,11 @@ namespace KPCOS.APIService.Controllers
         {
             return await _feedbackService.DeleteById(id);
         }
+
+        [HttpGet("project/{projectId}")]
+        public async Task<IBusinessResult> GetFeedbackByProjectId([FromRoute] string projectId)
+        {
+            return await _feedbackService.GetByProjectId(projectId);
+        }
     }
 }

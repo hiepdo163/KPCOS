@@ -17,5 +17,6 @@ namespace KPCOS.Service.Interface
         Task<IBusinessResult> Update(FeedbackDTO feedback);
         //Task<IBusinessResult> Save(Feedback feedback);
         Task<IBusinessResult> DeleteById(string Id);
+        Task<IBusinessResult> GetByProjectId(string projectId);
     }
 }
