@@ -14,5 +14,12 @@ namespace KPCOS.Data.Repository
         public EmployeeRepository() { }
 
         public EmployeeRepository(FA24_SE1717_PRN231_G4_KPCOSContext context) => _context = context;
+        public async Task<IEnumerable<Employee>> GetAllEmployee()
+        {
+            var employees = await _context.Employees
+                .Include(p => p.User)
+                .ToListAsync();
+            return employees;
+        }
     }
 }

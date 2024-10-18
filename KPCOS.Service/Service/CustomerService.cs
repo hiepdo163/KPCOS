@@ -21,7 +21,7 @@ namespace KPCOS.Service.Service
         public async Task<IBusinessResult> GetAll()
         {
 
-            var customers = await _unitOfWork.Customer.GetAllAsync();
+            var customers = await _unitOfWork.Customer.GetCustomersAsync();
             if (customers == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Customer>());

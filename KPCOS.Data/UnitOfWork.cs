@@ -37,13 +37,13 @@ namespace KPCOS.Data
             _designConceptRepository ??= new DesignConceptRepository();
             _designRepository ??= new DesignRepository(_context);
             _designTemplateRepository ??= new DesignTemplateRepository();
-            _employeeRepository ??= new EmployeeRepository();
+            _employeeRepository ??= new EmployeeRepository(_context);
             _feedbackRepository ??= new FeedbackRepository();
             _invoiceRepository ??= new InvoiceRepository();
             _materialRepository ??= new MaterialRepository();
             _packageRepository ??= new PackageRepository();
             _paymentPolicyRepository ??= new PaymentPolicyRepository();
-            _projectRepository ??= new ProjectRepository();
+            _projectRepository ??= new ProjectRepository(_context);
             _quotationRepository ??= new QuotationRepository(_context);
             _userRepository ??= new UserRepository();
             _serviceAssignmentRepository ??= new ServiceAssignmentRepository();
