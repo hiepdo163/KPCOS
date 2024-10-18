@@ -24,7 +24,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var employees = await _unitOfWork.Employee.GetEmployeesAsync();
+            var employees = await _unitOfWork.Employee.GetAllEmployee();
             if (employees == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Employee>());

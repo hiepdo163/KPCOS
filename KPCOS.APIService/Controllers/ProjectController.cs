@@ -31,14 +31,14 @@ namespace KPCOS.APIService.Controllers
         }
 
         [HttpPost]
-        public async Task<IBusinessResult> CreateProject(ProjectDTO project)
+        public async Task<IBusinessResult> CreateProject(Project project)
         {
             return await _projectService.Save(project);
 
         }
 
         [HttpPut]
-        public async Task<IBusinessResult> UpdateProject(ProjectDTO project)
+        public async Task<IBusinessResult> UpdateProject(Project project)
         {
             return await _projectService.Save(project);
 
