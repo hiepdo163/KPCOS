@@ -23,7 +23,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var projects = await _unitOfWork.Project.GetAllAsync();
+            var projects = await _unitOfWork.Project.GetProjectsAsync();
             if (projects == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Project>());
@@ -35,7 +35,7 @@ namespace KPCOS.Service.Service
         }
         public async Task<IBusinessResult> GetById(string id)
         {
-            var project = await _unitOfWork.Project.GetByIdAsync(id);
+            var project = await _unitOfWork.Project.GetProjectByIdAsync(id);
             if (project == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new Project());
@@ -45,16 +45,17 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, project);
             }
         }
-        public async Task<IBusinessResult> Save(ProjectDTO project)
+        public async Task<IBusinessResult> Save(Project project)
         {
             try
             {
                 int result = -1;
                 var projectTmp = await _unitOfWork.Project.GetByIdAsync(project.Id.ToString());
+                var constStaff = await _unitOfWork.Employee.GetByIdAsync(project.ConstructionStaffId);
                 if (projectTmp != null)
                 {
                     projectTmp.ActualCost = project.ActualCost;
-                    projectTmp.ConstructionStaffId = project.ConstructionStaffId;
+                    projectTmp.ConstructionStaff = project.ConstructionStaff;
                     projectTmp.CustomerId = project.CustomerId;
                     projectTmp.DesignerId = project.DesignerId;
                     projectTmp.StartDate = project.StartDate;
@@ -128,6 +129,11 @@ namespace KPCOS.Service.Service
             {
                 return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
+        }
+
+        public Task<IBusinessResult> GetProjectsAsync(string code)
+        {
+            throw new NotImplementedException();
         }
     }
 }
