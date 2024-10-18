@@ -9,13 +9,12 @@ namespace KPCOS.Service.DTOs
 {
     public class ConsultationDTO
     {
-        public string Id { get; set; } = null!;
-        public string DesignId { get; set; } = null!;
+        public required string DesignId { get; set; } = null!;
 
-        public string AdjustedDesign { get; set; } = null!;
+        public required string AdjustedDesign { get; set; } = null!;
 
-        public string AdjustedSpecification { get; set; } = null!;
+        public required string AdjustedSpecification { get; set; } = null!;
 
-        public string Note { get; set; } = null!;
+        public required string Note { get; set; } = null!;
     }
 }
