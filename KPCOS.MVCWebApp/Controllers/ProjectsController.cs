@@ -205,9 +205,13 @@ namespace KPCOS.MVCWebApp.Controllers
 
             if (project == null) return NotFound();
 
-            ViewBag.ConstructionStaffId = new SelectList(await GetConstructionStaffAsync(), "User.Id", "User.Fullname", project.ConstructionStaffId);
-            ViewBag.CustomerId = new SelectList(await GetCustomersAsync(), "Id", "User.Fullname", project.CustomerId);
-            ViewBag.DesignerId = new SelectList(await GetDesignersAsync(), "Id", "User.Fullname", project.DesignerId);
+            var tmp1 = await GetConstructionStaffAsync();
+            var tmp2 = await GetCustomersAsync();
+            var tmp3 = await GetDesignersAsync();
+
+            ViewBag.ConstructionStaffId = new SelectList(tmp1, "Id", "User.Fullname");
+            ViewBag.CustomerId = new SelectList(tmp2, "Id", "User.Fullname");
+            ViewBag.DesignerId = new SelectList(tmp3, "Id", "User.Fullname");
 
             return View(project);
         }
