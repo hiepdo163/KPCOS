@@ -19,6 +19,7 @@ builder.Services.AddControllers().AddOData(opt =>
 {
     var odataBuilder = new ODataConventionModelBuilder();
     odataBuilder.EntitySet<Feedback>("Feedback");
+    odataBuilder.EntitySet<Invoice>("Invoices");
     opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(100)
        .AddRouteComponents("odata", odataBuilder.GetEdmModel());
 });
