@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +26,9 @@ namespace KPCOS.APIService.Controllers
         }
 
         [HttpGet]
-        public async Task<IBusinessResult> GetQuotation()
+        public async Task<IBusinessResult> GetQuotation([FromQuery] QuotationFilterParams request)
         {
-            return await _service.GetAll();
+            return await _service.GetAll(request);
         }
 
         [HttpGet("{id}")]

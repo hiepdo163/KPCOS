@@ -9,6 +9,7 @@ using KPCOS.Data.Models;
 using KPCOS.Common;
 using KPCOS.Service.Base;
 using Newtonsoft.Json;
+using KPCOS.Service.DTOs;
 
 namespace KPCOS.MVCWebApp.Controllers
 {
@@ -94,14 +95,22 @@ namespace KPCOS.MVCWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AdjustedDesign,AdjustedSpecification,DesignId,Note")] Consultation consultation)
+        public async Task<IActionResult> Create([Bind("AdjustedDesign,AdjustedSpecification,DesignId,Note")] ConsultationDTO consultation)
         {
             bool Status = false;
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + $"{nameof(Consultation)}", consultation))
+                    Consultation requestModel = new Consultation()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        AdjustedDesign = consultation.AdjustedDesign,
+                        AdjustedSpecification = consultation.AdjustedSpecification,
+                        DesignId = consultation.DesignId,
+                        Note = consultation.Note
+                    };
+                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + $"{nameof(Consultation)}", requestModel))
                     {
                         if (response.IsSuccessStatusCode)
                         {

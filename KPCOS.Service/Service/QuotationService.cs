@@ -2,6 +2,7 @@
 using KPCOS.Data;
 using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,21 +20,46 @@ namespace KPCOS.Service.Service
         {
             _unitOfWork ??= new UnitOfWork();
         }
-        public async Task<IBusinessResult> GetAll()
+        public async Task<IBusinessResult> GetAll(QuotationFilterParams request)
         {
             #region Business rule
+            // Implement business rules if needed
             #endregion
 
+            // Fetch all quotations from the repository
             var quotations = await _unitOfWork.Quotation.GetAllAsync();
-            if (quotations == null)
+
+            // Apply filters
+            if (!string.IsNullOrEmpty(request.ComplexityLevel))
+            {
+                quotations = quotations.Where(q => q.ComplexityLevel.Contains(request.ComplexityLevel)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(request.Status))
+            {
+                quotations = quotations.Where(q => q.Status == request.Status).ToList();
+            }
+
+            if (request.StartDate.HasValue)
+            {
+                quotations = quotations.Where(q => q.QuotationDate >= request.StartDate.Value).ToList();
+            }
+
+            if (request.EndDate.HasValue)
+            {
+                quotations = quotations.Where(q => q.QuotationDate <= request.EndDate.Value).ToList();
+            }
+
+            // Check if no quotations match the filters
+            if (quotations == null || !quotations.Any())
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Quotation>());
             }
-            else
-            {
-                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, quotations);
-            }
+
+            // Return the filtered result
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, quotations);
         }
+
         public async Task<IBusinessResult> GetById(string id)
         {
             var quotation = await _unitOfWork.Quotation.GetByIdAsync(id);
