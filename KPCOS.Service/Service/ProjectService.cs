@@ -56,6 +56,7 @@ namespace KPCOS.Service.Service
                 {
                     projectTmp.ActualCost = project.ActualCost;
                     projectTmp.ConstructionStaff = project.ConstructionStaff;
+                    projectTmp.ConstructionStaffId = project.ConstructionStaffId;
                     projectTmp.CustomerId = project.CustomerId;
                     projectTmp.DesignerId = project.DesignerId;
                     projectTmp.StartDate = project.StartDate;

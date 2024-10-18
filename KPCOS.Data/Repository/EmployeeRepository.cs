@@ -37,6 +37,7 @@ namespace KPCOS.Data.Repository
         public async Task<IEnumerable<Employee>> GetAllEmployee()
         {
             var employees = await _context.Employees
+                .Include(u => u.User)
                 .ToListAsync();
             return employees;
         }
