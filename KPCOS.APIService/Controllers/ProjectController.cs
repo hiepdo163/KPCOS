@@ -25,9 +25,9 @@ namespace KPCOS.APIService.Controllers
    
         }
         [HttpGet("search")]
-        public async Task<IBusinessResult> GetProjects([FromQuery] string? customerName, [FromQuery] string? designerId, [FromQuery] DateTime? startDate, [FromQuery] string? status)
+        public async Task<IBusinessResult> GetProjects([FromQuery] string? customerName, [FromQuery] string? designerId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string? status)
         {
-            return await _projectService.GetProjectsAsync(customerName, designerId, startDate, status);
+            return await _projectService.GetProjectsAsync(customerName, designerId, startDate, endDate, status);
         }
 
 

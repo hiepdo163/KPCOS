@@ -194,11 +194,10 @@
 @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            loadCustomerData();
-            loadEmployeeData();
+            // loadCustomerData();
+            // loadEmployeeData();
+            // searchProject();
             // loadProjectData();
-            searchProject();
-
 
             $("#btSaveProject").click(function (event) {
                 event.preventDefault();
@@ -392,6 +391,7 @@
             let customerName = $('#customerName').val();
             let designerId = $('#designerName').val();
             let startDate = $('#startDate').val();
+            let endDate = $('#endDate').val();
             let status = $('#status').val();
             alert("Loading project data ...");
 
@@ -402,6 +402,7 @@
                     customerName: customerName,
                     designerId: designerId,
                     startDate: startDate ? new Date(startDate).toISOString() : null,
+                    endDate: endDate ? new Date(endDate).toISOString() : null,
                     status: status
                 },
                 success: function (result) {

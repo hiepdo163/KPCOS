@@ -33,7 +33,7 @@ namespace KPCOS.Data.Repository
 
             return project;
         }
-        public async Task<IEnumerable<Project>> GetProjectsByFilterAsync(string? customerName, string? designerId, DateTime? startDate, string? status)
+        public async Task<IEnumerable<Project>> GetProjectsByFilterAsync(string? customerName, string? designerId, DateTime? startDate,DateTime? endDate, string? status)
         {
             var query = _context.Projects
                 .Include(p => p.Customer).ThenInclude(c => c.User)
@@ -54,6 +54,10 @@ namespace KPCOS.Data.Repository
             if (startDate.HasValue)
             {
                 query = query.Where(p => p.StartDate.HasValue && p.StartDate.Value.Date >= startDate.Value.Date);
+            } 
+            if (endDate.HasValue)
+            {
+                query = query.Where(p => p.EndDate.HasValue && p.EndDate.Value.Date <= endDate.Value.Date);
             }
 
 

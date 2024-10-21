@@ -125,9 +125,9 @@ namespace KPCOS.Service.Service
             }
         }
 
-        public async Task<IBusinessResult> GetProjectsAsync(string customerName, string designerId, DateTime? startDate, string status)
+        public async Task<IBusinessResult> GetProjectsAsync(string customerName, string designerId, DateTime? startDate, DateTime? endDate, string status)
         {
-            var projects = await _unitOfWork.Project.GetProjectsByFilterAsync(customerName, designerId, startDate, status);
+            var projects = await _unitOfWork.Project.GetProjectsByFilterAsync(customerName, designerId, startDate, endDate, status);
             return projects == null && !projects.Any()
                 ? new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Project>())
                 : new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, projects);
