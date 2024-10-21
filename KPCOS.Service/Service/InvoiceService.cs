@@ -177,5 +177,25 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
         }
+
+        public async Task<IBusinessResult> SearchById(string searchId)
+        {
+            if (string.IsNullOrEmpty(searchId))
+            {
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Invoice>());
+            }
+
+            var invoices = await _unitOfWork.Invoice.GetAllAsync();
+            var matchedInvoices = invoices.Where(invoice => invoice.Id.Contains(searchId)).ToList();
+
+            if (matchedInvoices == null || matchedInvoices.Count == 0)
+            {
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Invoice>());
+            }
+            else
+            {
+                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, matchedInvoices);
+            }
+        }
     }
 }
