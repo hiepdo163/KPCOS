@@ -2,6 +2,7 @@
 using KPCOS.Data;
 using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using System;
 using System.Collections.Generic;
@@ -20,18 +21,10 @@ namespace KPCOS.Service.Service
         }
         public async Task<IBusinessResult> GetAll()
         {
-            #region Business rule
-            #endregion
-
             var projects = await _unitOfWork.Project.GetProjectsAsync();
-            if (projects == null)
-            {
-                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Project>());
-            }
-            else
-            {
-                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, projects);
-            }
+            return projects == null
+                ? new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Project>())
+                : new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, projects);
         }
         public async Task<IBusinessResult> GetById(string id)
         {
@@ -132,9 +125,12 @@ namespace KPCOS.Service.Service
             }
         }
 
-        public Task<IBusinessResult> GetProjectsAsync(string code)
+        public async Task<IBusinessResult> GetProjectsAsync(string customerName, string designerId, DateTime? startDate, string status)
         {
-            throw new NotImplementedException();
+            var projects = await _unitOfWork.Project.GetProjectsByFilterAsync(customerName, designerId, startDate, status);
+            return projects == null && !projects.Any()
+                ? new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Project>())
+                : new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, projects);
         }
     }
 }

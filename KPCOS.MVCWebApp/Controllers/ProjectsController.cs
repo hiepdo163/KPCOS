@@ -79,30 +79,30 @@ namespace KPCOS.MVCWebApp.Controllers
         public async Task<IActionResult> Index()
         {
             List<Project> projects = new();
-            try
-            {
-                using (var httpClient = new HttpClient())
-                {
-                    var response = await httpClient.GetAsync(_apiEndpoint);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+            //try
+            //{
+            //    using (var httpClient = new HttpClient())
+            //    {
+            //        var response = await httpClient.GetAsync(_apiEndpoint);
+            //        if (response.IsSuccessStatusCode)
+            //        {
+            //            var content = await response.Content.ReadAsStringAsync();
+            //            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
 
-                        if (result?.Data != null)
-                        {
-                            projects = JsonConvert.DeserializeObject<List<Project>>(result.Data.ToString());
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error: {ex.Message}");
-                return View("Error");
-            }
+            //            if (result?.Data != null)
+            //            {
+            //                projects = JsonConvert.DeserializeObject<List<Project>>(result.Data.ToString());
+            //            }
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine($"Error: {ex.Message}");
+            //    return View("Error");
+            //}
 
-            Debug.WriteLine($"Number of projects: {projects.Count}");
+            //Debug.WriteLine($"Number of projects: {projects.Count}");
             return View(projects);
         }
 

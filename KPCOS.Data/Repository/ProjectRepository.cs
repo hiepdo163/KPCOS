@@ -33,6 +33,36 @@ namespace KPCOS.Data.Repository
 
             return project;
         }
+        public async Task<IEnumerable<Project>> GetProjectsByFilterAsync(string? customerName, string? designerId, DateTime? startDate, string? status)
+        {
+            var query = _context.Projects
+                .Include(p => p.Customer).ThenInclude(c => c.User)
+                .Include(p => p.Designer).ThenInclude(d => d.User)
+                .Include(p => p.ConstructionStaff).ThenInclude(cs => cs.User)
+                .AsQueryable();
 
+            if (!string.IsNullOrEmpty(customerName))
+            {
+                query = query.Where(p => p.Customer.User.Fullname.Contains(customerName));
+            }
+
+            if (!string.IsNullOrEmpty(designerId))
+            {
+                query = query.Where(p => p.Designer.Id == designerId);
+            }
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(p => p.StartDate.HasValue && p.StartDate.Value.Date >= startDate.Value.Date);
+            }
+
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = query.Where(p => p.Status == status);
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }
