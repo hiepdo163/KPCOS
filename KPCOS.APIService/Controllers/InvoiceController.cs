@@ -38,5 +38,10 @@ namespace KPCOS.APIService.Controllers
         {
             return await _invoiceService.DeleteById(id);
         }
+        [HttpGet("search/{searchId}")]
+        public async Task<IBusinessResult> SearchInvoice([FromRoute] string searchId)
+        {
+            return await _invoiceService.SearchById(searchId);
+        }
     }
 }

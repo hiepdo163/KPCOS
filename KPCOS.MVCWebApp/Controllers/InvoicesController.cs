@@ -23,7 +23,7 @@ namespace KPCOS.MVCWebApp.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + $"{nameof(Invoice)}/" + searchId))
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + $"{nameof(Invoice)}/search/" + searchId))
                     {
                         if (response.IsSuccessStatusCode)
                         {
@@ -31,23 +31,23 @@ namespace KPCOS.MVCWebApp.Controllers
                             var result = JsonConvert.DeserializeObject<BusinessResult>(content);
                             if (result != null && result.Data != null)
                             {
-                                invoices = new List<Invoice> { JsonConvert.DeserializeObject<Invoice>(result.Data.ToString()) };
+                                invoices = JsonConvert.DeserializeObject<List<Invoice>>(result.Data.ToString());
                             }
                             else
                             {
-                                invoices = new List<Invoice>(); // Không tìm thấy hóa đơn
+                                invoices = new List<Invoice>();
                             }
                         }
                         else
                         {
-                            invoices = new List<Invoice>(); // Không thành công trong việc lấy dữ liệu
+                            invoices = new List<Invoice>();
                         }
                     }
                 }
             }
             else
             {
-                // Nếu không có ID, lấy tất cả hóa đơn
+                // Nếu không có searchId, lấy tất cả hóa đơn
                 using (var httpClient = new HttpClient())
                 {
                     using (var response = await httpClient.GetAsync(Const.APIEndpoint + nameof(Invoice)))
