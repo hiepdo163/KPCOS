@@ -15,7 +15,7 @@ namespace KPCOS.Service.Service
 {
     public class InvoiceService : IInvoiceService
     {
-        private readonly ProjectRepository _projectRepository;
+        private readonly ProjectRepository _projectRepository;  
         private readonly UnitOfWork _unitOfWork;
         public InvoiceService()
         {
@@ -33,7 +33,8 @@ namespace KPCOS.Service.Service
             }
             else
             {
-                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, invoices);
+                var sortedInvoices = invoices.OrderByDescending(invoice => invoice.PaymentDate).ToList();
+                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, sortedInvoices);
             }
         }
         public async Task<IBusinessResult> GetById(string id)
