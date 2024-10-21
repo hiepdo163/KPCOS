@@ -72,7 +72,7 @@
                     <th class="card-title text-center">Construction Staff</th>
                     <th class="card-title text-center">Customer</th>
                     <th class="card-title text-center">Designer</th>
-                    @* <th class="card-title text-center"></th> *@
+                    <th class="card-title text-center">Function</th> 
                 </tr>
             </thead>
             <tbody class="tblProject">
@@ -135,18 +135,22 @@
                         <div class="col-md-4">
                             <label for="ActualCost">Actual Cost</label>
                             <input type="text" id="ActualCost" name="ActualCost" class="form-control" />
+                            <span id="ActualCost-error" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label for="EstimatedCost">Estimated Cost</label>
                             <input type="text" id="EstimatedCost" name="EstimatedCost" class="form-control" />
+                            <span id="ActualCost-error" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label for="StartDate">Start Date</label>
                             <input type="datetime-local" id="StartDate" name="StartDate" class="form-control" />
+                            <span id="ActualCost-error" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label for="EndDate">End Date</label>
                             <input type="datetime-local" id="EndDate" name="EndDate" class="form-control" />
+                            <span id="ActualCost-error" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label for="Status">Status</label>
@@ -163,17 +167,18 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="CustomerId">Customer</label>
-                            <select id="CustomerId" name="CustomerId" class="form-control">
-                                <option value="">Select Customer</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
                             <label for="DesignerId">Designer</label>
                             <select id="DesignerId" name="DesignerId" class="form-control">
                                 <option value="">Select Designer</option>
                             </select>
                         </div>
+                        <div class="col-md-4">
+                            <label for="CustomerId">Customer</label>
+                            <select id="CustomerId" name="CustomerId" class="form-control">
+                                <option value="">Select Customer</option>
+                            </select>
+                        </div>
+
 
                     </div>
                 </div>
@@ -222,7 +227,7 @@
                         success: function (result) {
                             if (result.status >= 1) {
                                 $('#projectModal').modal('hide');
-                                loadProjectData();
+                                searchProject();
                             }
                             alert(result.message);
                         },
@@ -242,7 +247,7 @@
                         success: function (result) {
                             if (result.status >= 1) {
                                 $('#projectModal').modal('hide');
-                                loadProjectData();
+                                searchProject();
                             }
                             alert(result.message);
                         },
@@ -254,34 +259,34 @@
             });
         });
 
-        function loadProjectData() {
-            $.ajax({
-                url: 'https://localhost:7163/api/Project',
-                type: "GET",
-                success: function (result) {
-                    let tableBody = $('.tblProject');
-                    tableBody.empty();
-                    $.each(result.data, function (index, item) {
-                        let row = `<tr>
-                                            <td>${item.id}</td>
-                                            <td>${item.actualCost}</td>
-                                            <td>${item.endDate}</td>
-                                            <td>${item.estimatedCost}</td>
-                                            <td>${item.startDate}</td>
-                                            <td>${item.status}</td>
-                                            <td>${item.constructionStaff.user.fullname}</td>
-                                            <td>${item.customer.user.fullname}</td>
-                                            <td>${item.designer.user.fullname}</td>
-                                            <td>
-                                                <a class="btn btn-sm btn-info" onclick="editProject(${item.id})">Edit</a>
-                                                <a class="btn btn-sm btn-danger" onclick="deleteProject(${item.id})">Delete</a>
-                                            </td>
-                                        </tr>`;
-                        tableBody.append(row);
-                    });
-                }
-            });
-        }
+        // function loadProjectData() {
+        //     $.ajax({
+        //         url: 'https://localhost:7163/api/Project',
+        //         type: "GET",
+        //         success: function (result) {
+        //             let tableBody = $('.tblProject');
+        //             tableBody.empty();
+        //             $.each(result.data, function (index, item) {
+        //                 let row = `<tr>
+        //                                             <td>${item.id}</td>
+        //                                             <td>${item.actualCost}</td>
+        //                                             <td>${item.endDate}</td>
+        //                                             <td>${item.estimatedCost}</td>
+        //                                             <td>${item.startDate}</td>
+        //                                             <td>${item.status}</td>
+        //                                             <td>${item.constructionStaff.user.fullname}</td>
+        //                                             <td>${item.customer.user.fullname}</td>
+        //                                             <td>${item.designer.user.fullname}</td>
+        //                                             <td>
+        //                                                 <a class="btn btn-sm btn-info" onclick="editProject(${item.id})">Edit</a>
+        //                                                 <a class="btn btn-sm btn-danger" onclick="deleteProject(${item.id})">Delete</a>
+        //                                             </td>
+        //                                         </tr>`;
+        //                 tableBody.append(row);
+        //             });
+        //         }
+        //     });
+        // }
 
         function loadCustomerData() {
             $.ajax({
@@ -297,20 +302,25 @@
             });
         }
 
+
         function loadEmployeeData() {
             $.ajax({
                 url: 'https://localhost:7163/api/Employee',
                 type: "GET",
                 success: function (result) {
+                    console.log(result);
                     let employeeSelect = $('#ConstructionStaffId');
                     let designerSelect = $('#DesignerId');
                     employeeSelect.empty();
-                    designerSelect. empty();
+                    designerSelect.empty();
                     $.each(result.data, function (index, item) {
                         designerSelect.append(`<option value="${item.id}">${item.user.fullname}</option>`);
                         employeeSelect.append(`<option value="${item.id}">${item.user.fullname}</option>`);
                     });
+
                 }
+
+
             });
         }
 
@@ -320,12 +330,26 @@
             $('#projectModal').modal('show');
         }
 
+        $(document).on('click', '.btn-info', function () {
+            let id = $(this).closest('tr').find('td:first').text();
+            editProject(id);
+        });
+
+        $(document).on('click', '.btn-danger', function () {
+            let id = $(this).closest('tr').find('td:first').text(); 
+            deleteProject(id);
+        });
+
         function editProject(id) {
+            alert("Loading project: " + id + " data ...");
+
             $('#projectModalLabel').text("Edit Project");
             $.ajax({
                 url: `https://localhost:7163/api/Project/${id}`,
                 type: "GET",
-                success: function (item) {
+                success: function (response) {
+                    const item = response.data;
+                    console.log(item);
                     $('#ActualCost').val(item.actualCost);
                     $('#EstimatedCost').val(item.estimatedCost);
                     $('#StartDate').val(item.startDate);
@@ -345,8 +369,9 @@
                     url: `https://localhost:7163/api/Project/${id}`,
                     type: "DELETE",
                     success: function (result) {
+                        console.log(item);
                         alert(result.message);
-                        loadProjectData();
+                        searchProject()
                     },
                     error: function (xhr, error) {
                         alert(xhr.statusText);
@@ -359,7 +384,7 @@
             $('#DesignerId').val('');
             $('#createdDate').val('');
             $('#status').val('');
-            loadProjectData();
+            searchProject();
         }
 
 
@@ -368,6 +393,7 @@
             let designerId = $('#designerName').val();
             let startDate = $('#startDate').val();
             let status = $('#status').val();
+            alert("Loading project data ...");
 
             $.ajax({
                 url: 'https://localhost:7163/api/Project/search',
@@ -384,22 +410,22 @@
                     tableBody.empty();
                     $.each(result.data, function (index, item) {
                         let row = `<tr>
-                                                    <td>${item.id}</td>
-                                                    <td>${item.estimatedCost}</td>
+                                                            <td>${item.id}</td>
+                                                            <td>${item.estimatedCost}</td>
 
-                                                    <td>${item.actualCost}</td>
-                                                    <td>${item.startDate}</td>
-                                                    <td>${item.endDate}</td>
-                                                    <td>${item.status}</td>
-                                                    <td>${item.constructionStaff.user.fullname}</td>
-                                                    <td>${item.customer.user.fullname}</td>
-                                                    <td>${item.designer.user.fullname}</td>
-                                                    <td>
-                                                        <a class="btn btn-sm btn-info" onclick="editProject(${item.id})">Edit</a>
-                                                        <a class="btn btn-sm btn-danger" onclick="deleteProject(${item.id})">Delete</a>
-                                                    </td>
-                                                </tr>`;;
-                        tableBody.append(row);
+                                                            <td>${item.actualCost}</td>
+                                                            <td>${item.startDate}</td>
+                                                            <td>${item.endDate}</td>
+                                                            <td>${item.status}</td>
+                                                            <td>${item.constructionStaff.user.fullname}</td>
+                                                            <td>${item.customer.user.fullname}</td>
+                                                            <td>${item.designer.user.fullname}</td>
+                                                            <td>
+                                                                <a class="btn btn-sm btn-info" onclick="editProject(${item.id})">Edit</a>
+                                                                <a class="btn btn-sm btn-danger" onclick="deleteProject(${item.id})">Delete</a>
+                                                            </td>
+                                                        </tr>`;
+                        tableBody.append(row);                                                                                                                                                                                                          
                     });
                 }
             });
