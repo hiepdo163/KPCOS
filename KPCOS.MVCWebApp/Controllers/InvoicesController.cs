@@ -15,27 +15,62 @@ namespace KPCOS.MVCWebApp.Controllers
     public class InvoicesController : Controller
     {
         // GET: Invoices
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchId)
         {
-            using (var httpClient = new HttpClient())
-            {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + nameof(Invoice)))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+            List<Invoice> invoices;
 
-                        if (result != null && result.Data != null)
+            if (!string.IsNullOrEmpty(searchId))
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + $"{nameof(Invoice)}/" + searchId))
+                    {
+                        if (response.IsSuccessStatusCode)
                         {
-                            var data = JsonConvert.DeserializeObject<List<Invoice>>(result.Data.ToString());
-                            return View(data);
+                            var content = await response.Content.ReadAsStringAsync();
+                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                            if (result != null && result.Data != null)
+                            {
+                                invoices = new List<Invoice> { JsonConvert.DeserializeObject<Invoice>(result.Data.ToString()) };
+                            }
+                            else
+                            {
+                                invoices = new List<Invoice>(); // Không tìm thấy hóa đơn
+                            }
+                        }
+                        else
+                        {
+                            invoices = new List<Invoice>(); // Không thành công trong việc lấy dữ liệu
                         }
                     }
                 }
             }
-            return View(new List<Invoice>());
+            else
+            {
+                // Nếu không có ID, lấy tất cả hóa đơn
+                using (var httpClient = new HttpClient())
+                {
+                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + nameof(Invoice)))
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                            invoices = result != null && result.Data != null
+                                ? JsonConvert.DeserializeObject<List<Invoice>>(result.Data.ToString())
+                                : new List<Invoice>();
+                        }
+                        else
+                        {
+                            invoices = new List<Invoice>();
+                        }
+                    }
+                }
+            }
+
+            return View(invoices);
         }
+
 
         // GET: Invoices/Details/5
         public async Task<IActionResult> Details(string id)
