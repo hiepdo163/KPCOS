@@ -48,7 +48,6 @@ namespace KPCOS.Service.Service
                 if (projectTmp != null)
                 {
                     projectTmp.ActualCost = project.ActualCost;
-                    projectTmp.ConstructionStaff = project.ConstructionStaff;
                     projectTmp.ConstructionStaffId = project.ConstructionStaffId;
                     projectTmp.CustomerId = project.CustomerId;
                     projectTmp.DesignerId = project.DesignerId;

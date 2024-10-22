@@ -38,7 +38,6 @@ public partial class Project
 
     [Required(ErrorMessage = "Status is required.")]
     public string Status { get; set; }
-    [Required(ErrorMessage = "Staff is required.")]
 
     public virtual Employee ConstructionStaff { get; set; }
 
