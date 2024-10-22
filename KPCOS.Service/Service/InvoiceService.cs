@@ -21,22 +21,50 @@ namespace KPCOS.Service.Service
         {
             _unitOfWork ??= new UnitOfWork();
         }
-        public async Task<IBusinessResult> GetAll()
+        public async Task<IBusinessResult> GetAll(string searchId = null, string paymentMethod = null, string status = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             #region Business rule
             #endregion
 
             var invoices = await _unitOfWork.Invoice.GetAllAsync();
+
             if (invoices == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Invoice>());
             }
-            else
+
+            // Lọc theo Invoice ID
+            if (!string.IsNullOrEmpty(searchId))
             {
-                var sortedInvoices = invoices.OrderByDescending(invoice => invoice.PaymentDate).ToList();
-                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, sortedInvoices);
+                invoices = invoices.Where(i => i.Id.ToString() == searchId).ToList();
             }
+
+            // Lọc theo PaymentMethod
+            if (!string.IsNullOrEmpty(paymentMethod))
+            {
+                invoices = invoices.Where(i => i.PaymentMethod == paymentMethod).ToList();
+            }
+
+            // Lọc theo Status
+            if (!string.IsNullOrEmpty(status))
+            {
+                invoices = invoices.Where(i => i.Status == status).ToList();
+            }
+
+            // Lọc theo PaymentDate
+            if (startDate.HasValue)
+            {
+                invoices = invoices.Where(i => i.PaymentDate >= startDate.Value).ToList();
+            }
+            if (endDate.HasValue)
+            {
+                invoices = invoices.Where(i => i.PaymentDate <= endDate.Value).ToList();
+            }
+
+            var sortedInvoices = invoices.OrderByDescending(invoice => invoice.PaymentDate).ToList();
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, sortedInvoices);
         }
+
         public async Task<IBusinessResult> GetById(string id)
         {
             var invoice = await _unitOfWork.Invoice.GetByIdAsync(id);

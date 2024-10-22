@@ -13,13 +13,25 @@
 
     <div class="d-flex justify-content-between mb-3">
         <form asp-action="Index" method="get" class="d-flex align-items-center">
-            <input type="text" name="searchId" placeholder="Enter Invoice ID" class="form-control me-2" />
+            <input type="text" name="searchId" placeholder="Search by Invoice ID..." class="form-control me-2" />
+            <select name="paymentMethod" class="form-control me-2">
+                <option value="">Select Payment Method</option>
+                <option value="CreditCard">Credit Card</option>
+                <option value="BankTransfer">Bank Transfer</option>
+                <option value="Cash">Cash</option>
+            </select>
+            <select name="status" class="form-control me-2">
+                <option value="">Select Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Paid">Paid</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+            <input type="date" name="startDate" class="form-control me-2" />
+            <input type="date" name="endDate" class="form-control me-2" />
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
         <a class="btn btn-primary" asp-action="Create">Create New Invoice</a>
     </div>
-
-
 
     <table class="table table-striped table-bordered table-hover">
         <thead class="thead-dark">

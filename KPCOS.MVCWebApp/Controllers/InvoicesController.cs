@@ -15,55 +15,51 @@ namespace KPCOS.MVCWebApp.Controllers
     public class InvoicesController : Controller
     {
         // GET: Invoices
-        public async Task<IActionResult> Index(string searchId)
+        public async Task<IActionResult> Index(string searchId, string paymentMethod, string status, DateTime? startDate, DateTime? endDate)
         {
             List<Invoice> invoices;
 
+            var url = $"{Const.APIEndpoint}{nameof(Invoice)}?";
+
             if (!string.IsNullOrEmpty(searchId))
             {
-                using (var httpClient = new HttpClient())
-                {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + $"{nameof(Invoice)}/search/" + searchId))
-                    {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            if (result != null && result.Data != null)
-                            {
-                                invoices = JsonConvert.DeserializeObject<List<Invoice>>(result.Data.ToString());
-                            }
-                            else
-                            {
-                                invoices = new List<Invoice>();
-                            }
-                        }
-                        else
-                        {
-                            invoices = new List<Invoice>();
-                        }
-                    }
-                }
+                url += $"searchId={searchId}&";
             }
-            else
+            if (!string.IsNullOrEmpty(paymentMethod))
             {
-                // Nếu không có searchId, lấy tất cả hóa đơn
-                using (var httpClient = new HttpClient())
+                url += $"paymentMethod={paymentMethod}&";
+            }
+            if (!string.IsNullOrEmpty(status))
+            {
+                url += $"status={status}&";
+            }
+            if (startDate.HasValue)
+            {
+                url += $"startDate={startDate.Value:yyyy-MM-dd}&";
+            }
+            if (endDate.HasValue)
+            {
+                url += $"endDate={endDate.Value:yyyy-MM-dd}&";
+            }
+
+            // Xóa dấu "&" ở cuối nếu có
+            url = url.TrimEnd('&');
+
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.GetAsync(url))
                 {
-                    using (var response = await httpClient.GetAsync(Const.APIEndpoint + nameof(Invoice)))
+                    if (response.IsSuccessStatusCode)
                     {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                            invoices = result != null && result.Data != null
-                                ? JsonConvert.DeserializeObject<List<Invoice>>(result.Data.ToString())
-                                : new List<Invoice>();
-                        }
-                        else
-                        {
-                            invoices = new List<Invoice>();
-                        }
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                        invoices = result != null && result.Data != null
+                            ? JsonConvert.DeserializeObject<List<Invoice>>(result.Data.ToString())
+                            : new List<Invoice>();
+                    }
+                    else
+                    {
+                        invoices = new List<Invoice>();
                     }
                 }
             }
