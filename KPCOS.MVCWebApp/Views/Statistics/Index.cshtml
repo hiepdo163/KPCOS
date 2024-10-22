@@ -84,42 +84,42 @@
 
         const invoiceCtx = document.getElementById('invoiceChart').getContext('2d');
         new Chart(invoiceCtx, {
-            type: 'bar',
+            type: 'line',  
             data: invoiceData,
             options: { scales: { y: { beginAtZero: true } } }
         });
 
         const consultationCtx = document.getElementById('consultationChart').getContext('2d');
         new Chart(consultationCtx, {
-            type: 'bar',
+            type: 'line',  
             data: consultationData,
             options: { scales: { y: { beginAtZero: true } } }
         });
 
         const customerCtx = document.getElementById('customerChart').getContext('2d');
         new Chart(customerCtx, {
-            type: 'bar',
+            type: 'line',  
             data: customerData,
             options: { scales: { y: { beginAtZero: true } } }
         });
 
         const designCtx = document.getElementById('designChart').getContext('2d');
         new Chart(designCtx, {
-            type: 'bar',
+            type: 'line', 
             data: designData,
             options: { scales: { y: { beginAtZero: true } } }
         });
 
         const designConceptCtx = document.getElementById('designConceptChart').getContext('2d');
         new Chart(designConceptCtx, {
-            type: 'bar',
+            type: 'line',  
             data: designConceptData,
             options: { scales: { y: { beginAtZero: true } } }
         });
 
         const designTemplateCtx = document.getElementById('designTemplateChart').getContext('2d');
         new Chart(designTemplateCtx, {
-            type: 'bar',
+            type: 'line', 
             data: designTemplateData,
             options: { scales: { y: { beginAtZero: true } } }
         });
