@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace KPCOS.Service.Interface
 {
     public interface IDesignTemplateService
     {
-        Task<IBusinessResult> GetAll();
+        Task<IBusinessResult> GetAll(DesignTemplateFilterDTO filter);
         Task<IBusinessResult> GetById(string code);
         //Task<IBusinessResult> Create(DesignTemplate designTemplate);
         //Task<IBusinessResult> Update(DesignTemplate designTemplate);
