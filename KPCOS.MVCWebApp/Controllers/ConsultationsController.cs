@@ -9,14 +9,17 @@ using KPCOS.Data.Models;
 using KPCOS.Common;
 using KPCOS.Service.Base;
 using Newtonsoft.Json;
+using KPCOS.Service.DTOs;
 
 namespace KPCOS.MVCWebApp.Controllers
 {
     public class ConsultationsController : Controller
     {
         // GET: Consultations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchAdjustedDesign, string searchAdjustedSpecification, string searchNote)
         {
+            List<Consultation> data = new List<Consultation>();
+
             using (var httpClient = new HttpClient())
             {
                 using (var response = await httpClient.GetAsync(Const.APIEndpoint + nameof(Consultation)))
@@ -28,14 +31,31 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<List<Consultation>>(result.Data.ToString());
-                            return View(data);
+                            data = JsonConvert.DeserializeObject<List<Consultation>>(result.Data.ToString());
                         }
                     }
                 }
             }
-            return View(new List<Consultation>());
+
+            // Filter by search string if provided
+            if (!string.IsNullOrEmpty(searchAdjustedDesign))
+            {
+                data = data.Where(c => c.AdjustedDesign.Contains(searchAdjustedDesign, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(searchAdjustedSpecification))
+            {
+                data = data.Where(c => c.AdjustedSpecification.Contains(searchAdjustedSpecification, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(searchNote))
+            {
+                data = data.Where(c => c.Note.Contains(searchNote, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            return View(data);
         }
+
 
         // GET: Consultations/Details/5
         public async Task<IActionResult> Details(string id)
@@ -94,14 +114,22 @@ namespace KPCOS.MVCWebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AdjustedDesign,AdjustedSpecification,DesignId,Note")] Consultation consultation)
+        public async Task<IActionResult> Create([Bind("AdjustedDesign,AdjustedSpecification,DesignId,Note")] ConsultationDTO consultation)
         {
             bool Status = false;
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())
                 {
-                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + $"{nameof(Consultation)}", consultation))
+                    Consultation requestModel = new Consultation()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        AdjustedDesign = consultation.AdjustedDesign,
+                        AdjustedSpecification = consultation.AdjustedSpecification,
+                        DesignId = consultation.DesignId,
+                        Note = consultation.Note
+                    };
+                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + $"{nameof(Consultation)}", requestModel))
                     {
                         if (response.IsSuccessStatusCode)
                         {
