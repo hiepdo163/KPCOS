@@ -26,13 +26,21 @@ namespace KPCOS.Service.Service
             _serviceBookingRepository = new ServiceBookingRepository();
             _customerRepository = new CustomerRepository();
         }
-        public async Task<IBusinessResult> GetAll()
+        public async Task<IBusinessResult> GetAll(ServiceFeedbackFilterParam request)
         {
             #region Business rule
             #endregion
 
             var serviceFeedbacks = await _unitOfWork.ServiceFeedback.GetAllAsync();
-            if (serviceFeedbacks == null)
+             if (!string.IsNullOrEmpty(request.Feedback))
+            {
+                serviceFeedbacks = serviceFeedbacks.Where(q => q.Feedback.Contains(request.Feedback)).ToList();
+            }
+            if (request.Rating.HasValue)
+            {
+                serviceFeedbacks = serviceFeedbacks.Where(q => q.Rating == request.Rating.Value).ToList();
+            }
+            if (serviceFeedbacks == null || !serviceFeedbacks.Any())
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<ServiceFeedback>());
             }
