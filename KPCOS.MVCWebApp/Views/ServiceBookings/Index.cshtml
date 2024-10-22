@@ -13,6 +13,37 @@
         <a asp-action="Create">Create New</a>
     </div>
 </div>
+<div class="row form">
+    <form method="get" class="d-flex flex-row my-3 gap-2">
+        <div class="form-group col-md-4">
+            <label>Service Type</label>
+            <input type="text" name="serviceType" class="form-control" placeholder="Service type ..." value="@ViewContext.HttpContext.Request.Query["ServiceType"]" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>Customer</label>
+            <select name="CustomerId" class="form-control" asp-items="ViewBag.CustomerId" value="@ViewContext.HttpContext.Request.Query["CustomerId"]"><option value="">None</option></select>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Start Date</label>
+            <input type="datetime-local" name="startDate" class="form-control" placeholder="Start date ..." value="@ViewContext.HttpContext.Request.Query["StartDate"]" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>End Date</label>
+            <input type="datetime-local" name="endDate" class="form-control" placeholder="End date ..." value="@ViewContext.HttpContext.Request.Query["EndDate"]" />
+        </div>
+        <div class="form-group col-md-4">
+            <label>Status</label>
+            <select name="Status" value="@ViewContext.HttpContext.Request.Query["Status"]" class="form-control">
+                <option value="">None</option>
+                <option value="Done">Done</option>
+                <option value="On-Going">On-Going</option>
+                <option value="Canceled">Canceled</option>
+            </select>
+        </div>        
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+        <a asp-action="Index"><div class="btn btn-outline-secondary">Reset</div></a>
+    </form>
+</div>
 <table class="table">
     <thead>
         <tr>

@@ -12,6 +12,7 @@ namespace KPCOS.Service.Interface
     public interface IServiceBookingService
     {
         Task<IBusinessResult> GetAll();
+        Task<IBusinessResult> GetByPage(QueryPagedServiceBooking query);
         Task<IBusinessResult> GetById(string code);
         Task<IBusinessResult> Create(ServiceBookingDTO request);
         Task<IBusinessResult> Update(string id, ServiceBookingDTO request);

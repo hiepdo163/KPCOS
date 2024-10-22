@@ -16,11 +16,11 @@ namespace KPCOS.MVCWebApp.Controllers
     public class ServiceBookingsController : Controller
     {
         // GET: ServiceBookings
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(QueryPagedServiceBooking query)
         {
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking?ServiceType="+ query.ServiceType +"&CustomerId="+ query.CustomerId + "&StartDate="+ query.StartDate +"&EndDate="+query.EndDate + "&Status="+query.Status))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -29,6 +29,7 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
+                            ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "User.Fullname");
                             var data = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
                             return View(data);
                         }

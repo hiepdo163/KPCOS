@@ -14,10 +14,15 @@ namespace KPCOS.APIService.Controllers
     {
         private readonly IServiceBookingService _serviceBookingService = serviceBookingService;
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public async Task<IBusinessResult> GetServiceBookings()
         {
             return await _serviceBookingService.GetAll();
+        }
+        [HttpGet]
+        public async Task<IBusinessResult> GetByPage([FromQuery]QueryPagedServiceBooking query)
+        {
+            return await _serviceBookingService.GetByPage(query);
         }
         [HttpGet("{id}")]
         public async Task<IBusinessResult> GetAServiceBooking([FromRoute] string id)

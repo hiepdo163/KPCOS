@@ -12,6 +12,29 @@
         <a asp-action="Create">Create New</a>
     </div>
 </div>
+<div class="row form">
+    <form method="get" class="d-flex flex-row my-3 gap-2">
+        <div class="form-group col-md-4">
+            <label>Service Booking</label>
+            <select name="ServiceBookingId" class="form-control" asp-items="ViewBag.ServiceBookingId" value="@ViewContext.HttpContext.Request.Query["ServiceBookingId"]"><option value="">None</option></select>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Employee</label>
+            <select name="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeId" value="@ViewContext.HttpContext.Request.Query["EmployeeId"]"><option value="">None</option></select>
+        </div>
+        <div class="form-group col-md-4">
+            <label>Status</label>
+            <select name="Status" value="@ViewContext.HttpContext.Request.Query["Status"]" class="form-control">
+                <option value="">None</option>
+                <option value="Done">Done</option>
+                <option value="On-Going">On-Going</option>
+                <option value="Canceled">Canceled</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+        <a asp-action="Index"><div class="btn btn-outline-secondary">Reset</div></a>
+    </form>
+</div>
 <table class="table">
     <thead>
         <tr>

@@ -15,7 +15,12 @@ namespace KPCOS.APIService.Controllers
         private readonly IEmployeeService _employeeService = employeeService;
 
         [HttpGet]
-        public async Task<IBusinessResult> GetEmployees()
+        public async Task<IBusinessResult> GetEmployees([FromQuery] QueryPagedEmployee query)
+        {
+            return await _employeeService.GetByPage(query);
+        }
+        [HttpGet("get-all")]
+        public async Task<IBusinessResult> GetAll()
         {
             return await _employeeService.GetAll();
         }

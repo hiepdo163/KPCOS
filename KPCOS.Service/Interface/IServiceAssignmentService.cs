@@ -11,7 +11,7 @@ namespace KPCOS.Service.Interface
 {
     public interface IServiceAssignmentService
     {
-        Task<IBusinessResult> GetAll();
+        Task<IBusinessResult> GetAll(QueryPagedServiceAssignment query);
         Task<IBusinessResult> GetById(string code);
         Task<IBusinessResult> Create(ServiceAssignmentDTO serviceAssignment);
         Task<IBusinessResult> Update(string id, ServiceAssignmentDTO serviceAssignment);
