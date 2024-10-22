@@ -1,59 +1,228 @@
 ﻿@model IEnumerable<KPCOS.Data.Models.ServiceFeedback>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Service Feedback List";
 }
 
-<h1>Index</h1>
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">Service Feedback List</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-primary" onclick="addFeedback();">
+            Add Feedback
+        </button>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Rating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Feedback)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreateDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Customer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ServiceBooking)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Feedback)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CustomerId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ServiceBookingId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">Rating</th>
+                    <th class="card-title text-center">Feedback</th>
+                    <th class="card-title text-center">Create Date</th>
+                    <th class="card-title text-center">Customer</th>
+                    <th class="card-title text-center">Service Booking</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblFeedback">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmFeedback", id = "frmFeedback" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Service Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="Rating">Rating</label>
+                            <input type="text" id="Rating" name="Rating" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="Feedback">Feedback</label>
+                            <input type="text" id="Feedback" name="Feedback" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="CreateDate">Create Date</label>
+                            <input type="date" id="CreateDate" name="CreateDate" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="CustomerId">Customer</label>
+                            <select id="CustomerId" name="CustomerId" class="form-control"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="ServiceBookingId">Service Booking</label>
+                            <select id="ServiceBookingId" name="ServiceBookingId" class="form-control"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSaveFeedback" type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadFeedbackData();
+
+            $("#btSaveFeedback").click(function (event) {
+                event.preventDefault();
+                var id = $("#feedbackModal").data("id");
+                var method = id ? "PUT" : "POST";
+                var url = 'https://localhost:7163/api/ServiceFeedback';
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    headers: {
+                        'accept': 'text/plain',
+                        "Content-Type": 'application/json'
+                    },
+                    data: JSON.stringify({
+                        id: id,
+                        rating: $('#Rating').val(),
+                        feedback: $('#Feedback').val(),
+                        createDate: $('#CreateDate').val(),
+                        customerId: $('#CustomerId').val(),
+                        serviceBookingId: $('#ServiceBookingId').val()
+                    }),
+                    success: function (result) {
+                        $('#feedbackModal').modal('hide');
+                        loadFeedbackData();
+                        alert(result.message);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.statusText);
+                    }
+                });
+            });
+        });
+
+        function loadFeedbackData() {
+            alert("Loading feedback data ...");
+
+            $.ajax({
+                url: 'https://localhost:7163/api/ServiceFeedback',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.rating + '</td>';
+                        html += '<td>' + item.feedback + '</td>';
+                        html += '<td>' + item.createDate + '</td>';
+                        html += '<td>' + item.customerId + '</td>';
+                        html += '<td>' + item.serviceBookingId + '</td>';
+                        html += '<td>' +
+                            '<button class="btn btn-success" onclick="editFeedback(`' + item.id + '`)">Update</button>' +
+                            '<button class="btn btn-danger" onclick="deleteFeedback(`' + item.id + '`)">Delete</button>' +
+                            '</td>';
+                        html += '</tr>'
+                    });
+                    $('.tblFeedback').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+
+            $.ajax({
+                url: 'https://localhost:7163/api/Customer',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<option value="' + item.id + '">' + item.id + '</option>'
+                    });
+                    $('#CustomerId').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+
+            $.ajax({
+                url: 'https://localhost:7163/api/ServiceBooking',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<option value="' + item.id + '">' + item.id + '</option>'
+                    });
+                    $('#ServiceBookingId').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function addFeedback() {
+            $("#feedbackModalLabel").html("Add New Feedback");
+            $('#frmFeedback').trigger("reset");
+            $('#feedbackModal').modal('show');
+            $('#feedbackModal').data("id", null);
+        }
+
+        function editFeedback(id) {
+            $("#feedbackModalLabel").html("Update Feedback");
+            $.ajax({
+                url: 'https://localhost:7163/api/ServiceFeedback/' + id,
+                type: "GET",
+                contentType: 'application/json',
+                success: function (response) {
+                    $('#Rating').val(response.data.rating);
+                    $('#Feedback').val(response.data.feedback);
+                    $('#CreateDate').val(response.data.createDate);
+                    $('#CustomerId').val(response.data.customerId);
+                    $('#ServiceBookingId').val(response.data.serviceBookingId);
+
+                    $('#feedbackModal').modal('show');
+                    $('#feedbackModal').data("id", id);
+                },
+                error: function (xhr) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function deleteFeedback(id) {
+            if (confirm("Are you sure you want to delete this feedback?")) {
+                $.ajax({
+                    url: 'https://localhost:7163/api/ServiceFeedback/' + id,
+                    type: "DELETE",
+                    success: function (result) {
+                        loadFeedbackData();
+                        alert(result.message);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+        }
+    </script>
 }
-    </tbody>
-</table>
