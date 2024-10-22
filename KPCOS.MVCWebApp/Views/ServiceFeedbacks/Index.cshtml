@@ -14,6 +14,27 @@
         </button>
     </div>
 </div>
+<div class="row mb-3">
+    <div class="col-md-3">
+        <label for="filterFeedback">Feedback</label>
+        <input type="text" id="filterFeedback" class="form-control" placeholder="Feedback" />
+    </div>
+  
+    <div class="col-md-3">
+        <label for="filterRate">Rating</label>
+        <input type="text" id="filterRate" class="form-control" placeholder="Rating" />
+    </div>
+    <div class="col-md-3">
+        <label for="filterEndDate">End Date</label>
+        <input type="date" id="filterEndDate" class="form-control" />
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-12 text-end">
+        <button type="button" class="btn btn-primary" onclick="loadFeedbackData();">Filter</button>
+        <button type="button" class="btn btn-secondary" onclick="resetFilters();">Reset</button>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-md-12">
@@ -116,12 +137,18 @@
         });
 
         function loadFeedbackData() {
-            alert("Loading feedback data ...");
+            var feedback = $('#filterFeedback').val();
+            var rating = $('#filterRate').val();
+            var queryParams = {
+                feedback: feedback,
+                rating: rating,
+            };
 
             $.ajax({
                 url: 'https://localhost:7163/api/ServiceFeedback',
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
+                data: queryParams,
                 dataType: "json",
                 success: function (result) {
                     var html = '';
@@ -144,6 +171,13 @@
                     alert(xhr.statusText);
                 }
             });
+
+            function resetFilters() {
+                $('#filterFeedback').val('');
+                $('#filterRate').val('');
+
+                loadFeedbackData();
+            }
 
             $.ajax({
                 url: 'https://localhost:7163/api/Customer',
