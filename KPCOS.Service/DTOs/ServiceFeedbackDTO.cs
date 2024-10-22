@@ -8,7 +8,7 @@ namespace KPCOS.Service.DTOs
 {
     public class ServiceFeedbackDTO
     {
-        public string ID {  get; set; }
+        public string? ID {  get; set; }
         public string ServiceBookingId { get; set; }
         public string CustomerId { get; set; }
         public decimal? Rating { get; set; }
