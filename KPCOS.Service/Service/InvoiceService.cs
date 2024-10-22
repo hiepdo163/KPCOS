@@ -15,27 +15,56 @@ namespace KPCOS.Service.Service
 {
     public class InvoiceService : IInvoiceService
     {
-        private readonly ProjectRepository _projectRepository;
+        private readonly ProjectRepository _projectRepository;  
         private readonly UnitOfWork _unitOfWork;
         public InvoiceService()
         {
             _unitOfWork ??= new UnitOfWork();
         }
-        public async Task<IBusinessResult> GetAll()
+        public async Task<IBusinessResult> GetAll(string searchId = null, string paymentMethod = null, string status = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             #region Business rule
             #endregion
 
             var invoices = await _unitOfWork.Invoice.GetAllAsync();
+
             if (invoices == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Invoice>());
             }
-            else
+
+            // Lọc theo Invoice ID
+            if (!string.IsNullOrEmpty(searchId))
             {
-                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, invoices);
+                invoices = invoices.Where(i => i.Id.ToString() == searchId).ToList();
             }
+
+            // Lọc theo PaymentMethod
+            if (!string.IsNullOrEmpty(paymentMethod))
+            {
+                invoices = invoices.Where(i => i.PaymentMethod == paymentMethod).ToList();
+            }
+
+            // Lọc theo Status
+            if (!string.IsNullOrEmpty(status))
+            {
+                invoices = invoices.Where(i => i.Status == status).ToList();
+            }
+
+            // Lọc theo PaymentDate
+            if (startDate.HasValue)
+            {
+                invoices = invoices.Where(i => i.PaymentDate >= startDate.Value).ToList();
+            }
+            if (endDate.HasValue)
+            {
+                invoices = invoices.Where(i => i.PaymentDate <= endDate.Value).ToList();
+            }
+
+            var sortedInvoices = invoices.OrderByDescending(invoice => invoice.PaymentDate).ToList();
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, sortedInvoices);
         }
+
         public async Task<IBusinessResult> GetById(string id)
         {
             var invoice = await _unitOfWork.Invoice.GetByIdAsync(id);
@@ -174,6 +203,26 @@ namespace KPCOS.Service.Service
             catch (Exception ex)
             {
                 return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
+            }
+        }
+
+        public async Task<IBusinessResult> SearchById(string searchId)
+        {
+            if (string.IsNullOrEmpty(searchId))
+            {
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Invoice>());
+            }
+
+            var invoices = await _unitOfWork.Invoice.GetAllAsync();
+            var matchedInvoices = invoices.Where(invoice => invoice.Id.Contains(searchId)).ToList();
+
+            if (matchedInvoices == null || matchedInvoices.Count == 0)
+            {
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Invoice>());
+            }
+            else
+            {
+                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, matchedInvoices);
             }
         }
     }

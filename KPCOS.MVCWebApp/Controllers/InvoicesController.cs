@@ -15,27 +15,58 @@ namespace KPCOS.MVCWebApp.Controllers
     public class InvoicesController : Controller
     {
         // GET: Invoices
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchId, string paymentMethod, string status, DateTime? startDate, DateTime? endDate)
         {
+            List<Invoice> invoices;
+
+            var url = $"{Const.APIEndpoint}{nameof(Invoice)}?";
+
+            if (!string.IsNullOrEmpty(searchId))
+            {
+                url += $"searchId={searchId}&";
+            }
+            if (!string.IsNullOrEmpty(paymentMethod))
+            {
+                url += $"paymentMethod={paymentMethod}&";
+            }
+            if (!string.IsNullOrEmpty(status))
+            {
+                url += $"status={status}&";
+            }
+            if (startDate.HasValue)
+            {
+                url += $"startDate={startDate.Value:yyyy-MM-dd}&";
+            }
+            if (endDate.HasValue)
+            {
+                url += $"endDate={endDate.Value:yyyy-MM-dd}&";
+            }
+
+            // Xóa dấu "&" ở cuối nếu có
+            url = url.TrimEnd('&');
+
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + nameof(Invoice)))
+                using (var response = await httpClient.GetAsync(url))
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         var content = await response.Content.ReadAsStringAsync();
                         var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-
-                        if (result != null && result.Data != null)
-                        {
-                            var data = JsonConvert.DeserializeObject<List<Invoice>>(result.Data.ToString());
-                            return View(data);
-                        }
+                        invoices = result != null && result.Data != null
+                            ? JsonConvert.DeserializeObject<List<Invoice>>(result.Data.ToString())
+                            : new List<Invoice>();
+                    }
+                    else
+                    {
+                        invoices = new List<Invoice>();
                     }
                 }
             }
-            return View(new List<Invoice>());
+
+            return View(invoices);
         }
+
 
         // GET: Invoices/Details/5
         public async Task<IActionResult> Details(string id)
