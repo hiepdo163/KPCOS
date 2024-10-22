@@ -14,10 +14,11 @@ namespace KPCOS.APIService.Controllers
         private readonly IInvoiceService _invoiceService = invoiceService;
 
         [HttpGet]
-        public async Task<IBusinessResult> GetInvoices()
+        public async Task<IBusinessResult> GetInvoices(string searchId = null, string paymentMethod = null, string status = null, DateTime? startDate = null, DateTime? endDate = null)
         {
-            return await _invoiceService.GetAll();
+            return await _invoiceService.GetAll(searchId, paymentMethod, status, startDate, endDate);
         }
+
         [HttpGet("{id}")]
         public async Task<IBusinessResult> GetInvoice([FromRoute] string id)
         {
