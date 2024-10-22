@@ -382,6 +382,7 @@
             $('#customerName').val('');
             $('#DesignerId').val('');
             $('#createdDate').val('');
+            $('#endDate').val('');
             $('#status').val('');
             searchProject();
         }
@@ -413,7 +414,6 @@
                         let row = `<tr>
                                                             <td>${item.id}</td>
                                                             <td>${item.estimatedCost}</td>
-
                                                             <td>${item.actualCost}</td>
                                                             <td>${item.startDate}</td>
                                                             <td>${item.endDate}</td>
