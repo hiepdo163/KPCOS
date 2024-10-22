@@ -2,28 +2,25 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace KPCOS.Data.Models;
 
 public partial class DesignTemplate
 {
-    public DesignTemplate() 
-    {
-       Id = Guid.NewGuid().ToString();
-    }
 
     public string Id { get; set; }
-
+    [Required]
     public string DefaultLocation { get; set; }
-
+    [Required]
     public string DefaultShape { get; set; }
-
+    [Required]
     public string DefaultSize { get; set; }
-
+    [Required]
     public string Description { get; set; }
-
+    [Required]
     public string Image { get; set; }
-
+    [Required]
     public string Name { get; set; }
 
     public decimal? TotalPrice { get; set; }

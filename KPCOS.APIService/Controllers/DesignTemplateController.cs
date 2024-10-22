@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using KPCOS.Service.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -13,19 +14,14 @@ namespace KPCOS.APIService.Controllers
         private readonly IDesignTemplateService _designTemplateService1 = designTemplateService;
 
         [HttpGet]
-        public async Task<IBusinessResult> GetDesignTemplates()
+        public async Task<IBusinessResult> GetDesignTemplates([FromQuery] DesignTemplateFilterDTO request)
         {
-            return await _designTemplateService1.GetAll();
+            return await _designTemplateService1.GetAll(request);
         }
         [HttpGet("{id}")]
         public async Task<IBusinessResult> GetADesignTemplate([FromRoute] string id)
         {
             return await _designTemplateService1.GetById(id);
-        }
-        [HttpGet("filter/{name}")]
-        public async Task<IBusinessResult> GetByName([FromRoute] string name)
-        {
-            return await _designTemplateService1.GetWithCondition(name);
         }
         [HttpPut]
         public async Task<IBusinessResult> PutADesignTemplate(DesignTemplate request)
