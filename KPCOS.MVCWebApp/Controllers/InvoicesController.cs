@@ -42,7 +42,6 @@ namespace KPCOS.MVCWebApp.Controllers
                 url += $"endDate={endDate.Value:yyyy-MM-dd}&";
             }
 
-            // Xóa dấu "&" ở cuối nếu có
             url = url.TrimEnd('&');
 
             using (var httpClient = new HttpClient())
