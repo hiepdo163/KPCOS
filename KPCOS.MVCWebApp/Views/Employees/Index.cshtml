@@ -71,23 +71,24 @@
     </div>
 </div>
 
-<div class="row form-group">
-    <div class="col-md-2">
+<div class="row form-group my-2">
+    <div class="col-md-2 px-1">
+        <label for="1">Employee's name:</label>
         <input type="text" id="name" name="name" class="form-control" placeholder="Employee's name" />
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 px-1">
+        <label for="1">Salary from:</label>
         <input type="number" id="fromSalary" name="fromSalary" class="form-control" placeholder="Salary from ...." />
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 px-1">
+        <label for="1">Salary to:</label>
         <input type="number" id="toSalary" name="toSalary" class="form-control" placeholder="Salary to ...." />
     </div>
-    <div class="col-md-2 text-end">
+    <div class="col-md-2 text-end py-4">
         <button type="button" class="btn btn-outline-primary" onclick="filter();">
             Search
         </button>
-        <button type="button" class="btn btn-outline-secondary" onclick="reset();">
-            Reset
-        </button>
+        <a asp-action="Index"><div class="btn btn-outline-secondary">Reset</div></a>
     </div>
 </div>
 
@@ -170,7 +171,7 @@
                     },
                     data: JSON.stringify({
                         userId: $('#userId').val(),
-                        supervisorId: $('#supervisorId').val(),
+                        supervisorId: $('#supervisorId').val() == "null" ? null : $('#supervisorId').val(),
                         salary: $('#salary').val()
                     }),
                     success: function (result) {
@@ -198,10 +199,11 @@
                     var htmlTbl = '';
                     var htmlPage = '';
                     $.each(result.data, function (key, item) {
+                        var supervisorName = item.supervisor == null ? "" : item.supervisor.user.fullname;
                         htmlTbl += '<tr>';
                         htmlTbl += '<td>' + item.user.fullname + '</td>';
                         htmlTbl += '<td>' + item.salary + '</td>';
-                        htmlTbl += '<td>' + item.supervisorId +'</td>';
+                        htmlTbl += '<td>' + supervisorName +'</td>';
                         htmlTbl += '<td>' +
                                     // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
                                     // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
@@ -246,7 +248,7 @@
                 dataType: "json",
                 success: function (result) {
                     var html = '';
-                    html += '<option value="">None</option>';
+                    html += '<option value="null">None</option>';
                     $.each(result.data, function (key, item) {
                         html += '<option value="' + item.id + '">' + item.user.fullname + '</option>';
                     });
@@ -278,10 +280,11 @@
                     var htmlTbl = '';
                     var htmlPage = '';
                     $.each(result.data, function (key, item) {
+                        var supervisorName = item.supervisor == null ? "" : item.supervisor.user.fullname;
                         htmlTbl += '<tr>';
                         htmlTbl += '<td>' + item.user.fullname + '</td>';
                         htmlTbl += '<td>' + item.salary + '</td>';
-                        htmlTbl += '<td>' + item.supervisorId + '</td>';
+                        htmlTbl += '<td>' + supervisorName + '</td>';
                         htmlTbl += '<td>' +
                             // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
                             // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
@@ -350,10 +353,11 @@
                     var htmlTbl = '';
                     var htmlPage = '';
                     $.each(result.data, function (key, item) {
+                        var supervisorName = item.supervisor == null ? "" : item.supervisor.user.fullname;
                         htmlTbl += '<tr>';
                         htmlTbl += '<td>' + item.user.fullname + '</td>';
                         htmlTbl += '<td>' + item.salary + '</td>';
-                        htmlTbl += '<td>' + item.supervisorId +'</td>';
+                        htmlTbl += '<td>' + supervisorName +'</td>';
                         htmlTbl += '<td>' +
                             // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
                             // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
@@ -386,10 +390,11 @@
                     var htmlTbl = '';
                     var htmlPage = '';
                     $.each(result.data, function (key, item) {
+                        var supervisorName = item.supervisor == null ? "" : item.supervisor.user.fullname;
                         htmlTbl += '<tr>';
                         htmlTbl += '<td>' + item.user.fullname + '</td>';
                         htmlTbl += '<td>' + item.salary + '</td>';
-                        htmlTbl += '<td>' + item.supervisorId +'</td>';
+                        htmlTbl += '<td>' + supervisorName +'</td>';
                         htmlTbl += '<td>' +
                             // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
                             // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
