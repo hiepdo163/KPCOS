@@ -15,9 +15,9 @@ namespace KPCOS.APIService.Controllers
         private readonly IServiceAssignmentService _serviceAssignmentService = serviceAssignmentService;
 
         [HttpGet]
-        public async Task<IBusinessResult> GetServiceAssignments()
+        public async Task<IBusinessResult> GetServiceAssignments([FromQuery]QueryPagedServiceAssignment query)
         {
-            return await _serviceAssignmentService.GetAll();
+            return await _serviceAssignmentService.GetAll(query);
         }
         [HttpGet("{id}")]
         public async Task<IBusinessResult> GetAServiceAssignment([FromRoute] string id)

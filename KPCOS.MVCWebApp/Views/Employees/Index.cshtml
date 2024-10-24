@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Employee</h1>
+@* <h1>Employee</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -47,9 +47,20 @@
 }
     </tbody>
 </table>
+@if (Model.Any())
+{
+    <div class="pagination">
+        @for (int i = 1; i <= Model.Count(); i++)
+        {
+            <span class="@(i == 1 ? "active" : "") mx-4">
+                <a asp-action="Index" asp-route-id="page=@i">@i</a>
+            </span>
+        }
+    </div>
+} *@
 
 
-@*<div class="row">
+<div class="row">
     <div class="col-md-10">
         <h1 class="display-8">Employees</h1>
     </div>
@@ -57,6 +68,26 @@
     <button type="button" class="btn btn-success" onclick="add();">
     Add
     </button>
+    </div>
+</div>
+
+<div class="row form-group">
+    <div class="col-md-2">
+        <input type="text" id="name" name="name" class="form-control" placeholder="Employee's name" />
+    </div>
+    <div class="col-md-2">
+        <input type="number" id="fromSalary" name="fromSalary" class="form-control" placeholder="Salary from ...." />
+    </div>
+    <div class="col-md-2">
+        <input type="number" id="toSalary" name="toSalary" class="form-control" placeholder="Salary to ...." />
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-outline-primary" onclick="filter();">
+            Search
+        </button>
+        <button type="button" class="btn btn-outline-secondary" onclick="reset();">
+            Reset
+        </button>
     </div>
 </div>
 
@@ -73,7 +104,13 @@
             </thead>
             <tbody class="tblEmployees">
             </tbody>
-        </table>
+        </table>      
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">        
+        <div class="pagination pgEmployees">
+        </div>
     </div>
 </div>
 
@@ -158,22 +195,28 @@
                 contentType: 'application/json; charset=utf-8',
                 dataType: "json",
                 success: function (result) {
-                    var html = '';
+                    var htmlTbl = '';
+                    var htmlPage = '';
                     $.each(result.data, function (key, item) {
-                        html += '<tr>';
-                        html += '<td>' + item.userId + '</td>';
-                        html += '<td>' + item.salary + '</td>';
-                        html += '<td>' + item.supervisorId + '</td>';
-                        html += '<td>' +
+                        htmlTbl += '<tr>';
+                        htmlTbl += '<td>' + item.user.fullname + '</td>';
+                        htmlTbl += '<td>' + item.salary + '</td>';
+                        htmlTbl += '<td>' + item.supervisorId +'</td>';
+                        htmlTbl += '<td>' +
                                     // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
                                     // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
                                     '<button type="button" class="btn btn-warning" onclick="edit(`'+ item.id +'`);">Edit</button> |' +
                                     '<button type="button" class="btn btn-danger" onclick="remove(`'+ item.id +'`);">Delete</button>' +
                                 '</td >';
-                        html += '</tr>'
+                        htmlTbl += '</tr>'
                     });
-                    $('.tblEmployees').html(html);
-
+                    // $.each(result.data.count, function (key) {
+                    //     htmlPage += '<span class="mx-4">';
+                    //     htmlPage += '<button type="button" class="btn btn-primary" onclick="paging(`' + (key + 1) + '`);">' + (key + 1) + '</button>';
+                    //     htmlPage += '</tr>'
+                    // });
+                    $('.pgEmployees').html(htmlPage);
+                    $('.tblEmployees').html(htmlTbl);
                 },
                 error: function (xhr, error) {
                     alert(xhr.statusText);
@@ -197,7 +240,7 @@
                 }
             });
             $.ajax({
-                url: 'https://localhost:7163/api/Employee',
+                url: 'https://localhost:7163/api/Employee/get-all',
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
                 dataType: "json",
@@ -220,6 +263,45 @@
             $('#frmEmployee').trigger("reset");
             $('#employeeModal').modal('show');
             $('#employeeModal').data("id", null);
+        }
+
+        function reset() {
+            $('#name').val("");
+            $('#fromSalary').val(0);
+            $('#toSalary').val(0);
+            $.ajax({
+                url: 'https://localhost:7163/api/Employee',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var htmlTbl = '';
+                    var htmlPage = '';
+                    $.each(result.data, function (key, item) {
+                        htmlTbl += '<tr>';
+                        htmlTbl += '<td>' + item.user.fullname + '</td>';
+                        htmlTbl += '<td>' + item.salary + '</td>';
+                        htmlTbl += '<td>' + item.supervisorId + '</td>';
+                        htmlTbl += '<td>' +
+                            // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
+                            // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
+                            '<button type="button" class="btn btn-warning" onclick="edit(`' + item.id + '`);">Edit</button> |' +
+                            '<button type="button" class="btn btn-danger" onclick="remove(`' + item.id + '`);">Delete</button>' +
+                            '</td >';
+                        htmlTbl += '</tr>'
+                    });
+                    $.each(result.data.size, function (key) {
+                        htmlPage += '<span class="mx-4">';
+                        htmlPage += 'button type="button" class="btn btn-primary" onclick="paging(`' + (key + 1) + '`);">' + (key + 1) + '</button>';
+                        htmlPage += '</tr>'
+                    });
+                    $('.pgEmployees').html(htmlPage);
+                    $('.tblEmployees').html(htmlTbl);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
         }
 
         function edit(id) {
@@ -257,5 +339,77 @@
                 });
             }
         }
+        function paging(page) {
+            $.ajax({
+                ToSalary: $('#toSalary').val(),
+                url: 'https://localhost:7163/api/Employee?Name=' + $('#name').val() + '&FromSalary=' + $('#fromSalary').val() + '&ToSalary=' + $('#toSalary').val() + '&PageNumber=' + page,
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var htmlTbl = '';
+                    var htmlPage = '';
+                    $.each(result.data, function (key, item) {
+                        htmlTbl += '<tr>';
+                        htmlTbl += '<td>' + item.user.fullname + '</td>';
+                        htmlTbl += '<td>' + item.salary + '</td>';
+                        htmlTbl += '<td>' + item.supervisorId +'</td>';
+                        htmlTbl += '<td>' +
+                            // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
+                            // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
+                            '<button type="button" class="btn btn-warning" onclick="edit(`' + item.id + '`);">Edit</button> |' +
+                            '<button type="button" class="btn btn-danger" onclick="remove(`' + item.id + '`);">Delete</button>' +
+                            '</td >';
+                        htmlTbl += '</tr>'
+                    });
+                    $.each(result.data.count, function (key) {
+                        htmlPage += '<span class="mx-4">';
+                        htmlPage += 'button type="button" class="btn btn-primary" onclick="paging(`' + (key + 1) + '`);">' + (key + 1) + '</button>';
+                        htmlPage += '</tr>'
+                    });
+                    $('.pgEmployees').html(htmlPage);
+                    $('.tblEmployees').html(htmlTbl);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+        function filter() {
+            $.ajax({
+                ToSalary: $('#toSalary').val(),
+                url: 'https://localhost:7163/api/Employee?Name=' + $('#name').val() + '&FromSalary=' + $('#fromSalary').val() + '&ToSalary=' + $('#toSalary').val() + '&PageNumber=1',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                dataType: "json",
+                success: function (result) {
+                    var htmlTbl = '';
+                    var htmlPage = '';
+                    $.each(result.data, function (key, item) {
+                        htmlTbl += '<tr>';
+                        htmlTbl += '<td>' + item.user.fullname + '</td>';
+                        htmlTbl += '<td>' + item.salary + '</td>';
+                        htmlTbl += '<td>' + item.supervisorId +'</td>';
+                        htmlTbl += '<td>' +
+                            // '<a asp-action="Edit" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-warning">Edit</button></a>' +
+                            // '<a asp-action="Delete" asp-route-id="'+ item.id +'"><button type="button" class="btn btn-danger">Delete</button></a>' +
+                            '<button type="button" class="btn btn-warning" onclick="edit(`' + item.id + '`);">Edit</button> |' +
+                            '<button type="button" class="btn btn-danger" onclick="remove(`' + item.id + '`);">Delete</button>' +
+                            '</td >';
+                        htmlTbl += '</tr>'
+                    });
+                    $.each(result.data.count, function (key) {
+                        htmlPage += '<span class="mx-4">';
+                        htmlPage += 'button type="button" class="btn btn-primary" onclick="paging(`' + (key + 1) + '`);">' + (key + 1) + '</button>';
+                        htmlPage += '</tr>'
+                    });
+                    $('.pgEmployees').html(htmlPage);
+                    $('.tblEmployees').html(htmlTbl);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
     </script>
-} *@
+}

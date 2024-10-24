@@ -15,9 +15,9 @@ namespace KPCOS.APIService.Controllers
         private readonly IServiceExecutionService _serviceExecutionService = serviceExecutionService;
 
         [HttpGet]
-        public async Task<IBusinessResult> GetServiceExecutions()
+        public async Task<IBusinessResult> GetServiceExecutions([FromQuery]QueryPagedServiceExecution query)
         {
-            return await _serviceExecutionService.GetAll();
+            return await _serviceExecutionService.GetAll(query);
         }
         [HttpGet("{id}")]
         public async Task<IBusinessResult> GetAServiceExecution([FromRoute] string id)

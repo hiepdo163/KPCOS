@@ -11,6 +11,7 @@ namespace KPCOS.Service.Interface
 {
     public interface IEmployeeService
     {
+        Task<IBusinessResult> GetByPage(QueryPagedEmployee query);
         Task<IBusinessResult> GetAll();
         Task<IBusinessResult> GetById(string code);
         Task<IBusinessResult> Create(EmployeeDTO employee);

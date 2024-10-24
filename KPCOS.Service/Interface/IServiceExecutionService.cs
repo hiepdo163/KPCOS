@@ -11,7 +11,7 @@ namespace KPCOS.Service.Interface
 {
     public interface IServiceExecutionService
     {
-        Task<IBusinessResult> GetAll();
+        Task<IBusinessResult> GetAll(QueryPagedServiceExecution query);
         Task<IBusinessResult> GetById(string id);
         Task<IBusinessResult> Create(ServiceExecutionDTO serviceExecution);
         Task<IBusinessResult> Update(string id, ServiceExecutionDTO serviceExecution);

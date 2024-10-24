@@ -18,25 +18,25 @@ namespace KPCOS.MVCWebApp.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            using (var httpClient = new HttpClient())
-            {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee"))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+            //using (var httpClient = new HttpClient())
+            //{
+            //    using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee"))
+            //    {
+            //        if (response.IsSuccessStatusCode)
+            //        {
+            //            var content = await response.Content.ReadAsStringAsync();
+            //            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
 
-                        if (result != null && result.Data != null)
-                        {
-                            var data = JsonConvert.DeserializeObject<List<Employee>>(result.Data.ToString());
-                            return View(data);
-                        }
-                    }
-                }
-            }
-            return View(new List<Employee>());
-            //return View();
+            //            if (result != null && result.Data != null)
+            //            {
+            //                var data = JsonConvert.DeserializeObject<List<Employee>>(result.Data.ToString());
+            //                return View(data);
+            //            }
+            //        }
+            //    }
+            //}
+            //return View(new List<Employee>());
+            return View();
         }
 
         // GET: Employees/Details/5

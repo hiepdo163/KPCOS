@@ -19,12 +19,24 @@ namespace KPCOS.Service.Service
         {
             _unitOfWork ??= new UnitOfWork();
         }
-        public async Task<IBusinessResult> GetAll()
+        public async Task<IBusinessResult> GetAll(QueryPagedServiceExecution query)
         {
             #region Business rule
             #endregion
 
             var serviceExecutions = await _unitOfWork.ServiceExecution.GetServiceExecutionsAsync();
+            if (!string.IsNullOrEmpty(query.ServiceBookingId))
+            {
+                serviceExecutions = serviceExecutions.Where(e => e.ServiceBookingId == query.ServiceBookingId).ToList();
+            }
+            if (!string.IsNullOrEmpty(query.EmployeeId))
+            {
+                serviceExecutions = serviceExecutions.Where(e => e.EmployeeId == query.EmployeeId).ToList();
+            }
+            if (!string.IsNullOrEmpty(query.Status))
+            {
+                serviceExecutions = serviceExecutions.Where(e => e.Status == query.Status).ToList();
+            }
             if (serviceExecutions == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<ServiceExecution>());

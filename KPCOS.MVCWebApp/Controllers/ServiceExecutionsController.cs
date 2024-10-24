@@ -16,11 +16,11 @@ namespace KPCOS.MVCWebApp.Controllers
     public class ServiceExecutionsController : Controller
     {      
         // GET: ServiceExecutions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(QueryPagedServiceExecution query)
         {
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceExecution"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceExecution?ServiceBookingId="+ query.ServiceBookingId +"&EmployeeId="+ query.EmployeeId +"&Status="+ query.Status))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -30,6 +30,8 @@ namespace KPCOS.MVCWebApp.Controllers
                         if (result != null && result.Data != null)
                         {
                             var data = JsonConvert.DeserializeObject<List<ServiceExecution>>(result.Data.ToString());
+                            ViewData["ServiceBookingId"] = new SelectList(await this.GetServiceBookings(), "Id", "ServiceType");
+                            ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "User.Fullname");
                             return View(data);
                         }
                     }
@@ -250,7 +252,7 @@ namespace KPCOS.MVCWebApp.Controllers
             var bookings = new List<ServiceBooking>();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking/get-all"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -272,7 +274,7 @@ namespace KPCOS.MVCWebApp.Controllers
             var employees = new List<Employee>();
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee"))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "Employee/get-all"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
