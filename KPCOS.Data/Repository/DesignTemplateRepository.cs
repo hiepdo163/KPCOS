@@ -14,5 +14,6 @@ namespace KPCOS.Data.Repository
         public DesignTemplateRepository() { }
 
         public DesignTemplateRepository(FA24_SE1717_PRN231_G4_KPCOSContext context) => _context = context;
+        public IQueryable<DesignTemplate> GetQuery() => _context.DesignTemplates.AsQueryable();
     }
 }

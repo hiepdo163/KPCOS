@@ -1,215 +1,288 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using KPCOS.Data.Models;
 using KPCOS.Common;
+using KPCOS.Service.Base;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.Design;
 
 namespace KPCOS.MVCWebApp.Controllers
 {
     public class ProjectsController : Controller
     {
-        private readonly FA24_SE1717_PRN231_G4_KPCOSContext _context;
-        
-        public ProjectsController(FA24_SE1717_PRN231_G4_KPCOSContext context)
+        private readonly string _apiEndpoint = Const.APIEndpoint + "Project/";
+        private readonly string _apiEmployeeEndpoint = Const.APIEndpoint + "Employee/";
+        private readonly string _apiCustomerEndpoint = Const.APIEndpoint + "Customer/";
+
+        private async Task<IEnumerable<Employee>> GetConstructionStaffAsync()
         {
-            _context = context;
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.GetAsync(_apiEmployeeEndpoint);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    if (result?.Data != null)
+                    {
+                        return JsonConvert.DeserializeObject<IEnumerable<Employee>>(result.Data.ToString());
+                    }
+                }
+            }
+            return Enumerable.Empty<Employee>();
         }
+
+        private async Task<IEnumerable<Customer>> GetCustomersAsync()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.GetAsync(_apiCustomerEndpoint);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    if (result?.Data != null)
+                    {
+                        return JsonConvert.DeserializeObject<IEnumerable<Customer>>(result.Data.ToString());
+                    }
+                }
+            }
+            return Enumerable.Empty<Customer>();
+        }
+
+        private async Task<IEnumerable<Employee>> GetDesignersAsync()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.GetAsync(_apiEmployeeEndpoint);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    if (result?.Data != null)
+                    {
+                        return JsonConvert.DeserializeObject<IEnumerable<Employee>>(result.Data.ToString());
+                    }
+                }
+            }
+            return Enumerable.Empty<Employee>();
+        }
+
 
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            var fA24_SE1717_PRN231_G4_KPCOSContext = _context.Projects.Include(p => p.ConstructionStaff).Include(p => p.Customer).Include(p => p.Designer);
-            return View(await fA24_SE1717_PRN231_G4_KPCOSContext.ToListAsync());
+            List<Project> projects = new();
+            try
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    var response = await httpClient.GetAsync(_apiEndpoint);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+
+                        if (result?.Data != null)
+                        {
+                            projects = JsonConvert.DeserializeObject<List<Project>>(result.Data.ToString());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error: {ex.Message}");
+                return View("Error");
+            }
+
+            Debug.WriteLine($"Number of projects: {projects.Count}");
+            return View(projects);
         }
 
-        // GET: Projects/Details/5
-        public async Task<IActionResult> Details(string id)
+
+        // GET: Projects/Details/{id}
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
-            {
+            if (id == Guid.Empty)
                 return NotFound();
+
+            Project project = null;
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.GetAsync($"{_apiEndpoint}{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    if (result?.Data != null)
+                    {
+                        project = JsonConvert.DeserializeObject<Project>(result.Data.ToString());
+                    }
+                }
             }
 
-            var project = await _context.Projects
-                .Include(p => p.ConstructionStaff.User)
-                .Include(p => p.Customer.User)
-                .Include(p => p.Designer.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
+            if (project == null) return NotFound();
             return View(project);
         }
 
         // GET: Projects/Create
-        // GET: Projects/Create
-        // GET: Projects/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ConstructionStaffId"] = new SelectList(
-                _context.Employees.Include(e => e.User).Select(e => new { e.Id, FullName = e.User.Fullname }),
-                "Id",
-                "FullName"
-            );
+            var constructionStaffList = (await GetConstructionStaffAsync()).Select(s => new SelectListItem
+            {
+                Value = s.Id.ToString(),
+                Text = s.User.Fullname,
+            }).ToList();
+            ViewBag.ConstructionStaffId = new SelectList(constructionStaffList, "Value", "Text");
 
-            ViewData["DesignerId"] = new SelectList(
-                _context.Employees.Include(e => e.User).Select(e => new { e.Id, FullName = e.User.Fullname }),
-                "Id",
-                "FullName"
-            );
+            var customerList = (await GetCustomersAsync()).Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.User.Fullname,
+            }).ToList();
+            ViewBag.CustomerId = new SelectList(customerList, "Value", "Text");
 
-            ViewData["CustomerId"] = new SelectList(
-                _context.Customers.Include(c => c.User).Select(c => new { c.Id, FullName = c.User.Fullname }),
-                "Id",
-                "FullName"
-            );
+            var designerList = (await GetDesignersAsync()).Select(d => new SelectListItem
+            {
+                Value = d.Id.ToString(),
+                Text = d.User.Fullname,
+            }).ToList();
+            ViewBag.DesignerId = new SelectList(designerList, "Value", "Text");
 
             return View();
         }
 
 
-
         // POST: Projects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ActualCost,ConstructionStaffId,CustomerId,DesignerId,EndDate,EstimatedCost,StartDate,Status")] Project project)
+        public async Task<IActionResult> Create([Bind("ActualCost,ConstructionStaffId,CustomerId,DesignerId,StartDate,EndDate,EstimatedCost,Status")] Project project)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(project);
+
+            bool isSuccess = false;
+            using (var httpClient = new HttpClient())
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await httpClient.PostAsJsonAsync(_apiEndpoint, project);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    isSuccess = result?.Status == Const.SUCCESS_CREATE_CODE;
+                }
             }
-            ViewData["ConstructionStaffId"] = new SelectList(_context.Employees, "Id", "Id", project.ConstructionStaffId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Id", project.CustomerId);
-            ViewData["DesignerId"] = new SelectList(_context.Employees, "Id", "Id", project.DesignerId);
+
+            return isSuccess ? RedirectToAction(nameof(Index)) : View(project);
+        }
+
+        // GET: Projects/Edit/{id}
+        public async Task<IActionResult> Edit(String id)
+        {
+            if (id == String.Empty) return NotFound();
+
+            Project project = null;
+
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.GetAsync($"{_apiEndpoint}{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    if (result?.Data != null)
+                    {
+                        project = JsonConvert.DeserializeObject<Project>(result.Data.ToString());
+                    }
+                }
+            }
+
+            if (project == null) return NotFound();
+
+            var tmp1 = await GetConstructionStaffAsync();
+            var tmp2 = await GetCustomersAsync();
+            var tmp3 = await GetDesignersAsync();
+
+            ViewBag.ConstructionStaffId = new SelectList(tmp1, "Id", "User.Fullname");
+            ViewBag.CustomerId = new SelectList(tmp2, "Id", "User.Fullname");
+            ViewBag.DesignerId = new SelectList(tmp3, "Id", "User.Fullname");
+
             return View(project);
         }
 
-        // GET: Projects/Edit/5
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-            ViewData["ConstructionStaffId"] = new SelectList(
-                _context.Employees.Include(e => e.User).Select(e => new { e.Id, FullName = e.User.Fullname }),
-                "Id",
-                "FullName"
-            );
-
-            ViewData["DesignerId"] = new SelectList(
-                _context.Employees.Include(e => e.User).Select(e => new { e.Id, FullName = e.User.Fullname }),
-                "Id",
-                "FullName"
-            );
-
-            ViewData["CustomerId"] = new SelectList(
-                _context.Customers.Include(c => c.User).Select(c => new { c.Id, FullName = c.User.Fullname }),
-                "Id",
-                "FullName"
-            );
-            return View(project);
-        }
-
-        // POST: Projects/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Projects/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,ActualCost,ConstructionStaffId,CustomerId,DesignerId,EndDate,EstimatedCost,StartDate,Status")] Project project)
+        public async Task<IActionResult> Edit(String id, [Bind("Id,ActualCost,ConstructionStaffId,CustomerId,DesignerId,StartDate,EndDate,EstimatedCost,Status")] Project project)
         {
-            if (id != project.Id)
+            if (id != project.Id) return NotFound();
+
+            if (!ModelState.IsValid) return View(project);
+
+            bool isSuccess = false;
+            using (var httpClient = new HttpClient())
             {
-                return NotFound();
+                var response = await httpClient.PutAsJsonAsync(_apiEndpoint, project);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    isSuccess = result?.Status == Const.SUCCESS_UPDATE_CODE;
+                }
             }
 
-            if (ModelState.IsValid)
+            return isSuccess ? RedirectToAction(nameof(Index)) : View(project);
+        }
+
+        // GET: Projects/Delete/{id}
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            if (id == Guid.Empty) return NotFound();
+
+            Project project = null;
+            using (var httpClient = new HttpClient())
             {
-                try
+                var response = await httpClient.GetAsync($"{_apiEndpoint}{id}");
+                if (response.IsSuccessStatusCode)
                 {
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProjectExists(project.Id))
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    if (result?.Data != null)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        project = JsonConvert.DeserializeObject<Project>(result.Data.ToString());
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["ConstructionStaffId"] = new SelectList(_context.Employees, "Id", "Id", project.ConstructionStaffId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Name", project.CustomerId);
-            ViewData["DesignerId"] = new SelectList(_context.Employees, "Id", "Id", project.DesignerId);
+
+            if (project == null) return NotFound();
             return View(project);
         }
 
-        // GET: Projects/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var project = await _context.Projects
-                .Include(p => p.ConstructionStaff)
-                .Include(p => p.Customer)
-                .Include(p => p.Designer)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            return View(project);
-        }
-
-        // POST: Projects/Delete/5
+        // POST: Projects/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var feedbacks = await _context.Feedbacks.Where(f => f.ProjectId == id).ToListAsync();
-            if (feedbacks != null)
+            bool isDeleted = false;
+            using (var httpClient = new HttpClient())
             {
-                _context.Feedbacks.RemoveRange(feedbacks);
-                var project = await _context.Projects.FindAsync(id);
-                if (project != null)
+                var response = await httpClient.DeleteAsync($"{_apiEndpoint}{id}");
+                if (response.IsSuccessStatusCode)
                 {
-                    _context.Projects.Remove(project);
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                    isDeleted = result?.Status == Const.SUCCESS_DELETE_CODE;
                 }
             }
 
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProjectExists(string id)
-        {
-            return _context.Projects.Any(e => e.Id == id);
+            return isDeleted ? RedirectToAction(nameof(Index)) : View("Delete", id);
         }
     }
 }

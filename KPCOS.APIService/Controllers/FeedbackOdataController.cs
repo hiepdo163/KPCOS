@@ -1,4 +1,5 @@
 ﻿using KPCOS.Data.Models;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -20,18 +21,17 @@ namespace KPCOS.APIService.Controllers
         // GET: api/Feedback
         [HttpGet]
         [EnableQuery]
-        public async Task<IQueryable<Feedback>> GetFeedbacks()
+        public async Task<IQueryable<FeedbackDTO>> GetFeedbacks()
         {
-            
             var businessResult = await _feedbackService.GetAll();
 
-            if (businessResult.Data is IEnumerable<Feedback> feedbacks)
+            if (businessResult.Data is IEnumerable<FeedbackDTO> feedbackDtos)
             {
-                return feedbacks.AsQueryable();
+                return feedbackDtos.AsQueryable();
             }
 
-            //neu sai format, return thanh enum
-            return Enumerable.Empty<Feedback>().AsQueryable();
+            // Return an empty IQueryable if no data is found
+            return Enumerable.Empty<FeedbackDTO>().AsQueryable();
         }
 
     }

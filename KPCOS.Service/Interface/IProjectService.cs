@@ -1,5 +1,6 @@
 ﻿using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,10 @@ namespace KPCOS.Service.Interface
     {
         Task<IBusinessResult> GetAll();
         Task<IBusinessResult> GetById(string code);
+        Task<IBusinessResult> GetProjectsAsync(string customerName, string? designerId, DateTime? startDate,DateTime? endDate, string? status);
         //Task<IBusinessResult> Create(Project project);
         //Task<IBusinessResult> Update(Project project);
-        Task<IBusinessResult> Save(ProjectDTO project);
+        Task<IBusinessResult> Save(Project project);
         Task<IBusinessResult> DeleteById(string Id);
     }
 }

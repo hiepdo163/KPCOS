@@ -24,7 +24,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var consultations = await _unitOfWork.Consultation.GetAllAsync();
+            var consultations = await _unitOfWork.Consultation.GetAllWithDesign();
             if (consultations == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Consultation>());

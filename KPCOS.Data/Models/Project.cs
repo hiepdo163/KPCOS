@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace KPCOS.Data.Models;
 
@@ -11,23 +12,31 @@ public partial class Project
     {
         Id = Guid.NewGuid().ToString();
     }
-  
+
     public String Id { get; set; }
 
+    [Required(ErrorMessage = "Actual Cost is required.")]
+    [Range(0, double.MaxValue, ErrorMessage = "Actual Cost must be a positive value.")]
     public decimal? ActualCost { get; set; }
 
     public string ConstructionStaffId { get; set; }
+    [Required(ErrorMessage = "Customer is required.")]
 
     public string CustomerId { get; set; }
+    [Required(ErrorMessage = "Customer is required.")]
 
     public string DesignerId { get; set; }
-
+    [Required(ErrorMessage = "End Date is required.")]
     public DateTime? EndDate { get; set; }
 
+    [Required(ErrorMessage = "EstimateCost is required.")]
+    [Range(0, double.MaxValue, ErrorMessage = "EstimateCost must be a positive value.")]
     public decimal? EstimatedCost { get; set; }
 
+    [Required(ErrorMessage = "Start Date is required.")]
     public DateTime? StartDate { get; set; }
 
+    [Required(ErrorMessage = "Status is required.")]
     public string Status { get; set; }
 
     public virtual Employee ConstructionStaff { get; set; }

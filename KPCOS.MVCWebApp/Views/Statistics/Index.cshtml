@@ -1,0 +1,127 @@
+﻿@model StatisticsViewModel
+
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<h1>Statistics</h1>
+
+<canvas id="invoiceChart" width="400" height="200"></canvas>
+<canvas id="consultationChart" width="400" height="200"></canvas>
+<canvas id="customerChart" width="400" height="200"></canvas>
+<canvas id="designChart" width="400" height="200"></canvas>
+<canvas id="designConceptChart" width="400" height="200"></canvas>
+<canvas id="designTemplateChart" width="400" height="200"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const invoiceData = {
+            labels: @Html.Raw(Json.Serialize(Model.Invoices.Select(i => i.PaymentDate?.ToString("yyyy-MM-dd")))),
+            datasets: [{
+                label: 'Total Amount',
+                data: @Html.Raw(Json.Serialize(Model.Invoices.Select(i => i.TotalAmount ?? 0))),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const consultationData = {
+            labels: @Html.Raw(Json.Serialize(Model.Consultations.Select(c => c.AdjustedSpecification))),
+            datasets: [{
+                label: 'Consultation Count',
+                data: @Html.Raw(Json.Serialize(Model.Consultations.Select(c => 1))),
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const customerData = {
+            labels: @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.MembershipStatus))),
+            datasets: [{
+                label: 'Loyalty Points',
+                data: @Html.Raw(Json.Serialize(Model.Customers.Select(c => c.LoyaltyPoint ?? 0))),
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const designData = {
+            labels: @Html.Raw(Json.Serialize(Model.Designs.Select(d => d.DesignType))), // Loại thiết kế
+            datasets: [{
+                label: 'Design Count',
+                data: @Html.Raw(Json.Serialize(Model.Designs.Select(d => 1))), // Số lượng thiết kế
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const designConceptData = {
+            labels: @Html.Raw(Json.Serialize(Model.DesignConcepts.Select(dc => dc.Name))), // Tên khái niệm thiết kế
+            datasets: [{
+                label: 'Design Concept Count',
+                data: @Html.Raw(Json.Serialize(Model.DesignConcepts.Select(dc => 1))), // Số lượng khái niệm thiết kế
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const designTemplateData = {
+            labels: @Html.Raw(Json.Serialize(Model.DesignTemplates.Select(dt => dt.Name))), // Tên mẫu thiết kế
+            datasets: [{
+                label: 'Design Template Count',
+                data: @Html.Raw(Json.Serialize(Model.DesignTemplates.Select(dt => 1))), // Số lượng mẫu thiết kế
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const invoiceCtx = document.getElementById('invoiceChart').getContext('2d');
+        new Chart(invoiceCtx, {
+            type: 'line',  
+            data: invoiceData,
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+
+        const consultationCtx = document.getElementById('consultationChart').getContext('2d');
+        new Chart(consultationCtx, {
+            type: 'line',  
+            data: consultationData,
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+
+        const customerCtx = document.getElementById('customerChart').getContext('2d');
+        new Chart(customerCtx, {
+            type: 'line',  
+            data: customerData,
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+
+        const designCtx = document.getElementById('designChart').getContext('2d');
+        new Chart(designCtx, {
+            type: 'line', 
+            data: designData,
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+
+        const designConceptCtx = document.getElementById('designConceptChart').getContext('2d');
+        new Chart(designConceptCtx, {
+            type: 'line',  
+            data: designConceptData,
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+
+        const designTemplateCtx = document.getElementById('designTemplateChart').getContext('2d');
+        new Chart(designTemplateCtx, {
+            type: 'line', 
+            data: designTemplateData,
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+    </script>
+}

@@ -1,9 +1,6 @@
-﻿using KPCOS.Data.Models;
-using KPCOS.Service.Base;
+﻿using KPCOS.Service.Base;
 using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
-using KPCOS.Service.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KPCOS.APIService.Controllers

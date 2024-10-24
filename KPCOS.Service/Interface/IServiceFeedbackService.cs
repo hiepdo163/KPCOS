@@ -11,7 +11,7 @@ namespace KPCOS.Service.Interface
 {
     public interface IServiceFeedbackService
     {
-        Task<IBusinessResult> GetAll();
+        Task<IBusinessResult> GetAll(ServiceFeedbackFilterParam request);
         Task<IBusinessResult> GetById(string id);
         Task<IBusinessResult> Create(ServiceFeedbackDTO serviceFeedback);
         Task<IBusinessResult> Update(ServiceFeedbackDTO serviceFeedback);

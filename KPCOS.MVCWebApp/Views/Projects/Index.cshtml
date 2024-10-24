@@ -6,6 +6,7 @@
 
 <h1>Project Index</h1>
 
+
 <div class="row">
     <div class="col-md-10">
         <h3 class="display-8">Project List</h3>
@@ -13,11 +14,45 @@
     <div class="col-md-2 text-end">
         <button type="button" id="addProjectButton" class="btn btn-primary" onclick="addProject();">
             Add Project
-        </button>     
-        
+        </button>
+
     </div>
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <input type="text" id="customerName" class="form-control" placeholder="Search by customer name" onkeyup="searchProject()" />
+        </div>
+        <div class="col-md-3">
+            <select id="DesignerId" class="form-control" onchange="searchProject()">
+                <option value="">Select Designer</option>
+            </select>
+        </div>
+
+
+        <div class="col-md-2">
+            <select id="status" class="form-control" onchange="searchProject()">
+                <option value="">Select Status</option>
+                <option value="Planed">Planed</option>
+                <option value="Working">Working</option>
+                <option value="Done">Done</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-primary" onclick="resetFilters()">Reset</button>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" class="form-control" onchange="searchProject()" />
+        </div>
+        <div class="col-md-2">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" class="form-control" onchange="searchProject()" />
+        </div>
+    </div>
+
     <p>
-        <a asp-action="Create">Create New</a>
+        <a class="btn btn-primary" asp-action="Create">Create New</a>
     </p>
 </div>
 
@@ -26,15 +61,18 @@
         <table class="table table-striped table-bordered table-hover">
             <thead>
                 <tr class="card-header">
-                    <th class="card-title text-center">Actual Cost</th>
-                    <th class="card-title text-center">End Date</th>
+                    <th class="card-title text-center">ID</th>
                     <th class="card-title text-center">Estimated Cost</th>
+
+                    <th class="card-title text-center">Actual Cost</th>
                     <th class="card-title text-center">Start Date</th>
+
+                    <th class="card-title text-center">End Date</th>
                     <th class="card-title text-center">Status</th>
                     <th class="card-title text-center">Construction Staff</th>
                     <th class="card-title text-center">Customer</th>
                     <th class="card-title text-center">Designer</th>
-                    @* <th class="card-title text-center"></th> *@
+                    <th class="card-title text-center">Function</th> 
                 </tr>
             </thead>
             <tbody class="tblProject">
@@ -42,17 +80,22 @@
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.ActualCost)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.EndDate)
+                            @Html.DisplayFor(modelItem => item.Id)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.EstimatedCost)
                         </td>
                         <td>
+                            @Html.DisplayFor(modelItem => item.ActualCost)
+                        </td>
+                        <td>
                             @Html.DisplayFor(modelItem => item.StartDate)
                         </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EndDate)
+                        </td>
+
+
                         <td>
                             @Html.DisplayFor(modelItem => item.Status)
                         </td>
@@ -64,6 +107,11 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Designer.User.Fullname)
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="btn btn-sm btn-secondary" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </td>
                     </tr>
                 }
@@ -87,18 +135,22 @@
                         <div class="col-md-4">
                             <label for="ActualCost">Actual Cost</label>
                             <input type="text" id="ActualCost" name="ActualCost" class="form-control" />
+                            <span id="ActualCost-error" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label for="EstimatedCost">Estimated Cost</label>
                             <input type="text" id="EstimatedCost" name="EstimatedCost" class="form-control" />
+                            <span id="ActualCost-error" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label for="StartDate">Start Date</label>
                             <input type="datetime-local" id="StartDate" name="StartDate" class="form-control" />
+                            <span id="ActualCost-error" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label for="EndDate">End Date</label>
                             <input type="datetime-local" id="EndDate" name="EndDate" class="form-control" />
+                            <span id="ActualCost-error" class="text-danger"></span>
                         </div>
                         <div class="col-md-4">
                             <label for="Status">Status</label>
@@ -107,17 +159,11 @@
                                 <option value="Working">Working</option>
                                 <option value="Done">Done</option>
                             </select>
-                        </div>           
+                        </div>
                         <div class="col-md-4">
                             <label for="ConstructionStaffId">Construction Staff</label>
                             <select id="ConstructionStaffId" name="ConstructionStaffId" class="form-control">
                                 <option value="">Select Construction Staff</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="CustomerId">Customer</label>
-                            <select id="CustomerId" name="CustomerId" class="form-control">
-                                <option value="">Select Customer</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -126,6 +172,13 @@
                                 <option value="">Select Designer</option>
                             </select>
                         </div>
+                        <div class="col-md-4">
+                            <label for="CustomerId">Customer</label>
+                            <select id="CustomerId" name="CustomerId" class="form-control">
+                                <option value="">Select Customer</option>
+                            </select>
+                        </div>
+
 
                     </div>
                 </div>
@@ -140,15 +193,14 @@
 
 @section scripts {
     <script type="text/javascript">
-
-
         $(document).ready(function () {
-            loadProjectData();
-            loadCustomerData();
-            loadEmployeeData();
+            // loadCustomerData();
+            // loadEmployeeData();
+            // searchProject();
+            // loadProjectData();
+
             $("#btSaveProject").click(function (event) {
                 event.preventDefault();
-
                 let isEditMode = $('#projectModalLabel').text() === "Edit Project";
 
                 let projectData = {
@@ -164,7 +216,7 @@
 
                 if (isEditMode) {
                     $.ajax({
-                        url: 'https://localhost:7163/api/Project', 
+                        url: 'https://localhost:7163/api/Project',
                         type: "PUT",
                         headers: {
                             'accept': 'text/plain',
@@ -174,7 +226,7 @@
                         success: function (result) {
                             if (result.status >= 1) {
                                 $('#projectModal').modal('hide');
-                                loadProjectData();
+                                searchProject();
                             }
                             alert(result.message);
                         },
@@ -194,7 +246,7 @@
                         success: function (result) {
                             if (result.status >= 1) {
                                 $('#projectModal').modal('hide');
-                                loadProjectData();
+                                searchProject();
                             }
                             alert(result.message);
                         },
@@ -204,135 +256,121 @@
                     });
                 }
             });
-
         });
 
-        function loadProjectData() {
-            $.ajax({
-                url: 'https://localhost:7163/api/Project',
-                type: "GET",
-                contentType: 'application/json; charset=utf-8',
-                dataType: "json",
-                success: function (result) {
-                    var html = '';
-                    $.each(result.data, function (key, item) {
-                        html += '<tr>';
-                        html += '<td>' + item.actualCost + '</td>';
-                        html += '<td>' + item.endDate + '</td>';
-                        html += '<td>' + item.estimatedCost + '</td>';
-                        html += '<td>' + item.startDate + '</td>';
-                        html += '<td>' + item.status + '</td>';
-                        html += '<td>' + item.constructionStaffId + '</td>';
-                        html += '<td>' + item.customerId + '</td>';
-                        html += '<td>' + item.designerId + '</td>';
-                        html += '<td>' +
-                            '<button class="btn btn-success" onclick="editProject(`' + item.id + '`)">Update</button>' +
-                            '<button class="btn btn-danger" onclick="deletePẹoect(`' + item.id + '`)">Delete</button>' +
-                            '</td>';;
-                        html += '</tr>';
-                    });
-                    $('.tblProject').html(html);
-                },
-                error: function (xhr, error) {
-                    alert(xhr.statusText);
-                }
-            });
-        }
-        function loadEmployeeData() {
-            $.ajax({
-                url: 'https://localhost:7163/api/Employee',
-                type: "GET",
-                contentType: 'application/json; charset=utf-8',
-                dataType: "json",
-                success: function (result) {
-                    if (result.status === 1) {
-                        populateDropdown('#ConstructionStaffId', result.data);
-                        populateDropdown('#DesignerId', result.data);
+        // function loadProjectData() {
+        //     $.ajax({
+        //         url: 'https://localhost:7163/api/Project',
+        //         type: "GET",
+        //         success: function (result) {
+        //             let tableBody = $('.tblProject');
+        //             tableBody.empty();
+        //             $.each(result.data, function (index, item) {
+        //                 let row = `<tr>
+        //                                             <td>${item.id}</td>
+        //                                             <td>${item.actualCost}</td>
+        //                                             <td>${item.endDate}</td>
+        //                                             <td>${item.estimatedCost}</td>
+        //                                             <td>${item.startDate}</td>
+        //                                             <td>${item.status}</td>
+        //                                             <td>${item.constructionStaff.user.fullname}</td>
+        //                                             <td>${item.customer.user.fullname}</td>
+        //                                             <td>${item.designer.user.fullname}</td>
+        //                                             <td>
+        //                                                 <a class="btn btn-sm btn-info" onclick="editProject(${item.id})">Edit</a>
+        //                                                 <a class="btn btn-sm btn-danger" onclick="deleteProject(${item.id})">Delete</a>
+        //                                             </td>
+        //                                         </tr>`;
+        //                 tableBody.append(row);
+        //             });
+        //         }
+        //     });
+        // }
 
-                    }
-                },
-                error: function (xhr, error) {
-                    alert(xhr.statusText);
-                }
-            });
-        }  
         function loadCustomerData() {
             $.ajax({
                 url: 'https://localhost:7163/api/Customer',
                 type: "GET",
-                contentType: 'application/json; charset=utf-8',
-                dataType: "json",
                 success: function (result) {
-                    if (result.status === 1) {
-                        populateDropdown('#CustomerId', result.data);
-                    }
-                },
-                error: function (xhr, error) {
-                    alert(xhr.statusText);
-                }
-            });
-        } 
-
-        function populateDropdown(selector, data) {
-            $(selector).empty(); 
-            $(selector).append('<option value="">Select</option>');
-
-            $.each(data, function (index, item) {
-                $(selector).append('<option value="' + item.id + '">' + item.id + '</option>');
-            });
-        };
-        function addProject() {
-            $("#projectModalLabel").html("Add New Project");
-            $('#projectModal').modal('show');
-            $('#ActualCost').val('');
-            $('#EstimatedCost').val('');
-            $('#StartDate').val('');
-            $('#EndDate').val('');
-            $('#Status').val('');
-            $('#ConstructionStaffId').val('');
-            $('#CustomerId').val('');
-            $('#DesignerId').val('');
-        };
-        function editProject(id) {
-            $.ajax({
-                url: 'https://localhost:7163/api/Project/' + id,
-                type: "GET",
-                contentType: 'application/json; charset=utf-8',
-                dataType: "json",
-                success: function (result) {
-                    if (result.status === 1) {
-                        $('#ActualCost').val(result.data.actualCost);
-                        $('#EstimatedCost').val(result.data.estimatedCost);
-                        $('#StartDate').val(result.data.startDate);
-                        $('#EndDate').val(result.data.endDate);
-                        $('#Status').val(result.data.status);
-                        $('#ConstructionStaffId').val(result.data.constructionStaffId);
-                        $('#CustomerId').val(result.data.customerId);
-                        $('#DesignerId').val(result.data.designerId);
-                        $("#projectModalLabel").html("Edit Project");
-                        $('#projectModal').modal('show');
-                    } else {
-                        alert(result.message);
-                    }
-                },
-                error: function (xhr, error) {
-                    alert(xhr.statusText);
+                    let customerSelect = $('#CustomerId');
+                    customerSelect.empty();
+                    $.each(result.data, function (index, item) {
+                        customerSelect.append(`<option value="${item.id}">${item.user.fullname}</option>`);
+                    });
                 }
             });
         }
+
+
+        function loadEmployeeData() {
+            $.ajax({
+                url: 'https://localhost:7163/api/Employee',
+                type: "GET",
+                success: function (result) {
+                    console.log(result);
+                    let employeeSelect = $('#ConstructionStaffId');
+                    let designerSelect = $('#DesignerId');
+                    employeeSelect.empty();
+                    designerSelect.empty();
+                    $.each(result.data, function (index, item) {
+                        designerSelect.append(`<option value="${item.id}">${item.user.fullname}</option>`);
+                        employeeSelect.append(`<option value="${item.id}">${item.user.fullname}</option>`);
+                    });
+
+                }
+
+
+            });
+        }
+
+        function addProject() {
+            $('#projectModalLabel').text("Add Project");
+            $('#frmProject')[0].reset();
+            $('#projectModal').modal('show');
+        }
+
+        $(document).on('click', '.btn-info', function () {
+            let id = $(this).closest('tr').find('td:first').text();
+            editProject(id);
+        });
+
+        $(document).on('click', '.btn-danger', function () {
+            let id = $(this).closest('tr').find('td:first').text(); 
+            deleteProject(id);
+        });
+
+        function editProject(id) {
+            alert("Loading project: " + id + " data ...");
+
+            $('#projectModalLabel').text("Edit Project");
+            $.ajax({
+                url: `https://localhost:7163/api/Project/${id}`,
+                type: "GET",
+                success: function (response) {
+                    const item = response.data;
+                    console.log(item);
+                    $('#ActualCost').val(item.actualCost);
+                    $('#EstimatedCost').val(item.estimatedCost);
+                    $('#StartDate').val(item.startDate);
+                    $('#EndDate').val(item.endDate);
+                    $('#Status').val(item.status);
+                    $('#ConstructionStaffId').val(item.constructionStaffId);
+                    $('#CustomerId').val(item.customerId);
+                    $('#DesignerId').val(item.designerId);
+                    $('#projectModal').modal('show');
+                }
+            });
+        }
+
         function deleteProject(id) {
-            if (confirm('Are you sure you want to delete this project?')) {
+            if (confirm("Are you sure you want to delete this project?")) {
                 $.ajax({
-                    url: 'https://localhost:7163/api/Project/' + id,
+                    url: `https://localhost:7163/api/Project/${id}`,
                     type: "DELETE",
-                    contentType: 'application/json; charset=utf-8',
                     success: function (result) {
-                        if (result.status === 1) {
-                            loadProjectData(); // Tải lại dữ liệu dự án
-                            alert(result.message);
-                        } else {
-                            alert(result.message);
-                        }
+                        console.log(item);
+                        alert(result.message);
+                        searchProject()
                     },
                     error: function (xhr, error) {
                         alert(xhr.statusText);
@@ -340,14 +378,59 @@
                 });
             }
         }
+        function resetFilters() {
+            $('#customerName').val('');
+            $('#DesignerId').val('');
+            $('#createdDate').val('');
+            $('#endDate').val('');
+            $('#status').val('');
+            searchProject();
+        }
 
 
+        function searchProject() {
+            let customerName = $('#customerName').val();
+            let designerId = $('#designerName').val();
+            let startDate = $('#startDate').val();
+            let endDate = $('#endDate').val();
+            let status = $('#status').val();
+            alert("Loading project data ...");
 
-        $('#addProjectButton').on('click', function () {
-            addProject();
-        });
-
+            $.ajax({
+                url: 'https://localhost:7163/api/Project/search',
+                type: "GET",
+                data: {
+                    customerName: customerName,
+                    designerId: designerId,
+                    startDate: startDate ? new Date(startDate).toISOString() : null,
+                    endDate: endDate ? new Date(endDate).toISOString() : null,
+                    status: status
+                },
+                success: function (result) {
+                    console.log(result);
+                    let tableBody = $('.tblProject');
+                    tableBody.empty();
+                    $.each(result.data, function (index, item) {
+                        let row = `<tr>
+                                                            <td>${item.id}</td>
+                                                            <td>${item.estimatedCost}</td>
+                                                            <td>${item.actualCost}</td>
+                                                            <td>${item.startDate}</td>
+                                                            <td>${item.endDate}</td>
+                                                            <td>${item.status}</td>
+                                                            <td>${item.constructionStaff.user.fullname}</td>
+                                                            <td>${item.customer.user.fullname}</td>
+                                                            <td>${item.designer.user.fullname}</td>
+                                                            <td>
+                                                                <a class="btn btn-sm btn-info" onclick="editProject(${item.id})">Edit</a>
+                                                                <a class="btn btn-sm btn-danger" onclick="deleteProject(${item.id})">Delete</a>
+                                                            </td>
+                                                        </tr>`;
+                        tableBody.append(row);                                                                                                                                                                                                          
+                    });
+                }
+            });
+        }
 
     </script>
 }
-

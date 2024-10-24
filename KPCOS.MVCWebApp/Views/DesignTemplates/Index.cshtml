@@ -1,77 +1,261 @@
 ﻿@model IEnumerable<KPCOS.Data.Models.DesignTemplate>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Design Template List";
 }
 
-<h1>Index</h1>
+<div class="row">
+    <div class="col-md-10">
+        <h3 class="display-8">Design Template List</h3>
+    </div>
+    <div class="col-md-2 text-end">
+        <button type="button" class="btn btn-primary" onclick="addDesignTemplate();">
+            Add Design Template
+        </button>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DefaultLocation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DefaultShape)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DefaultSize)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalPrice)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DefaultLocation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DefaultShape)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DefaultSize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<!-- Filter form -->
+<div class="row mb-3">
+    <div class="col-md-3">
+        <label for="filterDefaultLocation">Default Location</label>
+        <input type="text" id="filterDefaultLocation" class="form-control" placeholder="Default Location" />
+    </div>
+    <div class="col-md-3">
+        <label for="filterDefaultShape">Default Shape</label>
+        <input type="text" id="filterDefaultShape" class="form-control" placeholder="Default Shape" />
+    </div>
+    <div class="col-md-3">
+        <label for="filterName">Name</label>
+        <input type="text" id="filterName" class="form-control" placeholder="Name" />
+    </div>
+    <div class="col-md-3">
+        <label for="filterTotalPrice">Min Total Price</label>
+        <input type="number" id="filterTotalPrice" class="form-control" placeholder="Min Total Price" />
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12 text-end">
+        <button type="button" class="btn btn-primary" onclick="loadDesignTemplateData();">Filter</button>
+        <button type="button" class="btn btn-secondary" onclick="resetFilters();">Reset</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">Id</th>
+                    <th class="card-title text-center">Default Location</th>
+                    <th class="card-title text-center">Default Shape</th>
+                    <th class="card-title text-center">Default Size</th>
+                    <th class="card-title text-center">Description</th>
+                    <th class="card-title text-center">Image</th>
+                    <th class="card-title text-center">Name</th>
+                    <th class="card-title text-center">Total Price</th>
+                    <th class="card-title text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tblDesignTemplate">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="designTemplateModal" tabindex="-1" aria-labelledby="designTemplateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frmDesignTemplate", id = "frmDesignTemplate" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="designTemplateModalLabel">Design Template</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <label for="DefaultLocation">Default Location</label>
+                            <input type="text" id="DefaultLocation" name="DefaultLocation" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="DefaultShape">Default Shape</label>
+                            <input type="text" id="DefaultShape" name="DefaultShape" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="DefaultSize">Default Size</label>
+                            <input type="text" id="DefaultSize" name="DefaultSize" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="Description">Description</label>
+                            <input type="text" id="Description" name="Description" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="Image">Image</label>
+                            <input type="text" id="Image" name="Image" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="Name">Name</label>
+                            <input type="text" id="Name" name="Name" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="TotalPrice">Total Price</label>
+                            <input type="text" id="TotalPrice" name="TotalPrice" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSaveDesignTemplate" type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadDesignTemplateData();
+
+            $("#btSaveDesignTemplate").click(function (event) {
+                event.preventDefault();
+                var id = $("#designTemplateModal").data("id");
+                var method = id ? "PUT" : "POST";
+                var url = 'https://localhost:7163/api/DesignTemplate';
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    headers: {
+                        'accept': 'text/plain',
+                        "Content-Type": 'application/json'
+                    },
+                    data: JSON.stringify({
+                        id: id,
+                        defaultLocation: $('#DefaultLocation').val(),
+                        defaultShape: $('#DefaultShape').val(),
+                        defaultSize: $('#DefaultSize').val(),
+                        description: $('#Description').val(),
+                        image: $('#Image').val(),
+                        name: $('#Name').val(),
+                        totalPrice: $('#TotalPrice').val()
+                    }),
+                    success: function (result) {
+                        $('#designTemplateModal').modal('hide');
+                        loadDesignTemplateData();
+                        alert(result.message);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.statusText);
+                    }
+                });
+            });
+        });
+
+        function loadDesignTemplateData() {
+            var defaultLocation = $('#filterDefaultLocation').val();
+            var defaultShape = $('#filterDefaultShape').val();
+            var name = $('#filterName').val();
+            var totalPrice = $('#filterTotalPrice').val();
+
+            var queryParams = {
+                defaultLocation: defaultLocation,  // handle null or empty string
+                defaultShape: defaultShape,  // typo fixed: `defaultShapte` -> `defaultShape`
+                name: name,
+                totalPrice: totalPrice
+            };
+
+            // Log the queryParams to debug any potential issues with parameter values
+            console.log(queryParams);
+
+            $.ajax({
+                url: 'https://localhost:7163/api/DesignTemplate',
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                data: queryParams,
+                dataType: "json",
+                success: function (result) {
+                    var html = '';
+                    $.each(result.data, function (key, item) {
+                        html += '<tr>';
+                        html += '<td>' + item.id + '</td>';
+                        html += '<td>' + item.defaultLocation + '</td>';
+                        html += '<td>' + item.defaultShape + '</td>';
+                        html += '<td>' + item.defaultSize + '</td>';
+                        html += '<td>' + item.description + '</td>';
+                        html += '<td>' + item.image + '</td>';
+                        html += '<td>' + item.name + '</td>';
+                        html += '<td>' + item.totalPrice + '</td>';
+                        html += '<td>' +
+                            '<button class="btn btn-success" onclick="editDesignTemplate(`' + item.id + '`)">Update</button>' +
+                            '<button class="btn btn-danger" onclick="deleteDesignTemplate(`' + item.id + '`)">Delete</button>' +
+                            '</td>';
+                        html += '</tr>'
+                    });
+                    $('.tblDesignTemplate').html(html);
+                },
+                error: function (xhr, error) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function resetFilters() {
+            $('#filterDefaultLocation').val('');
+            $('#filterDefaultShape').val('');
+            $('#filterName').val('');
+            $('#filterTotalPrice').val('');
+            loadQuotationData();
+        }
+
+        function addDesignTemplate() {
+            $("#designTemplateModalLabel").html("Add New Design Template");
+            $('#frmDesignTemplate').trigger("reset");
+            $('#designTemplateModal').modal('show');
+            $('#designTemplateModal').data("id", null);
+        }
+
+        function editDesignTemplate(id) {
+            $("#designTemplateModalLabel").html("Update Design Template");
+            $.ajax({
+                url: 'https://localhost:7163/api/DesignTemplate/' + id,
+                type: "GET",
+                contentType: 'application/json',
+                success: function (response) {
+                    $('#DefaultLocation').val(response.data.defaultLocation);
+                    $('#DefaultShape').val(response.data.defaultShape);
+                    $('#DefaultSize').val(response.data.defaultSize);
+                    $('#Description').val(response.data.description);
+                    $('#Image').val(response.data.image);
+                    $('#Name').val(response.data.name);
+                    $('#TotalPrice').val(response.data.totalPrice);
+
+                    $('#designTemplateModal').modal('show');
+                    $('#designTemplateModal').data("id", id);
+                },
+                error: function (xhr) {
+                    alert(xhr.statusText);
+                }
+            });
+        }
+
+        function deleteDesignTemplate(id) {
+            if (confirm("Are you sure you want to delete this design template?")) {
+                $.ajax({
+                    url: 'https://localhost:7163/api/DesignTemplate/' + id,
+                    type: "DELETE",
+                    success: function (result) {
+                        loadDesignTemplateData();
+                        alert(result.message);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.statusText);
+                    }
+                });
+            }
+        }
+    </script>
 }
-    </tbody>
-</table>

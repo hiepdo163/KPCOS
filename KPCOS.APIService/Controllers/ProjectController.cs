@@ -3,6 +3,7 @@ using KPCOS.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 
 namespace KPCOS.APIService.Controllers
 {
@@ -23,6 +24,13 @@ namespace KPCOS.APIService.Controllers
             return await _projectService.GetAll();
    
         }
+        [HttpGet("search")]
+        public async Task<IBusinessResult> GetProjects([FromQuery] string? customerName, [FromQuery] string? designerId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string? status)
+        {
+            return await _projectService.GetProjectsAsync(customerName, designerId, startDate, endDate, status);
+        }
+
+
 
         [HttpGet("{projectId}")]
         public async Task<IBusinessResult> GetProjectById(string projectId)
@@ -31,14 +39,14 @@ namespace KPCOS.APIService.Controllers
         }
 
         [HttpPost]
-        public async Task<IBusinessResult> CreateProject(ProjectDTO project)
+        public async Task<IBusinessResult> CreateProject(Project project)
         {
             return await _projectService.Save(project);
 
         }
 
         [HttpPut]
-        public async Task<IBusinessResult> UpdateProject(ProjectDTO project)
+        public async Task<IBusinessResult> UpdateProject(Project project)
         {
             return await _projectService.Save(project);
 

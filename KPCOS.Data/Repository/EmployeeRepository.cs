@@ -34,5 +34,12 @@ namespace KPCOS.Data.Repository
         {
             return await _context.Employees.AsNoTracking().AsSplitQuery().Where(e => e.UserId == userId).ToListAsync();
         }
+        public async Task<IEnumerable<Employee>> GetAllEmployee()
+        {
+            var employees = await _context.Employees
+                .Include(u => u.User)
+                .ToListAsync();
+            return employees;
+        }
     }
 }

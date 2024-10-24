@@ -2,7 +2,9 @@
 using KPCOS.Data;
 using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +20,34 @@ namespace KPCOS.Service.Service
         {
             _unitOfWork ??= new UnitOfWork();
         }
-        public async Task<IBusinessResult> GetAll()
+        public async Task<IBusinessResult> GetAll(DesignTemplateFilterDTO filter)
         {
             #region Business rule
             #endregion
 
             var designTemplates = await _unitOfWork.DesignTemplate.GetAllAsync();
-            if (designTemplates == null)
+
+            if (!string.IsNullOrEmpty(filter.DefaultLocation))
+            {
+                designTemplates = designTemplates.Where(d => d.DefaultLocation.Contains(filter.DefaultLocation)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter.DefaultShape))
+            {
+                designTemplates = designTemplates.Where(d => d.DefaultShape.Contains(filter.DefaultShape)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                designTemplates = designTemplates.Where(d => d.Name.Contains(filter.Name)).ToList();
+            }
+
+            if (filter.TotalPrice.HasValue && filter.TotalPrice != 0)
+            {
+                designTemplates = designTemplates.Where(d => d.TotalPrice >= filter.TotalPrice).ToList();
+            }
+
+            if (designTemplates == null || !designTemplates.Any())
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<DesignTemplate>());
             }
@@ -66,7 +89,8 @@ namespace KPCOS.Service.Service
             try
             {
                 int result = -1;
-                var templateTmp = await _unitOfWork.DesignTemplate.GetByIdAsync(template.Id);
+                var templateTmp = await _unitOfWork.DesignTemplate.GetQuery()
+                    .FirstOrDefaultAsync(d => d.Id == template.Id);
                 if (templateTmp != null)
                 {
                     templateTmp.DefaultLocation = template.DefaultLocation;
@@ -90,6 +114,8 @@ namespace KPCOS.Service.Service
                 }
                 else
                 {
+                    string Id = Guid.NewGuid().ToString();
+                    template.Id = Id;
                     result = await _unitOfWork.DesignTemplate.CreateAsync(template);
                     if (result > 0)
                     {

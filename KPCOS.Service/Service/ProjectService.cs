@@ -2,6 +2,7 @@
 using KPCOS.Data;
 using KPCOS.Data.Models;
 using KPCOS.Service.Base;
+using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using System;
 using System.Collections.Generic;
@@ -20,22 +21,14 @@ namespace KPCOS.Service.Service
         }
         public async Task<IBusinessResult> GetAll()
         {
-            #region Business rule
-            #endregion
-
-            var projects = await _unitOfWork.Project.GetAllAsync();
-            if (projects == null)
-            {
-                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Project>());
-            }
-            else
-            {
-                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, projects);
-            }
+            var projects = await _unitOfWork.Project.GetProjectsAsync();
+            return projects == null
+                ? new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Project>())
+                : new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, projects);
         }
         public async Task<IBusinessResult> GetById(string id)
         {
-            var project = await _unitOfWork.Project.GetByIdAsync(id);
+            var project = await _unitOfWork.Project.GetProjectByIdAsync(id);
             if (project == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new Project());
@@ -45,12 +38,13 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, project);
             }
         }
-        public async Task<IBusinessResult> Save(ProjectDTO project)
+        public async Task<IBusinessResult> Save(Project project)
         {
             try
             {
                 int result = -1;
                 var projectTmp = await _unitOfWork.Project.GetByIdAsync(project.Id.ToString());
+                var constStaff = await _unitOfWork.Employee.GetByIdAsync(project.ConstructionStaffId);
                 if (projectTmp != null)
                 {
                     projectTmp.ActualCost = project.ActualCost;
@@ -128,6 +122,14 @@ namespace KPCOS.Service.Service
             {
                 return new BusinessResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
+        }
+
+        public async Task<IBusinessResult> GetProjectsAsync(string customerName, string designerId, DateTime? startDate, DateTime? endDate, string status)
+        {
+            var projects = await _unitOfWork.Project.GetProjectsByFilterAsync(customerName, designerId, startDate, endDate, status);
+            return projects == null && !projects.Any()
+                ? new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Project>())
+                : new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, projects);
         }
     }
 }

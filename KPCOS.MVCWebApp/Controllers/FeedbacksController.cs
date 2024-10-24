@@ -17,45 +17,45 @@ namespace KPCOS.MVCWebApp.Controllers
     {
         private readonly string _apiEndpoint = Const.APIEndpoint + "Feedback/";
         // GET: Feedbacks
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string content, decimal? rating)
         {
-            string apiUrl = _apiEndpoint;
-            Console.WriteLine("API URL: " + apiUrl); 
+            List<Feedback> data = new List<Feedback>();
+
             using (var httpClient = new HttpClient())
             {
-                try
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + nameof(Feedback)))
                 {
-                    using (var response = await httpClient.GetAsync(apiUrl))
+                    if (response.IsSuccessStatusCode)
                     {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                        var responseContent = await response.Content.ReadAsStringAsync(); // Renamed local variable
+                        var result = JsonConvert.DeserializeObject<BusinessResult>(responseContent);
 
-                            if (result != null && result.Data != null)
-                            {
-                                var data = JsonConvert.DeserializeObject<List<Feedback>>(result.Data.ToString());
-                                return View(data);
-                            }
-                        }
-                        else
+                        if (result != null && result.Data != null)
                         {
-                           
-                            Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                            data = JsonConvert.DeserializeObject<List<Feedback>>(result.Data.ToString());
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Exception occurred: " + ex.Message);
-                }
             }
-            return View(new List<Feedback>());
+
+            // Filter by content if provided
+            if (!string.IsNullOrEmpty(content))
+            {
+                data = data.Where(c => c.Content.Contains(content, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            // Filter by rating if provided
+            if (rating.HasValue)
+            {
+                data = data.Where(c => c.Rating >= rating.Value).ToList();
+            }
+
+            return View(data);
         }
 
 
         // GET: Feedbacks/Details/{id}
-       
+
         public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id))
