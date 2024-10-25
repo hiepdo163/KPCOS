@@ -173,68 +173,121 @@ namespace KPCOS.MVCWebApp.Controllers
             return new List<Project>();
         }
 
-        // POST: Invoices/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //// POST: Invoices/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,DiscountApplied,PaymentDate,PaymentMethod,ProjectId,Status,TaxAmount,TotalAmount")] Invoice invoice)
+        //{
+        //    bool Status = false;
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (invoice.DiscountApplied < 0 || invoice.DiscountApplied > invoice.TotalAmount)
+        //        {
+        //            ModelState.AddModelError("DiscountApplied", "Discount cannot be negative or exceed total amount");
+        //            await LoadInvoiceViewData();
+        //            return View(invoice);
+        //        }
+
+        //        if (invoice.TaxAmount < 0 || invoice.TaxAmount > invoice.TotalAmount)
+        //        {
+        //            ModelState.AddModelError("TaxAmount", "Tax amount cannot be negative or exceed total amount");
+        //            await LoadInvoiceViewData();
+        //            return View(invoice);
+        //        }
+
+        //        if (invoice.TotalAmount < 0)
+        //        {
+        //            ModelState.AddModelError("TotalAmount", "Total amount cannot be negative");
+        //            await LoadInvoiceViewData();
+        //            return View(invoice);
+        //        }
+
+        //        using (var httpClient = new HttpClient())
+        //        {
+        //            using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + $"{nameof(Invoice)}", invoice))
+        //            {
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    var content = await response.Content.ReadAsStringAsync();
+        //                    var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+
+        //                    if (result != null && result.Status == Const.SUCCESS_CREATE_CODE)
+        //                    {
+        //                        Status = true;
+        //                    }
+        //                    else
+        //                    {
+        //                        Status = false;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    if (Status)
+        //    {
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    else
+        //    {
+        //        await LoadInvoiceViewData();
+        //        return View(invoice);
+        //    }
+        //}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DiscountApplied,PaymentDate,PaymentMethod,ProjectId,Status,TaxAmount,TotalAmount")] Invoice invoice)
         {
             bool Status = false;
+            string message = "";
+
             if (ModelState.IsValid)
             {
                 if (invoice.DiscountApplied < 0 || invoice.DiscountApplied > invoice.TotalAmount)
                 {
-                    ModelState.AddModelError("DiscountApplied", "Discount cannot be negative or exceed total amount");
-                    await LoadInvoiceViewData();
-                    return View(invoice);
+                    message = "Discount cannot be negative or exceed total amount";
                 }
-
-                if (invoice.TaxAmount < 0 || invoice.TaxAmount > invoice.TotalAmount)
+                else if (invoice.TaxAmount < 0 || invoice.TaxAmount > invoice.TotalAmount)
                 {
-                    ModelState.AddModelError("TaxAmount", "Tax amount cannot be negative or exceed total amount");
-                    await LoadInvoiceViewData();
-                    return View(invoice);
+                    message = "Tax amount cannot be negative or exceed total amount";
                 }
-
-                if (invoice.TotalAmount < 0)
+                else if (invoice.TotalAmount < 0)
                 {
-                    ModelState.AddModelError("TotalAmount", "Total amount cannot be negative");
-                    await LoadInvoiceViewData();
-                    return View(invoice);
+                    message = "Total amount cannot be negative";
                 }
-
-                using (var httpClient = new HttpClient())
+                else
                 {
-                    using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + $"{nameof(Invoice)}", invoice))
+                    using (var httpClient = new HttpClient())
                     {
-                        if (response.IsSuccessStatusCode)
+                        using (var response = await httpClient.PostAsJsonAsync(Const.APIEndpoint + $"{nameof(Invoice)}", invoice))
                         {
-                            var content = await response.Content.ReadAsStringAsync();
-                            var result = JsonConvert.DeserializeObject<BusinessResult>(content);
+                            if (response.IsSuccessStatusCode)
+                            {
+                                var content = await response.Content.ReadAsStringAsync();
+                                var result = JsonConvert.DeserializeObject<BusinessResult>(content);
 
-                            if (result != null && result.Status == Const.SUCCESS_CREATE_CODE)
-                            {
-                                Status = true;
-                            }
-                            else
-                            {
-                                Status = false;
+                                if (result != null && result.Status == Const.SUCCESS_CREATE_CODE)
+                                {
+                                    Status = true;
+                                }
+                                else
+                                {
+                                    message = "Error while saving the invoice.";
+                                }
                             }
                         }
                     }
                 }
             }
-
-            if (Status)
-            {
-                return RedirectToAction(nameof(Index));
-            }
             else
             {
-                await LoadInvoiceViewData();
-                return View(invoice);
+                message = "Invalid input data.";
             }
+
+            return Json(new { Status, Message = message });
         }
 
         // GET: Invoices/Edit/5
