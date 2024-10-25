@@ -27,34 +27,10 @@ namespace KPCOS.Service.Service
             #endregion
 
             // Fetch all quotations from the repository
-            var quotations = await _unitOfWork.Quotation.GetAllAsync();
+            var quotations = await _unitOfWork.Quotation.GetAllFilter(request);
 
             // Apply filters
-            if (!string.IsNullOrEmpty(request.ComplexityLevel))
-            {
-                quotations = quotations.Where(q => q.ComplexityLevel.Contains(request.ComplexityLevel)).ToList();
-            }
-
-            if (!string.IsNullOrEmpty(request.Status))
-            {
-                quotations = quotations.Where(q => q.Status == request.Status).ToList();
-            }
-
-            if (request.StartDate.HasValue)
-            {
-                quotations = quotations.Where(q => q.QuotationDate >= request.StartDate.Value).ToList();
-            }
-
-            if (request.EndDate.HasValue)
-            {
-                quotations = quotations.Where(q => q.QuotationDate <= request.EndDate.Value).ToList();
-            }
-
-            // Check if no quotations match the filters
-            if (quotations == null || !quotations.Any())
-            {
-                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Quotation>());
-            }
+            
 
             // Return the filtered result
             return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, quotations);
@@ -87,8 +63,7 @@ namespace KPCOS.Service.Service
             try
             {
                 int result = -1;
-                var quotationTmp = await _unitOfWork.Quotation.GetQuery()
-                    .FirstOrDefaultAsync(q => q.Id == quotation.Id);
+                var quotationTmp = await _unitOfWork.Quotation.GetByIdAsync(quotation.Id);
                 var design = await _unitOfWork.Design.GetAllAsync();
 
                 if (quotationTmp != null)

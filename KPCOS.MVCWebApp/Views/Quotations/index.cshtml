@@ -158,6 +158,36 @@
                     return; // Stop the form submission
                 }
 
+                var errorMessage = '';
+                if (!complexityLevel) {
+                    errorMessage += 'Complexity Level is required.\n';
+                }
+                if (!consultationAmount || isNaN(consultationAmount)) {
+                    errorMessage += 'Consultation Amount is required and must be a number.\n';
+                }
+                if (!quotationAmount || isNaN(quotationAmount)) {
+                    errorMessage += 'Quotation Amount is required and must be a number.\n';
+                }
+                if (!quotationDate) {
+                    errorMessage += 'Quotation Date is required.\n';
+                }
+                if (!scale) {
+                    errorMessage += 'Scale is required.\n';
+                }
+                if (!status) {
+                    errorMessage += 'Status is required.\n';
+                }
+                if (!style) {
+                    errorMessage += 'Style is required.\n';
+                }
+                if (!designId) {
+                    errorMessage += 'DesignId is required.\n';
+                }
+
+                if (errorMessage) {
+                    alert(errorMessage);
+                    return;
+                }
 
                 $.ajax({
                     url: url,

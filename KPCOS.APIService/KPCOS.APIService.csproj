@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\KPCOS.Common\KPCOS.Common.csproj" />
     <ProjectReference Include="..\KPCOS.Service\KPCOS.Service.csproj" />
   </ItemGroup>
 
