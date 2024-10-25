@@ -242,11 +242,8 @@ namespace KPCOS.MVCWebApp.Controllers
         }
 
         // GET: Projects/Delete/{id}
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(string id)
         {
-            if (id == Guid.Empty) return NotFound();
-
-            Project project = null;
             using (var httpClient = new HttpClient())
             {
                 var response = await httpClient.GetAsync($"{_apiEndpoint}{id}");
@@ -254,21 +251,21 @@ namespace KPCOS.MVCWebApp.Controllers
                 {
                     var content = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                    if (result?.Data != null)
+                    if (result != null && result.Data != null)
                     {
-                        project = JsonConvert.DeserializeObject<Project>(result.Data.ToString());
+                        var project = JsonConvert.DeserializeObject<Project>(result.Data.ToString());
+                        return View(project);
                     }
                 }
             }
 
-            if (project == null) return NotFound();
-            return View(project);
+            return View(new Project { });
         }
 
         // POST: Projects/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             bool isDeleted = false;
             using (var httpClient = new HttpClient())

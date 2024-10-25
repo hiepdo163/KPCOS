@@ -13,7 +13,7 @@ public partial class Project
         Id = Guid.NewGuid().ToString();
     }
 
-    public String Id { get; set; }
+    public string Id { get; set; }
 
     [Required(ErrorMessage = "Actual Cost is required.")]
     [Range(0, double.MaxValue, ErrorMessage = "Actual Cost must be a positive value.")]
