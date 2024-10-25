@@ -165,7 +165,9 @@
                 defaultLocation: defaultLocation,  // handle null or empty string
                 defaultShape: defaultShape,  // typo fixed: `defaultShapte` -> `defaultShape`
                 name: name,
-                totalPrice: totalPrice
+                totalPrice: totalPrice,
+                page: currentPage = 1,  // Add page number
+                pageSize: pageSize = 10  // Add page size
             };
 
             // Log the queryParams to debug any potential issues with parameter values
@@ -196,6 +198,9 @@
                         html += '</tr>'
                     });
                     $('.tblDesignTemplate').html(html);
+
+                    // Update current page display
+                    $('#currentPage').text('Page ' + currentPage);
                 },
                 error: function (xhr, error) {
                     alert(xhr.statusText);
@@ -255,6 +260,18 @@
                         alert(xhr.statusText);
                     }
                 });
+            }
+        }
+
+        function nextPage() {
+            currentPage++;
+            loadDesignTemplateData();
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadDesignTemplateData();
             }
         }
     </script>

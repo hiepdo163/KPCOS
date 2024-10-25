@@ -13,5 +13,6 @@ namespace KPCOS.Service.DTOs
         public string ProjectId { get; set; }
         public string Content { get; set; }
         public decimal? Rating { get; set; }
+        public DateTime? CreateDate { get; set; }
     }
 }

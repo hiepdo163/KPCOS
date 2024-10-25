@@ -12,5 +12,7 @@ namespace KPCOS.Service.DTOs
         public string? DefaultShape { get; set; }
         public string? Name {  get; set; }
         public decimal? TotalPrice { get; set; }
+        public int? Page {  get; set; }
+        public int? PageSize { get; set; }
     }
 }
