@@ -47,14 +47,24 @@ namespace KPCOS.Service.Service
                 designTemplates = designTemplates.Where(d => d.TotalPrice >= filter.TotalPrice).ToList();
             }
 
-            if (designTemplates == null || !designTemplates.Any())
+            // Check if there are any results after applying filters
+            var filteredResults = designTemplates.ToList();
+            if (filteredResults == null || !filteredResults.Any())
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<DesignTemplate>());
             }
-            else
+
+            // Apply pagination
+            if (filter.Page.HasValue && filter.PageSize.HasValue)
             {
-                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, designTemplates);
+                var skip = (filter.Page.Value - 1) * filter.PageSize.Value;
+                var pagedResults = filteredResults.Skip(skip).Take(filter.PageSize.Value).ToList();
+
+                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagedResults);
             }
+
+            // Return all results if no pagination is applied
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, filteredResults);
         }
 
         public async Task<IBusinessResult> GetWithCondition(string name)

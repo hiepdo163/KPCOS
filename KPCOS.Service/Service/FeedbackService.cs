@@ -42,7 +42,9 @@ namespace KPCOS.Service.Service
                 CustomerId = f.CustomerId,
                 ProjectId = f.ProjectId,
                 Content = f.Content,
-                Rating = f.Rating
+                Rating = f.Rating,
+                CreateDate = f.CreateDate
+
             }).ToList();
             return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, feedbackDtos);
 
