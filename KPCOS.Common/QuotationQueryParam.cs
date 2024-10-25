@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KPCOS.Service.DTOs
+namespace KPCOS.Common
 {
     public class QuotationFilterParams
     {
@@ -13,5 +13,4 @@ namespace KPCOS.Service.DTOs
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
     }
-
 }
