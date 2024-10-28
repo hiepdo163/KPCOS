@@ -8,12 +8,13 @@
 
 
 <div class="row">
-    <div class="col-md-10">
+    <div class="col-md-8">
         <h3 class="display-8">Project List</h3>
     </div>
-    <div class="col-md-2 text-end">
+    <a class="col-md-2" asp-action="Create">Create with HTTP Client </a>
+    <div class="col-md-2">
         <button type="button" id="addProjectButton" class="btn btn-primary" onclick="addProject();">
-            Add Project
+            Create with Ajax
         </button>
 
     </div>
@@ -31,7 +32,7 @@
         <div class="col-md-2">
             <select id="status" class="form-control" onchange="searchProject()">
                 <option value="">Select Status</option>
-                <option value="Planned">Planned</option>
+                <option value="Planed">Planed</option>
                 <option value="Working">Working</option>
                 <option value="Done">Done</option>
             </select>
@@ -51,9 +52,7 @@
         </div>
     </div>
 
-    <p>
-        <a class="btn btn-primary" asp-action="Create">Create New</a>
-    </p>
+
 </div>
 
 <div class="row">
@@ -168,7 +167,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="DesignerId">Designer</label>
-                            <select id="DesignerId" name="DesignerId" class="form-control">
+                            <select id="ConstructionStaffId" name="DesignerId" class="form-control">
                                 <option value="">Select Designer</option>
                             </select>
                         </div>
@@ -191,7 +190,7 @@
     </div>
 </div>
 
-@section scripts {
+@* @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
             loadCustomerData();
@@ -316,10 +315,7 @@
                         designerSelect.append(`<option value="${item.id}">${item.user.fullname}</option>`);
                         employeeSelect.append(`<option value="${item.id}">${item.user.fullname}</option>`);
                     });
-
                 }
-
-
             });
         }
 
@@ -368,9 +364,7 @@
                     url: `https://localhost:7163/api/Project/${id}`,
                     type: "DELETE",
                     success: function (result) {
-                        console.log(item);
-                        alert(result.message);
-                        searchProject()
+                        searchProject();
                     },
                     error: function (xhr, error) {
                         alert(xhr.statusText);
@@ -390,12 +384,11 @@
 
         function searchProject() {
             let customerName = $('#customerName').val();
-            let designerId = $('#designerName').val();
+            let designerId = $('#DesignerId').val();
             let startDate = $('#startDate').val();
             let endDate = $('#endDate').val();
             let status = $('#status').val();
-            alert("Loading project data ...");
-
+            console.log(designerId)
             $.ajax({
                 url: 'https://localhost:7163/api/Project/search',
                 type: "GET",
@@ -433,4 +426,4 @@
         }
 
     </script>
-}
+} *@
