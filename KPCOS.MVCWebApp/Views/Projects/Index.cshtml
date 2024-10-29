@@ -194,9 +194,9 @@
 @section scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            // loadCustomerData();
-            // loadEmployeeData();
-            // searchProject();
+            loadCustomerData();
+            loadEmployeeData();
+            searchProject();
             // loadProjectData();
 
             $("#btSaveProject").click(function (event) {
@@ -394,7 +394,7 @@
             let startDate = $('#startDate').val();
             let endDate = $('#endDate').val();
             let status = $('#status').val();
-            alert("Loading project data ...");
+    
 
             $.ajax({
                 url: 'https://localhost:7163/api/Project/search',
