@@ -17,7 +17,7 @@ namespace KPCOS.MVCWebApp.Controllers
     {
         private readonly string _apiEndpoint = Const.APIEndpoint + "Feedback/";
         // GET: Feedbacks
-        public async Task<IActionResult> Index(string content, decimal? rating)
+        public async Task<IActionResult> Index(string content, decimal? rating, DateTime? createdDate)
         {
             List<Feedback> data = new List<Feedback>();
 
@@ -27,7 +27,7 @@ namespace KPCOS.MVCWebApp.Controllers
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        var responseContent = await response.Content.ReadAsStringAsync(); // Renamed local variable
+                        var responseContent = await response.Content.ReadAsStringAsync();
                         var result = JsonConvert.DeserializeObject<BusinessResult>(responseContent);
 
                         if (result != null && result.Data != null)
@@ -38,16 +38,22 @@ namespace KPCOS.MVCWebApp.Controllers
                 }
             }
 
-            // Filter by content if provided
+            // Filter by content
             if (!string.IsNullOrEmpty(content))
             {
                 data = data.Where(c => c.Content.Contains(content, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            // Filter by rating if provided
+            // Filter by rating
             if (rating.HasValue)
             {
                 data = data.Where(c => c.Rating >= rating.Value).ToList();
+            }
+
+            // Filter by createdDate
+            if (createdDate.HasValue)
+            {
+                data = data.Where(c => c.CreateDate.HasValue && c.CreateDate.Value.Date == createdDate.Value.Date).ToList();
             }
 
             return View(data);
