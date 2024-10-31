@@ -2,6 +2,7 @@
 using KPCOS.Service.Base;
 using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
+using KPCOS.Service.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
@@ -20,13 +21,20 @@ namespace KPCOS.APIService.Controllers
             _invoiceService = invoiceService;
         }
 
-        // GET: odata/Invoices
-        [EnableQuery]
+        // GET: api/Feedback
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Invoice>>> GetInvoices()
+        [EnableQuery]
+        public async Task<IQueryable<Invoice>> GetInvoices()
         {
-            var result = await _invoiceService.GetAll();
-            return Ok(result);
+            var businessResult = await _invoiceService.GetAll();
+
+            if (businessResult.Data is IEnumerable<Invoice> invoice)
+            {
+                return invoice.AsQueryable();
+            }
+
+            // Return an empty IQueryable if no data is found
+            return Enumerable.Empty<Invoice>().AsQueryable();
         }
 
         // GET: odata/Invoices(5)
