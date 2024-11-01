@@ -15,7 +15,10 @@ namespace KPCOS.MVCWebApp.Controllers
     public class InvoicesController : Controller
     {
         // GET: Invoices
-        public async Task<IActionResult> Index(string searchId, string paymentMethod, string status, DateTime? startDate, DateTime? endDate)
+        public async Task<IActionResult> Index(
+            string searchId, string paymentMethod, string status,
+            DateTime? startDate, DateTime? endDate,
+            int pageNumber = 1, int pageSize = 3)
         {
             List<Invoice> invoices;
 
@@ -42,6 +45,8 @@ namespace KPCOS.MVCWebApp.Controllers
                 url += $"endDate={endDate.Value:yyyy-MM-dd}&";
             }
 
+            // Add pagination parameters
+            url += $"pageNumber={pageNumber}&pageSize={pageSize}";
             url = url.TrimEnd('&');
 
             using (var httpClient = new HttpClient())
@@ -63,6 +68,7 @@ namespace KPCOS.MVCWebApp.Controllers
                 }
             }
 
+            ViewBag.CurrentPage = pageNumber;
             return View(invoices);
         }
 
