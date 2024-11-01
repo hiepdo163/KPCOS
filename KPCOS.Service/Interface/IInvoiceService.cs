@@ -11,7 +11,14 @@ namespace KPCOS.Service.Interface
 {
     public interface IInvoiceService
     {
-        Task<IBusinessResult> GetAll(string searchId = null, string paymentMethod = null, string status = null, DateTime? startDate = null, DateTime? endDate = null);
+        Task<IBusinessResult> GetAll(
+            string searchId = null,
+            string paymentMethod = null,
+            string status = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            int pageNumber = 1,
+            int pageSize = 3);
         Task<IBusinessResult> GetById(string code);
         //Task<IBusinessResult> Create(InvoiceDTO invoice);
         //Task<IBusinessResult> Create(Invoice invoice);
