@@ -14,6 +14,7 @@
 <form method="get" class="d-flex flex-row my-3 gap-2">
     <input type="text" name="content" class="form-control" placeholder="Search by Content" value="@ViewContext.HttpContext.Request.Query["content"]" />
     <input type="number" name="rating" class="form-control" placeholder="Search by Rating" value="@ViewContext.HttpContext.Request.Query["rating"]" />
+    <input type="date" name="createdDate" class="form-control" placeholder="Search by Date" value="@ViewContext.HttpContext.Request.Query["createdDate"]" />
     <button type="submit" class="btn btn-outline-secondary">Search</button>
 </form>
 
