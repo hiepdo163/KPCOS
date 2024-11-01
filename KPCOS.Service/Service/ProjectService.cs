@@ -99,6 +99,7 @@ namespace KPCOS.Service.Service
         {
             try
             {
+                id = id.Trim();
                 var project = await _unitOfWork.Project.GetByIdAsync(id);
                 if (project == null)
                 {

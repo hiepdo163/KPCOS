@@ -254,15 +254,15 @@ namespace KPCOS.MVCWebApp.Controllers
                 {
                     var content = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-                    if (result?.Data != null)
+                    if (result != null && result.Data != null)
                     {
-                        project = JsonConvert.DeserializeObject<Project>(result.Data.ToString());
+                        var project = JsonConvert.DeserializeObject<Project>(result.Data.ToString());
+                        return View(project);
                     }
                 }
             }
 
-            if (project == null) return NotFound();
-            return View(project);
+            return View(new Project { });
         }
 
         // POST: Projects/Delete/{id}
