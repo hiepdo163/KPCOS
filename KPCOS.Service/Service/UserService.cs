@@ -184,7 +184,8 @@ namespace KPCOS.Service.Service
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["JwtConfig:Secret"]);
-
+            var secretkey = _configuration["JwtConfig:Secret"];
+            Console.WriteLine($"SecretKey:{secretkey}");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]

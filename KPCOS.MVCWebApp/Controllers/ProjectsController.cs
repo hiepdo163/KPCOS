@@ -244,6 +244,9 @@ namespace KPCOS.MVCWebApp.Controllers
         // GET: Projects/Delete/{id}
         public async Task<IActionResult> Delete(string id)
         {
+            if (id == string.Empty) return NotFound();
+
+            Project project = null;
             using (var httpClient = new HttpClient())
             {
                 var response = await httpClient.GetAsync($"{_apiEndpoint}{id}");
