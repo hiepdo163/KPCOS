@@ -14,9 +14,16 @@ namespace KPCOS.APIService.Controllers
         private readonly IInvoiceService _invoiceService = invoiceService;
 
         [HttpGet]
-        public async Task<IBusinessResult> GetInvoices(string searchId = null, string paymentMethod = null, string status = null, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IBusinessResult> GetInvoices(
+            string searchId = null,
+            string paymentMethod = null,
+            string status = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            int pageNumber = 1,
+            int pageSize = 3)
         {
-            return await _invoiceService.GetAll(searchId, paymentMethod, status, startDate, endDate);
+            return await _invoiceService.GetAll(searchId, paymentMethod, status, startDate, endDate, pageNumber, pageSize);
         }
 
         [HttpGet("{id}")]

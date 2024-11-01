@@ -21,7 +21,14 @@ namespace KPCOS.Service.Service
         {
             _unitOfWork ??= new UnitOfWork();
         }
-        public async Task<IBusinessResult> GetAll(string searchId = null, string paymentMethod = null, string status = null, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IBusinessResult> GetAll(
+            string searchId = null,
+            string paymentMethod = null,
+            string status = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            int pageNumber = 1,
+            int pageSize = 3)
         {
             #region Business rule
             #endregion
@@ -33,25 +40,19 @@ namespace KPCOS.Service.Service
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Invoice>());
             }
 
-            // Lọc theo Invoice ID
+            // Apply filters
             if (!string.IsNullOrEmpty(searchId))
             {
                 invoices = invoices.Where(i => i.Id.ToString() == searchId).ToList();
             }
-
-            // Lọc theo PaymentMethod
             if (!string.IsNullOrEmpty(paymentMethod))
             {
                 invoices = invoices.Where(i => i.PaymentMethod == paymentMethod).ToList();
             }
-
-            // Lọc theo Status
             if (!string.IsNullOrEmpty(status))
             {
                 invoices = invoices.Where(i => i.Status == status).ToList();
             }
-
-            // Lọc theo PaymentDate
             if (startDate.HasValue)
             {
                 invoices = invoices.Where(i => i.PaymentDate >= startDate.Value).ToList();
@@ -61,8 +62,14 @@ namespace KPCOS.Service.Service
                 invoices = invoices.Where(i => i.PaymentDate <= endDate.Value).ToList();
             }
 
+            // Sort and paginate
             var sortedInvoices = invoices.OrderByDescending(invoice => invoice.PaymentDate).ToList();
-            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, sortedInvoices);
+            var paginatedInvoices = sortedInvoices
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, paginatedInvoices);
         }
 
         public async Task<IBusinessResult> GetById(string id)
