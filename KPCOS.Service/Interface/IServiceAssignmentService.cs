@@ -1,4 +1,5 @@
-﻿using KPCOS.Data.Models;
+﻿using KPCOS.Common;
+using KPCOS.Data.Models;
 using KPCOS.Service.Base;
 using KPCOS.Service.DTOs;
 using System;
@@ -11,7 +12,8 @@ namespace KPCOS.Service.Interface
 {
     public interface IServiceAssignmentService
     {
-        Task<IBusinessResult> GetAll(QueryPagedServiceAssignment query);
+        Task<IBusinessResult> GetPage(QueryPagedServiceAssignment query);
+        Task<IBusinessResult> GetAll();
         Task<IBusinessResult> GetById(string code);
         Task<IBusinessResult> Create(ServiceAssignmentDTO serviceAssignment);
         Task<IBusinessResult> Update(string id, ServiceAssignmentDTO serviceAssignment);

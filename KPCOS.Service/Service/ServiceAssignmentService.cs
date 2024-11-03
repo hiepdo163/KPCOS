@@ -19,24 +19,29 @@ namespace KPCOS.Service.Service
         {
             _unitOfWork ??= new UnitOfWork();
         }
-        public async Task<IBusinessResult> GetAll(QueryPagedServiceAssignment query)
+        public async Task<IBusinessResult> GetPage(QueryPagedServiceAssignment query)
         {
             #region Business rule
             #endregion
 
-            var serviceAssignments = await _unitOfWork.ServiceAssignment.GetServiceAssignmentsAsync();
-            if (!string.IsNullOrEmpty(query.ServiceBookingId))
+            var serviceAssignments = await _unitOfWork.ServiceAssignment.GetServiceAssignmentsAsync(query);
+            
+            if (serviceAssignments == null)
             {
-                serviceAssignments = serviceAssignments.Where(e => e.ServiceBookingId == query.ServiceBookingId).ToList();
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new PagedResultResponse<ServiceAssignment>());
             }
-            if (!string.IsNullOrEmpty(query.EmployeeId))
+            else
             {
-                serviceAssignments = serviceAssignments.Where(e => e.EmployeeId == query.EmployeeId).ToList();
+                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, serviceAssignments);
             }
-            if (!string.IsNullOrEmpty(query.Status))
-            {
-                serviceAssignments = serviceAssignments.Where(e => e.Status == query.Status).ToList();
-            }
+        }
+        public async Task<IBusinessResult> GetAll()
+        {
+            #region Business rule
+            #endregion
+
+            var serviceAssignments = await _unitOfWork.ServiceAssignment.GetAllServiceAssignment();
+
             if (serviceAssignments == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<ServiceAssignment>());

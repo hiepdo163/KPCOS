@@ -20,7 +20,7 @@ namespace KPCOS.MVCWebApp.Controllers
         {
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceAssignment?ServiceBookingId="+ query.ServiceBookingId +"&EmployeeId="+ query.EmployeeId +"&Status="+ query.Status))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceAssignment?ServiceBookingId="+ query.ServiceBookingId +"&EmployeeId="+ query.EmployeeId +"&Status="+ query.Status + "&PageNumber=" + query.PageNumber))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -29,7 +29,7 @@ namespace KPCOS.MVCWebApp.Controllers
 
                         if (result != null && result.Data != null)
                         {
-                            var data = JsonConvert.DeserializeObject<List<ServiceAssignment>>(result.Data.ToString());
+                            var data = JsonConvert.DeserializeObject<PagedResultResponse<ServiceAssignment>>(result.Data.ToString());
                             ViewData["ServiceBookingId"] = new SelectList(await this.GetServiceBookings(), "Id", "ServiceType");
                             ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "User.Fullname");
                             return View(data);
@@ -37,7 +37,7 @@ namespace KPCOS.MVCWebApp.Controllers
                     }
                 }
             }
-            return View(new List<ServiceAssignment>());
+            return View(new PagedResultResponse<ServiceAssignment>());
             //return View();
         }
 
