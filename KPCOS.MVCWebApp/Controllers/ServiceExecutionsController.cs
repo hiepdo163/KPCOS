@@ -18,27 +18,7 @@ namespace KPCOS.MVCWebApp.Controllers
         // GET: ServiceExecutions
         public async Task<IActionResult> Index(QueryPagedServiceExecution query)
         {
-            using (var httpClient = new HttpClient())
-            {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceExecution?ServiceBookingId="+ query.ServiceBookingId +"&EmployeeId="+ query.EmployeeId +"&Status="+ query.Status))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<BusinessResult>(content);
-
-                        if (result != null && result.Data != null)
-                        {
-                            var data = JsonConvert.DeserializeObject<List<ServiceExecution>>(result.Data.ToString());
-                            ViewData["ServiceBookingId"] = new SelectList(await this.GetServiceBookings(), "Id", "ServiceType");
-                            ViewData["EmployeeId"] = new SelectList(await this.GetEmployees(), "Id", "User.Fullname");
-                            return View(data);
-                        }
-                    }
-                }
-            }
-            return View(new List<ServiceExecution>());
-            //return View();
+            return View();
         }
 
         // GET: ServiceExecutions/Details/5

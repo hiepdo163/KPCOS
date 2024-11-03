@@ -1,4 +1,5 @@
-﻿using KPCOS.Data.Models;
+﻿using KPCOS.Common;
+using KPCOS.Data.Models;
 using KPCOS.Service.Base;
 using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
@@ -17,7 +18,12 @@ namespace KPCOS.APIService.Controllers
         [HttpGet]
         public async Task<IBusinessResult> GetServiceExecutions([FromQuery]QueryPagedServiceExecution query)
         {
-            return await _serviceExecutionService.GetAll(query);
+            return await _serviceExecutionService.GetPaged(query);
+        }
+        [HttpGet("get-all")]
+        public async Task<IBusinessResult> GetAll()
+        {
+            return await _serviceExecutionService.GetAll();
         }
         [HttpGet("{id}")]
         public async Task<IBusinessResult> GetAServiceExecution([FromRoute] string id)

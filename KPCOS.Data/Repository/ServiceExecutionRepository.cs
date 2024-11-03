@@ -1,4 +1,5 @@
-﻿using KPCOS.Data.Base;
+﻿using KPCOS.Common;
+using KPCOS.Data.Base;
 using KPCOS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace KPCOS.Data.Repository
 {
@@ -14,7 +16,40 @@ namespace KPCOS.Data.Repository
         public ServiceExecutionRepository() { }
 
         public ServiceExecutionRepository(FA24_SE1717_PRN231_G4_KPCOSContext context) => _context = context;
-        public async Task<List<ServiceExecution>> GetServiceExecutionsAsync()
+        public async Task<PagedResultResponse<ServiceExecution>> GetServiceExecutionsAsync(QueryPagedServiceExecution query)
+        {
+            var serviceExecutions = _context.ServiceExecutions.OrderByDescending(se => se.ExecutionDate).AsNoTracking().AsSplitQuery();
+
+            if (!string.IsNullOrEmpty(query.ServiceBookingId))
+            {
+                serviceExecutions = serviceExecutions.Where(e => e.ServiceBookingId == query.ServiceBookingId);
+            }
+            if (!string.IsNullOrEmpty(query.EmployeeId))
+            {
+                serviceExecutions = serviceExecutions.Where(e => e.EmployeeId == query.EmployeeId);
+            }
+            if (!string.IsNullOrEmpty(query.Status))
+            {
+                serviceExecutions = serviceExecutions.Where(e => e.Status == query.Status);
+            }
+
+            var data = await serviceExecutions.Skip((query.PageNumber - 1) * 10).Take(10)
+                .Include(se => se.Employee)
+                .Include(se => se.Employee.User)
+                .Include(se => se.Employee.Supervisor)
+                .Include(se => se.Employee.Supervisor.User)
+                .Include(se => se.ServiceBooking)
+                .Include(se => se.ServiceBooking.Customer)
+                .Include(se => se.ServiceBooking.Customer.User)
+                .ToListAsync();
+            return new PagedResultResponse<ServiceExecution>
+            {
+                TotalCount = await serviceExecutions.CountAsync(),
+                PageNumber = query.PageNumber,
+                Items = data
+            };
+        }
+        public async Task<List<ServiceExecution>> GetAllServiceExecution()
         {
             return await _context.ServiceExecutions.AsNoTracking().AsSplitQuery()
                 .Include(se => se.Employee)

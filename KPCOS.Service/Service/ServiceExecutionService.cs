@@ -19,24 +19,29 @@ namespace KPCOS.Service.Service
         {
             _unitOfWork ??= new UnitOfWork();
         }
-        public async Task<IBusinessResult> GetAll(QueryPagedServiceExecution query)
+        public async Task<IBusinessResult> GetPaged(QueryPagedServiceExecution query)
         {
             #region Business rule
             #endregion
 
-            var serviceExecutions = await _unitOfWork.ServiceExecution.GetServiceExecutionsAsync();
-            if (!string.IsNullOrEmpty(query.ServiceBookingId))
+            var serviceExecutions = await _unitOfWork.ServiceExecution.GetServiceExecutionsAsync(query);
+            
+            if (serviceExecutions == null)
             {
-                serviceExecutions = serviceExecutions.Where(e => e.ServiceBookingId == query.ServiceBookingId).ToList();
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new PagedResultResponse<ServiceExecution>());
             }
-            if (!string.IsNullOrEmpty(query.EmployeeId))
+            else
             {
-                serviceExecutions = serviceExecutions.Where(e => e.EmployeeId == query.EmployeeId).ToList();
+                return new BusinessResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, serviceExecutions);
             }
-            if (!string.IsNullOrEmpty(query.Status))
-            {
-                serviceExecutions = serviceExecutions.Where(e => e.Status == query.Status).ToList();
-            }
+        }
+        public async Task<IBusinessResult> GetAll()
+        {
+            #region Business rule
+            #endregion
+
+            var serviceExecutions = await _unitOfWork.ServiceExecution.GetAllServiceExecution();
+
             if (serviceExecutions == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<ServiceExecution>());
