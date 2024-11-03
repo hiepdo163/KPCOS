@@ -20,7 +20,7 @@ namespace KPCOS.MVCWebApp.Controllers
         {
             using (var httpClient = new HttpClient())
             {
-                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking?ServiceType="+ query.ServiceType +"&CustomerId="+ query.CustomerId + "&StartDate="+ query.StartDate +"&EndDate="+query.EndDate + "&Status="+query.Status))
+                using (var response = await httpClient.GetAsync(Const.APIEndpoint + "ServiceBooking?ServiceType="+ query.ServiceType +"&CustomerId="+ query.CustomerId + "&StartDate="+ query.StartDate +"&EndDate="+query.EndDate + "&Status="+query.Status + "&PageNumber="+ query.PageNumber))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -30,13 +30,13 @@ namespace KPCOS.MVCWebApp.Controllers
                         if (result != null && result.Data != null)
                         {
                             ViewData["CustomerId"] = new SelectList(await this.GetCustomers(), "Id", "User.Fullname");
-                            var data = JsonConvert.DeserializeObject<List<ServiceBooking>>(result.Data.ToString());
+                            var data = JsonConvert.DeserializeObject<PagedResultResponse<ServiceBooking>>(result.Data.ToString());
                             return View(data);
                         }
                     }
                 }
             }
-            return View(new List<ServiceBooking>());
+            return View(new PagedResultResponse<ServiceBooking>());
             //return View();
         }
         public async Task<IActionResult> Details(string id)
@@ -70,6 +70,7 @@ namespace KPCOS.MVCWebApp.Controllers
         public async Task<IActionResult> Create(ServiceBookingDTO serviceBookingDTO)
         {
             bool Status = false;
+            serviceBookingDTO.Status = "On-Going";
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())

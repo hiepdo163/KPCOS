@@ -12,6 +12,6 @@ namespace KPCOS.Service.DTOs
 
         public string EmployeeId { get; set; } = null!;
 
-        public string Status { get; set; } = null!;
+        public string? Status { get; set; }
     }
 }

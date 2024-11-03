@@ -80,6 +80,7 @@ namespace KPCOS.MVCWebApp.Controllers
         public async Task<IActionResult> Create(ServiceAssignmentDTO serviceAssignment)
         {
             bool Status = false;
+            serviceAssignment.Status = "On-Going";
             if (ModelState.IsValid)
             {
                 using (var httpClient = new HttpClient())

@@ -1,4 +1,5 @@
-﻿using KPCOS.Data.Models;
+﻿using KPCOS.Common;
+using KPCOS.Data.Models;
 using KPCOS.Service.Base;
 using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;

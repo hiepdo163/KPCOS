@@ -33,7 +33,7 @@ namespace KPCOS.Data.Repository
             }
 
                         
-            var data = await serviceAssignments.Skip((query.PageNumber - 1) * 2).Take(2)
+            var data = await serviceAssignments.Skip((query.PageNumber - 1) * 10).Take(10)
                 .Include(sa => sa.ServiceBooking)
                 .Include(sa => sa.ServiceBooking.Customer)
                 .Include(sa => sa.ServiceBooking.Customer.User)

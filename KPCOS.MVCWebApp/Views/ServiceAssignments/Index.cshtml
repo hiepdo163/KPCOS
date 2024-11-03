@@ -168,10 +168,7 @@
                     <span class="page-item mx-2">
                         @if (Model.PageNumber == i)
                         {
-                            <a class="page-link p-0" asp-action="Index"
-                               asp-route-PageNumber="@i">
-                                <div class="btn btn-success">@i</div>
-                            </a>
+                            <button type="button" class="btn btn-success">@i</button>
                         } else
                         {
                             <a class="page-link p-0" asp-action="Index"
@@ -179,7 +176,7 @@
                                asp-route-EmployeeId="@ViewContext.HttpContext.Request.Query["EmployeeId"]"
                                asp-route-Status="@ViewContext.HttpContext.Request.Query["Status"]"
                                asp-route-PageNumber="@i">
-                                <div class="btn btn-primary">@i</div>
+                                <div class="btn btn-outline-secondary">@i</div>
                             </a>
                         }
                     </span>

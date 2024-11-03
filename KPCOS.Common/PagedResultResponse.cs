@@ -10,7 +10,7 @@ namespace KPCOS.Common
     {
         public int TotalCount { get; set; }
         public int PageNumber { get; set; } = 1;
-        public int TotalPages => (int)Math.Ceiling(decimal.Divide(TotalCount, 2));
+        public int TotalPages => (int)Math.Ceiling(decimal.Divide(TotalCount, 10));
         public List<T> Items { get; set; } = [];
     }
 }

@@ -24,7 +24,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var serviceBookings = await _unitOfWork.ServiceBooking.GetServiceBookingsAsync();
+            var serviceBookings = await _unitOfWork.ServiceBooking.GetAllServiceBookings();
             if (serviceBookings == null)
             {
                 return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<ServiceBooking>());
@@ -39,30 +39,11 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var serviceBookings = await _unitOfWork.ServiceBooking.GetServiceBookingsAsync();
-            if (!string.IsNullOrEmpty(query.CustomerId))
-            {
-                serviceBookings = serviceBookings.Where(e => e.CustomerId == query.CustomerId).ToList();
-            }
-            if (!string.IsNullOrEmpty(query.ServiceType))
-            {
-                serviceBookings = serviceBookings.Where(e => e.ServiceType.ToLower().Contains(query.ServiceType.ToLower())).ToList();
-            }
-            if (query.StartDate.HasValue)
-            {
-                serviceBookings = serviceBookings.Where(e => e.StartDate >= query.StartDate).ToList();
-            }
-            if (query.EndDate.HasValue)
-            {
-                serviceBookings = serviceBookings.Where(e => e.EndDate <= query.EndDate).ToList();
-            }
-            if (!string.IsNullOrEmpty(query.Status))
-            {
-                serviceBookings = serviceBookings.Where(e => e.Status == query.Status).ToList();
-            }
+            var serviceBookings = await _unitOfWork.ServiceBooking.GetServiceBookingsAsync(query);
+            
             if (serviceBookings == null)
             {
-                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<ServiceBooking>());
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new PagedResultResponse<ServiceBooking>());
             }
             else
             {
