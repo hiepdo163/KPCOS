@@ -24,23 +24,11 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var employees = await _unitOfWork.Employee.GetEmployeesAsync();
-            if (!string.IsNullOrEmpty(query.Name))
-            {
-                employees = employees.Where(e => e.User.Fullname.ToLower().Contains(query.Name.ToLower())).ToList();
-            }
-            if (query.FromSalary > 0)
-            {
-                employees = employees.Where(e => e.Salary > query.FromSalary).ToList();
-            }
-            if (query.ToSalary > 0)
-            {
-                employees = employees.Where(e => e.Salary < query.ToSalary).ToList();
-            }
-
+            var employees = await _unitOfWork.Employee.GetEmployeesAsync(query);
+            
             if (employees == null)
             {
-                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new List<Employee>());
+                return new BusinessResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA_MSG, new PagedResultResponse<Employee>());
             }
             else
             {
@@ -53,7 +41,7 @@ namespace KPCOS.Service.Service
             #region Business rule
             #endregion
 
-            var employees = await _unitOfWork.Employee.GetEmployeesAsync();
+            var employees = await _unitOfWork.Employee.GetAllEmployees();
 
             if (employees == null)
             {

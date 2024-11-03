@@ -1,4 +1,5 @@
-﻿using KPCOS.Service.Base;
+﻿using KPCOS.Common;
+using KPCOS.Service.Base;
 using KPCOS.Service.DTOs;
 using KPCOS.Service.Interface;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,5 @@
-﻿using KPCOS.Data.Base;
+﻿using KPCOS.Common;
+using KPCOS.Data.Base;
 using KPCOS.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,13 +15,33 @@ namespace KPCOS.Data.Repository
         public EmployeeRepository() { }
 
         public EmployeeRepository(FA24_SE1717_PRN231_G4_KPCOSContext context) => _context = context;
-        public async Task<List<Employee>> GetEmployeesAsync()
+        public async Task<PagedResultResponse<Employee>> GetEmployeesAsync(QueryPagedEmployee query)
         {
-            return await _context.Employees.AsNoTracking().AsSplitQuery()
+            var employees = _context.Employees.OrderByDescending(e => e.User.Fullname).AsNoTracking().AsSplitQuery();
+                
+            if (!string.IsNullOrEmpty(query.Name))
+            {
+                employees = employees.Where(e => e.User.Fullname.ToLower().Contains(query.Name.ToLower()));
+            }
+            if (query.FromSalary > 0)
+            {
+                employees = employees.Where(e => e.Salary > query.FromSalary);
+            }
+            if (query.ToSalary > 0)
+            {
+                employees = employees.Where(e => e.Salary < query.ToSalary);
+            }
+
+            var data = await employees.Skip((query.PageNumber - 1) * 10).Take(10)
                 .Include(e => e.Supervisor)
                 .Include(e => e.Supervisor.User)
-                .Include(e => e.User)
-                .ToListAsync();
+                .Include(e => e.User).ToListAsync();
+            return new PagedResultResponse<Employee>
+            {
+                TotalCount = await employees.CountAsync(),
+                PageNumber = query.PageNumber,
+                Items = data
+            };
         }
         public async Task<Employee?> GetAnEmployeeByIdAsync(string id)
         {
@@ -34,12 +55,19 @@ namespace KPCOS.Data.Repository
         {
             return await _context.Employees.AsNoTracking().AsSplitQuery().Where(e => e.UserId == userId).ToListAsync();
         }
-        public async Task<IEnumerable<Employee>> GetAllEmployee()
+        //public async Task<IEnumerable<Employee>> GetAllEmployee()
+        //{
+        //    var employees = await _context.Employees
+        //        .Include(u => u.User)
+        //        .ToListAsync();
+        //    return employees;
+        //}
+        public async Task<List<Employee>> GetAllEmployees()
         {
-            var employees = await _context.Employees
-                .Include(u => u.User)
-                .ToListAsync();
-            return employees;
+            return await _context.Employees.AsNoTracking().AsSplitQuery()
+                .Include(e => e.Supervisor)
+                .Include(e => e.Supervisor.User)
+                .Include(e => e.User).ToListAsync();
         }
     }
 }

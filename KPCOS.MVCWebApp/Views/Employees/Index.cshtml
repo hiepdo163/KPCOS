@@ -177,7 +177,7 @@
                     success: function (result) {
                         if (result.status >= 1) {
                             $('#employeeModal').modal('hide');
-                            loadData();
+                            filter();
                         }
                         alert(result.message);
                     },
@@ -198,7 +198,7 @@
                 success: function (result) {
                     var htmlTbl = '';
                     var htmlPage = '';
-                    $.each(result.data, function (key, item) {
+                    $.each(result.data.items, function (key, item) {
                         var supervisorName = item.supervisor == null ? "" : item.supervisor.user.fullname;
                         htmlTbl += '<tr>';
                         htmlTbl += '<td>' + item.user.fullname + '</td>';
@@ -212,11 +212,16 @@
                                 '</td >';
                         htmlTbl += '</tr>'
                     });
-                    // $.each(result.data.count, function (key) {
-                    //     htmlPage += '<span class="mx-4">';
-                    //     htmlPage += '<button type="button" class="btn btn-primary" onclick="paging(`' + (key + 1) + '`);">' + (key + 1) + '</button>';
-                    //     htmlPage += '</tr>'
-                    // });
+                    var i = 2;
+                    htmlPage += '<span class="page-item mx-2">';
+                    htmlPage += '<button type="button" class="btn btn-success" onclick="paging(`' + 1 + '`);">' + 1 + '</button>';
+                    htmlPage += '</span>';
+                    while (i <= result.data.totalPages) {
+                        htmlPage += '<span class="page-item mx-2">';
+                        htmlPage += '<button type="button" class="btn btn-primary" onclick="paging(`' + i + '`);">' + i + '</button>';
+                        htmlPage += '</span>';
+                        i++;
+                    }
                     $('.pgEmployees').html(htmlPage);
                     $('.tblEmployees').html(htmlTbl);
                 },
@@ -247,11 +252,12 @@
                 contentType: 'application/json; charset=utf-8',
                 dataType: "json",
                 success: function (result) {
-                    var html = '';
+                    var html = '';                    
                     html += '<option value="null">None</option>';
                     $.each(result.data, function (key, item) {
                         html += '<option value="' + item.id + '">' + item.user.fullname + '</option>';
                     });
+                    
                     $('.fslSupervisorId').html(html);
                 },
                 error: function (xhr, error) {
@@ -279,7 +285,7 @@
                 success: function (result) {
                     var htmlTbl = '';
                     var htmlPage = '';
-                    $.each(result.data, function (key, item) {
+                    $.each(result.data.items, function (key, item) {
                         var supervisorName = item.supervisor == null ? "" : item.supervisor.user.fullname;
                         htmlTbl += '<tr>';
                         htmlTbl += '<td>' + item.user.fullname + '</td>';
@@ -293,11 +299,16 @@
                             '</td >';
                         htmlTbl += '</tr>'
                     });
-                    $.each(result.data.size, function (key) {
-                        htmlPage += '<span class="mx-4">';
-                        htmlPage += 'button type="button" class="btn btn-primary" onclick="paging(`' + (key + 1) + '`);">' + (key + 1) + '</button>';
-                        htmlPage += '</tr>'
-                    });
+                    htmlPage += '<span class="page-item mx-2">';
+                    htmlPage += '<button type="button" class="btn btn-success" onclick="paging(`' + 1 + '`);">' + 1 + '</button>';
+                    htmlPage += '</span>';
+                    var i = 2;
+                    while (i <= result.data.totalPages) {
+                        htmlPage += '<span class="page-item mx-2">';
+                        htmlPage += '<button type="button" class="btn btn-primary" onclick="paging(`' + i + '`);">' + i + '</button>';
+                        htmlPage += '</span>';
+                        i++;
+                    }
                     $('.pgEmployees').html(htmlPage);
                     $('.tblEmployees').html(htmlTbl);
                 },
@@ -333,7 +344,7 @@
                     url: 'https://localhost:7163/api/Employee/' + id,
                     type: "DELETE",
                     success: function (result) {
-                        loadData();
+                        filter();
                         alert(result.message);
                     },
                     error: function (xhr) {
@@ -344,7 +355,6 @@
         }
         function paging(page) {
             $.ajax({
-                ToSalary: $('#toSalary').val(),
                 url: 'https://localhost:7163/api/Employee?Name=' + $('#name').val() + '&FromSalary=' + $('#fromSalary').val() + '&ToSalary=' + $('#toSalary').val() + '&PageNumber=' + page,
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
@@ -352,7 +362,7 @@
                 success: function (result) {
                     var htmlTbl = '';
                     var htmlPage = '';
-                    $.each(result.data, function (key, item) {
+                    $.each(result.data.items, function (key, item) {
                         var supervisorName = item.supervisor == null ? "" : item.supervisor.user.fullname;
                         htmlTbl += '<tr>';
                         htmlTbl += '<td>' + item.user.fullname + '</td>';
@@ -366,11 +376,19 @@
                             '</td >';
                         htmlTbl += '</tr>'
                     });
-                    $.each(result.data.count, function (key) {
-                        htmlPage += '<span class="mx-4">';
-                        htmlPage += 'button type="button" class="btn btn-primary" onclick="paging(`' + (key + 1) + '`);">' + (key + 1) + '</button>';
-                        htmlPage += '</tr>'
-                    });
+                    var i = 1;
+                    while (i <= result.data.totalPages) {
+                        if (i == page) {
+                            htmlPage += '<span class="page-item mx-2">';
+                            htmlPage += '<button type="button" class="btn btn-success" onclick="paging(`' + i + '`);">' + i + '</button>';
+                            htmlPage += '</span>';
+                        } else {
+                            htmlPage += '<span class="page-item mx-2">';
+                            htmlPage += '<button type="button" class="btn btn-primary" onclick="paging(`' + i + '`);">' + i + '</button>';
+                            htmlPage += '</span>';
+                        }
+                        i++;
+                    }
                     $('.pgEmployees').html(htmlPage);
                     $('.tblEmployees').html(htmlTbl);
                 },
@@ -381,7 +399,6 @@
         }
         function filter() {
             $.ajax({
-                ToSalary: $('#toSalary').val(),
                 url: 'https://localhost:7163/api/Employee?Name=' + $('#name').val() + '&FromSalary=' + $('#fromSalary').val() + '&ToSalary=' + $('#toSalary').val() + '&PageNumber=1',
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
@@ -389,7 +406,7 @@
                 success: function (result) {
                     var htmlTbl = '';
                     var htmlPage = '';
-                    $.each(result.data, function (key, item) {
+                    $.each(result.data.items, function (key, item) {
                         var supervisorName = item.supervisor == null ? "" : item.supervisor.user.fullname;
                         htmlTbl += '<tr>';
                         htmlTbl += '<td>' + item.user.fullname + '</td>';
@@ -403,11 +420,16 @@
                             '</td >';
                         htmlTbl += '</tr>'
                     });
-                    $.each(result.data.count, function (key) {
-                        htmlPage += '<span class="mx-4">';
-                        htmlPage += 'button type="button" class="btn btn-primary" onclick="paging(`' + (key + 1) + '`);">' + (key + 1) + '</button>';
-                        htmlPage += '</tr>'
-                    });
+                    htmlPage += '<span class="page-item mx-2">';
+                    htmlPage += '<button type="button" class="btn btn-success" onclick="paging(`' + 1 + '`);">' + 1 + '</button>';
+                    htmlPage += '</span>';
+                    var i = 2;
+                    while (i <= result.data.totalPages) {
+                        htmlPage += '<span class="page-item mx-2">';
+                        htmlPage += '<button type="button" class="btn btn-primary" onclick="paging(`' + i + '`);">' + i + '</button>';
+                        htmlPage += '</span>';
+                        i++;
+                    }
                     $('.pgEmployees').html(htmlPage);
                     $('.tblEmployees').html(htmlTbl);
                 },

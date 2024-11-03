@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KPCOS.Service.DTOs
+namespace KPCOS.Common
 {
     public class QueryPagedEmployee
     {
